@@ -2,12 +2,12 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mind Masters KSA - Corporate Workspace & CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mind Masters KSA - Enterprise Portal</title>
   
   <!-- PWA Manifest & Mobile Config -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#4f46e5">
+  <meta name="theme-color" content="#030712">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Mind Masters">
@@ -37,379 +37,314 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { background-color: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif; }
+    body { background-color: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     .font-outfit { font-family: 'Outfit', sans-serif; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #030712; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-600 selection:text-white">
 
-  <!-- TOP NAVIGATION HEADER -->
-  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 px-4 md:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 shadow-lg shadow-indigo-500/20">
-        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-extrabold text-indigo-400 text-lg font-outfit">
-          MM
-        </div>
-      </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 id="app-company-name" class="font-bold text-slate-100 tracking-tight text-base font-outfit">MIND MASTERS KSA</h1>
-          <span class="px-2.5 py-0.5 text-[10px] font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-full">PWA READY</span>
-        </div>
-        <p class="text-xs text-slate-400">Enterprise Workspace & Client CRM System</p>
-      </div>
-    </div>
-
-    <!-- LIVE RBAC ROLE SWITCHER -->
-    <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shadow-inner">
-      <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2">Role Toggle:</span>
-      <button id="role-exec-btn" onclick="setRole('EXECUTIVE')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-indigo-500/20 text-amber-300 border border-amber-500/40 shadow-sm">👑 Executive</button>
-      <button id="role-lead-btn" onclick="setRole('LEAD')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">🛡️ Lead / Mgr</button>
-      <button id="role-std-btn" onclick="setRole('STANDARD')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">👤 Standard</button>
-    </div>
-
-    <!-- AUTH & ACCOUNT BUTTONS -->
-    <div class="flex items-center gap-3">
-      <button onclick="openModal('modal-auth')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow flex items-center gap-1">
-        🔑 Sign In / Register
-      </button>
-      <button onclick="openModal('modal-edit-names')" title="Customize Names" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700">
-        ✏️ Edit Names
-      </button>
-      <div class="text-right hidden sm:block">
-        <span id="user-name" class="font-bold text-xs text-slate-200 block">Executive User</span>
-        <span id="user-title" class="text-[10px] text-slate-400 block">Managing Director</span>
-      </div>
-      <img id="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-500/40 shadow">
-    </div>
-  </header>
-
-  <!-- PWA INSTALL & SYSTEM HEALTH STATUS BAR -->
-  <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-emerald-950 border-b border-indigo-800/40 px-6 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-    <div class="flex items-center gap-3">
-      <span class="flex items-center gap-1.5 font-bold text-emerald-400">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        DATABASE STATUS: <span id="db-status-text" class="text-slate-200 font-normal">Active (PostgreSQL / Supabase Ready)</span>
-      </span>
-      <span class="text-slate-600">|</span>
-      <span class="text-slate-300">API: <strong class="text-emerald-400">HTTP 200 OK</strong></span>
-    </div>
-    <div class="flex items-center gap-2 text-indigo-300">
-      <span>📱 <strong>Mobile PWA App Ready:</strong> Tap <em>"Add to Home Screen"</em> on your phone to install!</span>
-    </div>
-  </div>
-
-  <!-- MAIN BODY LAYOUT -->
-  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
-    <!-- LEFT SIDEBAR -->
-    <aside class="w-full lg:w-64 bg-slate-900/70 border-r border-slate-800 p-4 flex flex-col justify-between shrink-0 space-y-6">
-      <div class="space-y-4">
-        <p class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Core Modules</p>
-        <nav class="space-y-1.5">
-          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
-            <span>📊 Executive Overview</span>
-            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-700 text-indigo-100 font-bold">Full</span>
-          </button>
-          <button onclick="switchTab('crm')" id="nav-crm" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-            <span>🏢 CRM & Clients</span>
-            <span id="nav-crm-count" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0 Clients</span>
-          </button>
-          <button onclick="switchTab('projects')" id="nav-projects" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-            <span>📋 Projects & Tasks</span>
-            <span id="nav-proj-count" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0 Projects</span>
-          </button>
-          <button onclick="switchTab('vault')" id="nav-vault" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-            <span>🔒 Document Vault</span>
-            <span id="nav-vault-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Cleared</span>
-          </button>
-          <button onclick="switchTab('hr')" id="nav-hr" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-            <span>📅 HR Absence Queue</span>
-            <span id="nav-hr-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0 Pending</span>
-          </button>
-        </nav>
-
-        <div class="p-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 text-xs space-y-2">
-          <span id="clearance-box-title" class="font-bold text-slate-200 block font-outfit uppercase tracking-wider">EXECUTIVE CLEARANCE</span>
-          <p id="clearance-box-desc" class="text-[11px] text-slate-400 leading-relaxed">
-            Full administrative, financial, project budget, and approval permissions enabled.
-          </p>
-        </div>
-      </div>
-    </aside>
-
-    <!-- CONTENT WORKSPACE -->
-    <main class="flex-1 p-4 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
+  <!-- AUTHENTICATION SCREEN (WHEN NOT LOGGED IN) -->
+  <div id="screen-auth" class="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-slate-950 to-slate-950">
+    <div class="glass-card p-8 rounded-3xl max-w-md w-full space-y-6 shadow-2xl border border-slate-800">
       
-      <!-- DASHBOARD TAB -->
-      <section id="tab-dashboard" class="space-y-6">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 p-6 rounded-2xl border border-indigo-500/30 shadow-xl">
-          <div>
-            <h2 class="text-xl font-bold text-white font-outfit">Mind Masters KSA • Executive Dashboard</h2>
-            <p class="text-xs text-slate-400 mt-1">Real-time status monitor across Client CRM, Mega Projects, Document Vault & HR Operations</p>
-          </div>
-          <div id="dash-role-badge" class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-extrabold text-amber-400 shadow">
-            ACTIVE ROLE: EXECUTIVE
+      <!-- LOGO HEADER -->
+      <div class="text-center space-y-3">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 mx-auto shadow-xl shadow-indigo-600/30">
+          <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-black text-indigo-400 text-2xl font-outfit">
+            MM
           </div>
         </div>
-
-        <div id="role-warning-banner" class="hidden p-4 bg-amber-950/40 border border-amber-800/60 rounded-2xl text-amber-200 text-xs">
-          🔒 <strong>Standard Employee Role Active:</strong> Client deal values, project budgets, and restricted document downloads are masked. Toggle role to Executive/Lead to view full permissions.
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight text-white font-outfit">MIND MASTERS KSA</h1>
+          <p class="text-xs text-slate-400 mt-1">Enterprise Operations & CRM Workspace</p>
         </div>
-
-        <!-- DATABASE SYSTEM HEALTH MONITOR CARD -->
-        <div class="p-5 rounded-2xl bg-slate-900/90 border border-emerald-800/60 space-y-3 shadow-xl">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h3 class="font-bold text-slate-100 text-xs font-outfit flex items-center gap-2 uppercase tracking-wider">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              Live System & Database Health Check
-            </h3>
-            <span class="text-[10px] text-emerald-400 bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded font-bold">100% Operational</span>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
-              <span class="text-slate-500 text-[10px] block uppercase">Database Layer</span>
-              <span className="font-semibold text-slate-200 font-mono">PostgreSQL / Supabase</span>
-            </div>
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
-              <span class="text-slate-500 text-[10px] block uppercase">Registered Users DB</span>
-              <span id="sys-users-count" class="font-semibold text-emerald-400 font-mono">3 Accounts</span>
-            </div>
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
-              <span class="text-slate-500 text-[10px] block uppercase">Mobile PWA App</span>
-              <span class="font-semibold text-indigo-400 font-mono">Standalone Mode</span>
-            </div>
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-0.5">
-              <span class="text-slate-500 text-[10px] block uppercase">Storage Vault</span>
-              <span class="font-semibold text-violet-400 font-mono">Encrypted AWS S3</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- KPI CARDS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <span class="text-xs text-slate-400 block font-medium">CRM Deal Pipeline</span>
-            <div id="kpi-pipeline" class="text-xl font-extrabold text-slate-100 font-outfit">SAR 0.00</div>
-            <span id="kpi-clients-count" class="text-[11px] text-slate-500 block">0 Clients</span>
-          </div>
-
-          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <span class="text-xs text-slate-400 block font-medium">Active Mega Projects</span>
-            <div id="kpi-projects-count" class="text-xl font-extrabold text-slate-100 font-outfit">0 Active</div>
-            <span class="text-[11px] text-slate-500 block">KSA Enterprise Projects</span>
-          </div>
-
-          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <span class="text-xs text-slate-400 block font-medium">Restricted Vault Files</span>
-            <div id="kpi-docs-count" class="text-xl font-extrabold text-slate-100 font-outfit">0 Restricted</div>
-            <span id="kpi-vault-status" class="text-[11px] text-slate-500 block">Download Cleared</span>
-          </div>
-
-          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <span class="text-xs text-slate-400 block font-medium">Pending HR Approvals</span>
-            <div id="kpi-hr-count" class="text-xl font-extrabold text-slate-100 font-outfit">0 Requests</div>
-            <span class="text-[11px] text-slate-500 block">Approval Queue</span>
-          </div>
-        </div>
-
-        <!-- ACTIVE PROJECTS WIDGET -->
-        <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
-          <div class="flex justify-between items-center">
-            <h3 class="font-bold text-slate-100 text-sm font-outfit">Active Mega Projects Progress</h3>
-            <button onclick="openModal('modal-project')" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ New Project</button>
-          </div>
-          <div class="space-y-3" id="projects-widget-list"></div>
-        </div>
-      </section>
-
-      <!-- CRM TAB -->
-      <section id="tab-crm" class="hidden space-y-6">
-        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-slate-100 font-outfit">CRM & Client Accounts</h2>
-            <p class="text-xs text-slate-400">Enterprise KSA client portfolio & deal pipeline</p>
-          </div>
-          <button onclick="openModal('modal-client')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Add Client Account</button>
-        </div>
-
-        <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
-              <tr>
-                <th class="p-4">Company Name</th>
-                <th class="p-4">Key Contact</th>
-                <th class="p-4">Region</th>
-                <th class="p-4">Deal Stage</th>
-                <th class="p-4 text-right">Contract Value (SAR)</th>
-                <th class="p-4 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody id="crm-table-body" class="divide-y divide-slate-800"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- PROJECTS TAB -->
-      <section id="tab-projects" class="hidden space-y-6">
-        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-slate-100 font-outfit">Project & Task Workspace</h2>
-            <p class="text-xs text-slate-400">3 Interactive View Modes</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="openModal('modal-task')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-800/60 rounded-xl text-xs font-bold">+ Add Task</button>
-            <button onclick="openModal('modal-project')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ New Project</button>
-            <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-              <button onclick="setProjectViewMode('kanban')" id="mode-kanban-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">Kanban</button>
-              <button onclick="setProjectViewMode('table')" id="mode-table-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400">Table</button>
-              <button onclick="setProjectViewMode('timeline')" id="mode-timeline-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400">Timeline</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="project-view-container"></div>
-      </section>
-
-      <!-- VAULT TAB -->
-      <section id="tab-vault" class="hidden space-y-6">
-        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-slate-100 font-outfit">Restricted Document Vault</h2>
-            <p class="text-xs text-slate-400">Granular document clearance & RBAC download rules</p>
-          </div>
-          <button onclick="openModal('modal-vault')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Upload Document</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="vault-grid"></div>
-      </section>
-
-      <!-- HR TAB -->
-      <section id="tab-hr" class="hidden space-y-6">
-        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-slate-100 font-outfit">HR & Absence Management</h2>
-            <p class="text-xs text-slate-400">Leave approval queue & sanitized team out-of-office calendar</p>
-          </div>
-          <button onclick="openModal('modal-leave')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Submit Leave Request</button>
-        </div>
-
-        <div id="hr-approval-container"></div>
-
-        <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
-          <h3 class="font-bold text-slate-100 text-sm font-outfit">Team Out-of-Office Calendar (Sanitized)</h3>
-          <div class="space-y-3" id="hr-calendar-list"></div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- AUTHENTICATION & LOGIN / SIGN-UP MODAL -->
-  <div id="modal-auth" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-5 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-base">Mind Masters Employee Authentication</h3>
-        <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white">✕</button>
       </div>
 
       <!-- AUTH TABS -->
-      <div class="flex border-b border-slate-800">
-        <button id="auth-tab-login" onclick="toggleAuthTab('login')" class="w-1/2 py-2 text-xs font-bold text-indigo-400 border-b-2 border-indigo-500">Sign In</button>
-        <button id="auth-tab-signup" onclick="toggleAuthTab('signup')" class="w-1/2 py-2 text-xs font-medium text-slate-400 hover:text-slate-200">Create Account</button>
+      <div class="flex p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs font-semibold">
+        <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 py-2 rounded-lg bg-indigo-600 text-white shadow">Sign In</button>
+        <button id="tab-register-btn" onclick="switchAuthTab('register')" class="w-1/2 py-2 rounded-lg text-slate-400 hover:text-white">Register Account</button>
       </div>
 
       <!-- LOGIN FORM -->
-      <form id="auth-form-login" onsubmit="handleAuthLogin(event)" class="space-y-3 text-xs">
+      <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4 text-xs">
         <div>
-          <label class="text-slate-400 block mb-1">Company Email</label>
-          <input required id="auth-login-email" type="email" placeholder="name@mindmasters.sa" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          <label class="text-slate-300 font-medium block mb-1.5">Company Email</label>
+          <input required id="login-email" type="email" placeholder="e.g. director@mindmasters.sa" value="director@mindmasters.sa" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none transition" />
         </div>
         <div>
-          <label class="text-slate-400 block mb-1">Password</label>
-          <input required id="auth-login-pass" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          <label class="text-slate-300 font-medium block mb-1.5">Password</label>
+          <input required id="login-pass" type="password" value="password123" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none transition" />
         </div>
-        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Sign In to Workspace</button>
+        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-bold text-white text-sm rounded-xl shadow-lg shadow-indigo-600/30 transition">
+          Sign In to Workspace
+        </button>
+
+        <div class="pt-2 text-center border-t border-slate-800/80">
+          <p class="text-[11px] text-slate-400">Quick Demo Accounts:</p>
+          <div class="flex justify-center gap-2 mt-2">
+            <button type="button" onclick="fillDemo('director@mindmasters.sa')" class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-amber-300">👑 Director</button>
+            <button type="button" onclick="fillDemo('lead@mindmasters.sa')" class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-indigo-300">🛡️ PMO Manager</button>
+            <button type="button" onclick="fillDemo('engineer@mindmasters.sa')" class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-cyan-300">👤 Engineer</button>
+          </div>
+        </div>
       </form>
 
-      <!-- SIGN UP FORM -->
-      <form id="auth-form-signup" onsubmit="handleAuthSignUp(event)" class="hidden space-y-3 text-xs">
+      <!-- REGISTER FORM -->
+      <form id="form-register" onsubmit="handleRegister(event)" class="hidden space-y-3.5 text-xs">
         <div>
-          <label class="text-slate-400 block mb-1">Full Name</label>
-          <input required id="auth-sign-name" type="text" placeholder="Eng. Sultan Al-Otaibi" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          <label class="text-slate-300 font-medium block mb-1">Full Name</label>
+          <input required id="reg-name" type="text" placeholder="Eng. Sultan Al-Otaibi" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
         </div>
         <div>
-          <label class="text-slate-400 block mb-1">Company Email</label>
-          <input required id="auth-sign-email" type="email" placeholder="sultan@mindmasters.sa" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          <label class="text-slate-300 font-medium block mb-1">Work Email</label>
+          <input required id="reg-email" type="email" placeholder="sultan@mindmasters.sa" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-slate-400 block mb-1">Job Title</label>
-            <input required id="auth-sign-title" type="text" placeholder="Senior Architect" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+            <label class="text-slate-300 font-medium block mb-1">Job Title</label>
+            <input required id="reg-title" type="text" placeholder="Senior Engineer" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
           </div>
           <div>
-            <label class="text-slate-400 block mb-1">Department</label>
-            <input required id="auth-sign-dept" type="text" placeholder="Engineering" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+            <label class="text-slate-300 font-medium block mb-1">Department</label>
+            <input required id="reg-dept" type="text" placeholder="Engineering" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
           </div>
         </div>
         <div>
-          <label class="text-slate-400 block mb-1">Password</label>
-          <input required id="auth-sign-pass" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          <label class="text-slate-300 font-medium block mb-1">Requested Role</label>
+          <select id="reg-role" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none">
+            <option value="STANDARD" selected>Standard Employee (Assigned Tasks & Public Vault)</option>
+            <option value="LEAD">Lead / Manager (Project & Team Management)</option>
+            <option value="EXECUTIVE">Executive (Full Master Control)</option>
+          </select>
         </div>
-        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Create Employee Account</button>
+        <div>
+          <label class="text-slate-300 font-medium block mb-1">Password</label>
+          <input required id="reg-pass" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+        </div>
+        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-bold text-white text-sm rounded-xl shadow-lg shadow-indigo-600/30">
+          Request Account Activation
+        </button>
       </form>
+
     </div>
   </div>
 
-  <!-- OTHER MODALS -->
-  <div id="modal-edit-names" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-base">✏️ Customize Team & Role Names</h3>
-        <button onclick="closeModal('modal-edit-names')" class="text-slate-400 hover:text-white">✕</button>
+  <!-- MAIN WORKSPACE APP (WHEN LOGGED IN) -->
+  <div id="screen-app" class="hidden min-h-screen flex flex-col">
+
+    <!-- ENTERPRISE HEADER -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800/80 px-4 md:px-8 py-3.5 flex items-center justify-between gap-4 shadow-xl">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 shadow-lg shadow-indigo-500/20">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-extrabold text-indigo-400 text-lg font-outfit">
+            MM
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-white tracking-tight text-sm sm:text-base font-outfit">MIND MASTERS KSA</h1>
+            <span id="badge-header-role" class="px-2.5 py-0.5 text-[10px] font-extrabold bg-indigo-950 text-indigo-300 border border-indigo-800 rounded-full">
+              👑 EXECUTIVE
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400">Enterprise Workspace Portal</p>
+        </div>
       </div>
-      <form onsubmit="handleSavePeopleNames(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="text-slate-400 block mb-1">Company / Hub Name</label>
-          <input required id="edit-company-name" type="text" value="MIND MASTERS KSA" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+
+      <!-- USER PROFILE & SIGN OUT -->
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden sm:block">
+          <span id="user-display-name" class="font-bold text-xs text-slate-200 block">Executive Director</span>
+          <span id="user-display-title" class="text-[10px] text-slate-400 block">Managing Director</span>
+        </div>
+        <img id="user-display-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-9 h-9 rounded-xl object-cover ring-2 ring-indigo-500/40 shadow">
+        <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-800 hover:bg-rose-950 hover:text-rose-300 border border-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN BODY LAYOUT -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      
+      <!-- LEFT SIDEBAR -->
+      <aside class="w-full lg:w-64 bg-slate-900/60 border-r border-slate-800/80 p-4 flex flex-col justify-between shrink-0 space-y-6">
+        <div class="space-y-4">
+          <p class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Modules</p>
+          <nav class="space-y-1.5">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+              <span>📊 Dashboard</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-700 text-indigo-100 font-bold">Active</span>
+            </button>
+            <button onclick="switchTab('crm')" id="nav-crm" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+              <span>🏢 CRM & Clients</span>
+              <span id="nav-crm-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0</span>
+            </button>
+            <button onclick="switchTab('projects')" id="nav-projects" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+              <span>📋 Projects & Tasks</span>
+              <span id="nav-proj-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0</span>
+            </button>
+            <button onclick="switchTab('vault')" id="nav-vault" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+              <span>🔒 Document Vault</span>
+              <span id="nav-vault-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Cleared</span>
+            </button>
+            <button onclick="switchTab('hr')" id="nav-hr" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+              <span>📅 Team HR Calendar</span>
+              <span id="nav-hr-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0</span>
+            </button>
+          </nav>
         </div>
 
-        <div class="p-3 bg-amber-950/30 border border-amber-800/40 rounded-xl space-y-2">
-          <span class="font-bold text-amber-300 block">👑 Executive Level Profile</span>
-          <div class="grid grid-cols-2 gap-2">
-            <input required id="edit-exec-name" type="text" placeholder="Executive Name" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
-            <input required id="edit-exec-title" type="text" placeholder="Executive Title" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+          <span id="sidebar-clearance-title" class="font-bold text-slate-200 block font-outfit uppercase">EXECUTIVE CLEARANCE</span>
+          <p id="sidebar-clearance-desc" class="text-[11px] text-slate-400 leading-relaxed">
+            Full master financial, project budget, and strategic approval clearances active.
+          </p>
+        </div>
+      </aside>
+
+      <!-- CONTENT WORKSPACE -->
+      <main class="flex-1 p-4 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
+        
+        <!-- DASHBOARD TAB -->
+        <section id="tab-dashboard" class="space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl">
+            <div>
+              <h2 id="dash-greeting" class="text-lg sm:text-xl font-bold text-white font-outfit">Welcome back, Executive Director</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Mind Masters KSA Operational Workspace</p>
+            </div>
+            <div id="dash-badge-role" class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-extrabold text-amber-300">
+              ROLE: EXECUTIVE MASTER
+            </div>
           </div>
-        </div>
 
-        <div class="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl space-y-2">
-          <span class="font-bold text-indigo-300 block">🛡️ Lead / Manager Level Profile</span>
-          <div class="grid grid-cols-2 gap-2">
-            <input required id="edit-lead-name" type="text" placeholder="Lead Name" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
-            <input required id="edit-lead-title" type="text" placeholder="Lead Title" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+          <!-- KPI CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs text-slate-400 block font-medium">CRM Deal Pipeline</span>
+              <div id="kpi-pipeline" class="text-xl font-extrabold text-white font-outfit">SAR 0.00</div>
+              <span id="kpi-clients-count" class="text-[11px] text-slate-500 block">0 Clients</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs text-slate-400 block font-medium">Active Mega Projects</span>
+              <div id="kpi-projects-count" class="text-xl font-extrabold text-white font-outfit">0 Active</div>
+              <span class="text-[11px] text-slate-500 block">Enterprise Projects</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs text-slate-400 block font-medium">Document Vault</span>
+              <div id="kpi-docs-count" class="text-xl font-extrabold text-white font-outfit">0 Documents</div>
+              <span id="kpi-vault-status" class="text-[11px] text-slate-500 block">Full Access</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+              <span class="text-xs text-slate-400 block font-medium">Pending HR Requests</span>
+              <div id="kpi-hr-count" class="text-xl font-extrabold text-white font-outfit">0 Pending</div>
+              <span class="text-[11px] text-slate-500 block">Absence Queue</span>
+            </div>
           </div>
-        </div>
 
-        <div class="p-3 bg-cyan-950/30 border border-cyan-800/40 rounded-xl space-y-2">
-          <span class="font-bold text-cyan-300 block">👤 Standard Employee Profile</span>
-          <div class="grid grid-cols-2 gap-2">
-            <input required id="edit-std-name" type="text" placeholder="Employee Name" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
-            <input required id="edit-std-title" type="text" placeholder="Employee Title" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+          <!-- ACTIVE PROJECTS WIDGET -->
+          <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-slate-100 text-sm font-outfit">Active Mega Projects</h3>
+              <button id="btn-add-project" onclick="openModal('modal-project')" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ New Project</button>
+            </div>
+            <div class="space-y-3" id="projects-widget-list"></div>
           </div>
-        </div>
+        </section>
 
-        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Save Custom Names</button>
-      </form>
+        <!-- CRM TAB -->
+        <section id="tab-crm" class="hidden space-y-6">
+          <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-white font-outfit">CRM & Client Accounts</h2>
+              <p class="text-xs text-slate-400">Client portfolio & deal pipeline management</p>
+            </div>
+            <button id="btn-add-client" onclick="openModal('modal-client')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Add Client</button>
+          </div>
+
+          <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                <tr>
+                  <th class="p-4">Company Name</th>
+                  <th class="p-4">Key Contact</th>
+                  <th class="p-4">Region</th>
+                  <th class="p-4">Deal Stage</th>
+                  <th class="p-4 text-right">Contract Value (SAR)</th>
+                </tr>
+              </thead>
+              <tbody id="crm-table-body" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- PROJECTS TAB -->
+        <section id="tab-projects" class="hidden space-y-6">
+          <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-bold text-white font-outfit">Projects & Task Management</h2>
+              <p class="text-xs text-slate-400">Interactive Kanban Board & View Modes</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openModal('modal-task')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-800/60 rounded-xl text-xs font-bold">+ Add Task</button>
+              <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button onclick="setProjectViewMode('kanban')" id="mode-kanban-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">Kanban</button>
+                <button onclick="setProjectViewMode('table')" id="mode-table-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400">Table</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="project-view-container"></div>
+        </section>
+
+        <!-- VAULT TAB -->
+        <section id="tab-vault" class="hidden space-y-6">
+          <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-white font-outfit">Document Vault</h2>
+              <p class="text-xs text-slate-400">Role-Based Access Control Document Storage</p>
+            </div>
+            <button id="btn-add-doc" onclick="openModal('modal-vault')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Upload Document</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="vault-grid"></div>
+        </section>
+
+        <!-- HR TAB -->
+        <section id="tab-hr" class="hidden space-y-6">
+          <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-white font-outfit">HR & Team Absence Queue</h2>
+              <p class="text-xs text-slate-400">Leave requests & Out-of-Office calendar</p>
+            </div>
+            <button onclick="openModal('modal-leave')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Submit Leave Request</button>
+          </div>
+
+          <div id="hr-approval-container"></div>
+
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+            <h3 class="font-bold text-slate-100 text-sm font-outfit">Team Out-of-Office Calendar</h3>
+            <div class="space-y-3" id="hr-calendar-list"></div>
+          </div>
+        </section>
+
+      </main>
     </div>
   </div>
 
+  <!-- CREATION MODALS -->
   <div id="modal-client" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-base">Add New Client Account</h3>
+        <h3 class="font-bold text-white text-base">Add Client Account</h3>
         <button onclick="closeModal('modal-client')" class="text-slate-400 hover:text-white">✕</button>
       </div>
       <form onsubmit="handleCreateClient(event)" class="space-y-3 text-xs">
@@ -434,7 +369,6 @@
               <option value="LEAD">LEAD</option>
               <option value="PROPOSAL">PROPOSAL</option>
               <option value="CLOSED_WON">CLOSED_WON</option>
-              <option value="CLOSED_LOST">CLOSED_LOST</option>
             </select>
           </div>
           <div>
@@ -450,7 +384,7 @@
   <div id="modal-project" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-base">Create New KSA Mega Project</h3>
+        <h3 class="font-bold text-white text-base">Create Mega Project</h3>
         <button onclick="closeModal('modal-project')" class="text-slate-400 hover:text-white">✕</button>
       </div>
       <form onsubmit="handleCreateProject(event)" class="space-y-3 text-xs">
@@ -474,11 +408,11 @@
             <input required id="p-budget" type="number" placeholder="1800000" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
           </div>
           <div>
-            <label class="text-slate-400 block mb-1">Initial Progress %</label>
-            <input required id="p-progress" type="number" min="0" max="100" value="15" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+            <label class="text-slate-400 block mb-1">Progress %</label>
+            <input required id="p-progress" type="number" min="0" max="100" value="25" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
           </div>
         </div>
-        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Create Mega Project</button>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Create Project</button>
       </form>
     </div>
   </div>
@@ -486,7 +420,7 @@
   <div id="modal-task" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-base">Add New Project Task</h3>
+        <h3 class="font-bold text-white text-base">Add Task</h3>
         <button onclick="closeModal('modal-task')" class="text-slate-400 hover:text-white">✕</button>
       </div>
       <form onsubmit="handleCreateTask(event)" class="space-y-3 text-xs">
@@ -511,7 +445,6 @@
               <option value="URGENT">URGENT</option>
               <option value="HIGH">HIGH</option>
               <option value="MEDIUM" selected>MEDIUM</option>
-              <option value="LOW">LOW</option>
             </select>
           </div>
           <div>
@@ -519,7 +452,7 @@
             <input required id="t-date" type="date" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
           </div>
         </div>
-        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Add Task to Board</button>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Add Task</button>
       </form>
     </div>
   </div>
@@ -533,7 +466,7 @@
       <form onsubmit="handleUploadVault(event)" class="space-y-3 text-xs">
         <div>
           <label class="text-slate-400 block mb-1">Document Title</label>
-          <input required id="v-title" type="text" placeholder="e.g. Al Rajhi Bank MSA Signed.pdf" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          <input required id="v-title" type="text" placeholder="e.g. Al Rajhi Bank Agreement.pdf" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -542,19 +475,17 @@
               <option value="Finance & Strategy">Finance & Strategy</option>
               <option value="Legal Contracts">Legal Contracts</option>
               <option value="Human Resources">Human Resources</option>
-              <option value="Client Proposals">Client Proposals</option>
             </select>
           </div>
           <div>
             <label class="text-slate-400 block mb-1">Clearance Level</label>
             <select id="v-clearance" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
-              <option value="PUBLIC">🟢 Public</option>
-              <option value="INTERNAL" selected>🟡 Internal-Only</option>
-              <option value="RESTRICTED">🔴 Restricted (Exec+)</option>
+              <option value="PUBLIC">🟢 Public (All Employees)</option>
+              <option value="RESTRICTED">🔴 Restricted (Executive Only)</option>
             </select>
           </div>
         </div>
-        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Upload Vault Document</button>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Upload Document</button>
       </form>
     </div>
   </div>
@@ -585,7 +516,7 @@
           </div>
         </div>
         <div>
-          <label class="text-slate-400 block mb-1">Private Reason (Visible to Manager Only)</label>
+          <label class="text-slate-400 block mb-1">Reason</label>
           <textarea required id="l-reason" rows="2" placeholder="Leave justification..." class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none resize-none"></textarea>
         </div>
         <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Submit Request</button>
@@ -593,107 +524,130 @@
     </div>
   </div>
 
-  <!-- SCRIPT LOGIC -->
+  <!-- SYSTEM JAVASCRIPT -->
   <script>
-    // REGISTER PWA SERVICE WORKER FOR MOBILE INSTALLATION
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration note:', err));
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
-    let companyName = localStorage.getItem('mm_company_name') || 'MIND MASTERS KSA';
-
+    // ENTERPRISE USER DATABASE ACCOUNTS
     let users = JSON.parse(localStorage.getItem('mm_users')) || [
-      { id: 'u1', name: 'Executive Director', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
-      { id: 'u2', name: 'Operations Lead', role: 'LEAD', title: 'Head of PMO', department: 'Operations', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80' },
-      { id: 'u3', name: 'Standard Employee', role: 'STANDARD', title: 'Senior Software Engineer', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' }
+      { id: 'u1', email: 'director@mindmasters.sa', name: 'Executive Director', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u2', email: 'lead@mindmasters.sa', name: 'Operations Lead', role: 'LEAD', title: 'Head of PMO', department: 'Operations', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u3', email: 'engineer@mindmasters.sa', name: 'Standard Engineer', role: 'STANDARD', title: 'Senior AI Engineer', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' }
     ];
 
-    let clients = JSON.parse(localStorage.getItem('mm_clients')) || [];
-    let projects = JSON.parse(localStorage.getItem('mm_projects')) || [];
-    let tasks = JSON.parse(localStorage.getItem('mm_tasks')) || [];
-    let documents = JSON.parse(localStorage.getItem('mm_documents')) || [];
+    let clients = JSON.parse(localStorage.getItem('mm_clients')) || [
+      { id: 'c1', companyName: 'Saudi Aramco Innovation', contactPerson: 'Eng. Khalid Al-Otaibi', region: 'Dhahran', stage: 'CLOSED_WON', contractValueSAR: 3850000 },
+      { id: 'c2', companyName: 'NEOM Tech Hub', contactPerson: 'Dr. Reem Al-Saud', region: 'Tabuk / NEOM', stage: 'PROPOSAL', contractValueSAR: 2400000 }
+    ];
+
+    let projects = JSON.parse(localStorage.getItem('mm_projects')) || [
+      { id: 'p1', name: 'Smart Logistics Platform', clientName: 'Saudi Aramco Innovation', managerName: 'Operations Lead', status: 'ACTIVE', budgetSAR: 1800000, progressPercent: 65 },
+      { id: 'p2', name: 'NEOM AI Analytics Core', clientName: 'NEOM Tech Hub', managerName: 'Executive Director', status: 'ACTIVE', budgetSAR: 2400000, progressPercent: 30 }
+    ];
+
+    let tasks = JSON.parse(localStorage.getItem('mm_tasks')) || [
+      { id: 't1', name: 'Architecture Review & API Design', projectName: 'Smart Logistics Platform', assigneeName: 'Standard Engineer', dueDate: '2026-08-25', priority: 'HIGH', status: 'IN_PROGRESS' },
+      { id: 't2', name: 'Security Audit & RBAC Scope', projectName: 'NEOM AI Analytics Core', assigneeName: 'Operations Lead', dueDate: '2026-08-30', priority: 'URGENT', status: 'TODO' }
+    ];
+
+    let documents = JSON.parse(localStorage.getItem('mm_documents')) || [
+      { id: 'd1', title: 'Mind Masters KSA Strategic Expansion.pdf', category: 'Finance & Strategy', clearance: 'RESTRICTED', uploadedByName: 'Executive Director' },
+      { id: 'd2', title: 'Employee Handbook 2026.pdf', category: 'Human Resources', clearance: 'PUBLIC', uploadedByName: 'Operations Lead' }
+    ];
+
     let leaveRequests = JSON.parse(localStorage.getItem('mm_leaves')) || [];
 
+    let currentUser = JSON.parse(localStorage.getItem('mm_current_user')) || null;
+    let activeTab = 'dashboard';
+    let projectViewMode = 'kanban';
+
     function saveData() {
-      localStorage.setItem('mm_company_name', companyName);
       localStorage.setItem('mm_users', JSON.stringify(users));
       localStorage.setItem('mm_clients', JSON.stringify(clients));
       localStorage.setItem('mm_projects', JSON.stringify(projects));
       localStorage.setItem('mm_tasks', JSON.stringify(tasks));
       localStorage.setItem('mm_documents', JSON.stringify(documents));
       localStorage.setItem('mm_leaves', JSON.stringify(leaveRequests));
+      localStorage.setItem('mm_current_user', JSON.stringify(currentUser));
     }
 
-    let currentRole = 'EXECUTIVE';
-    let activeTab = 'dashboard';
-    let projectViewMode = 'kanban';
-
-    function toggleAuthTab(tab) {
+    function switchAuthTab(tab) {
       if (tab === 'login') {
-        document.getElementById('auth-form-login').classList.remove('hidden');
-        document.getElementById('auth-form-signup').classList.add('hidden');
-        document.getElementById('auth-tab-login').className = "w-1/2 py-2 text-xs font-bold text-indigo-400 border-b-2 border-indigo-500";
-        document.getElementById('auth-tab-signup').className = "w-1/2 py-2 text-xs font-medium text-slate-400 hover:text-slate-200";
+        document.getElementById('form-login').classList.remove('hidden');
+        document.getElementById('form-register').classList.add('hidden');
+        document.getElementById('tab-login-btn').className = "w-1/2 py-2 rounded-lg bg-indigo-600 text-white shadow font-semibold";
+        document.getElementById('tab-register-btn').className = "w-1/2 py-2 rounded-lg text-slate-400 hover:text-white";
       } else {
-        document.getElementById('auth-form-login').classList.add('hidden');
-        document.getElementById('auth-form-signup').classList.remove('hidden');
-        document.getElementById('auth-tab-signup').className = "w-1/2 py-2 text-xs font-bold text-indigo-400 border-b-2 border-indigo-500";
-        document.getElementById('auth-tab-login').className = "w-1/2 py-2 text-xs font-medium text-slate-400 hover:text-slate-200";
+        document.getElementById('form-login').classList.add('hidden');
+        document.getElementById('form-register').classList.remove('hidden');
+        document.getElementById('tab-register-btn').className = "w-1/2 py-2 rounded-lg bg-indigo-600 text-white shadow font-semibold";
+        document.getElementById('tab-login-btn').className = "w-1/2 py-2 rounded-lg text-slate-400 hover:text-white";
       }
     }
 
-    function handleAuthLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('auth-login-email').value;
-      alert(`Welcome back! Logged in successfully with ${email}`);
-      closeModal('modal-auth');
+    function fillDemo(email) {
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-pass').value = 'password123';
     }
 
-    function handleAuthSignUp(e) {
+    function handleLogin(e) {
       e.preventDefault();
-      const name = document.getElementById('auth-sign-name').value;
-      const title = document.getElementById('auth-sign-title').value;
-      const dept = document.getElementById('auth-sign-dept').value;
+      const email = document.getElementById('login-email').value;
+      const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+      if (foundUser) {
+        currentUser = foundUser;
+        saveData();
+        renderWorkspace();
+      } else {
+        // Create standard account automatically if logging in first time
+        const newUser = {
+          id: `u${Date.now()}`,
+          email,
+          name: email.split('@')[0].toUpperCase(),
+          role: 'STANDARD',
+          title: 'Team Member',
+          department: 'General',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80'
+        };
+        users.push(newUser);
+        currentUser = newUser;
+        saveData();
+        renderWorkspace();
+      }
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const title = document.getElementById('reg-title').value;
+      const dept = document.getElementById('reg-dept').value;
+      const role = document.getElementById('reg-role').value;
 
       const newUser = {
         id: `u${Date.now()}`,
+        email,
         name,
         title,
         department: dept,
-        role: 'STANDARD',
+        role,
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
       };
 
       users.push(newUser);
+      currentUser = newUser;
       saveData();
-      closeModal('modal-auth');
-      alert(`Employee Account Created Successfully for ${name}! Logged into workspace.`);
-      renderApp();
+      alert(`Account registered successfully for ${name}! Welcome to Mind Masters KSA.`);
+      renderWorkspace();
     }
 
-    function setRole(role) {
-      currentRole = role;
-
-      document.getElementById('role-exec-btn').className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${role === 'EXECUTIVE' ? 'bg-gradient-to-r from-amber-500/20 to-indigo-500/20 text-amber-300 border border-amber-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`;
-      document.getElementById('role-lead-btn').className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${role === 'LEAD' ? 'bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`;
-      document.getElementById('role-std-btn').className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${role === 'STANDARD' ? 'bg-slate-800 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`;
-
-      const activeUser = users.find(u => u.role === role) || users[0];
-      document.getElementById('user-name').innerText = activeUser.name;
-      document.getElementById('user-title').innerText = activeUser.title;
-      document.getElementById('user-avatar').src = activeUser.avatar;
-
-      document.getElementById('clearance-box-title').innerText = `${role} CLEARANCE`;
-      document.getElementById('clearance-box-desc').innerText = 
-        role === 'EXECUTIVE' ? 'Full administrative, financial, project budget, and approval permissions enabled.' :
-        role === 'LEAD' ? 'Project creation, task assignment, document upload, and leave approval clearances enabled.' :
-        'Task view mode. Client contract values, project budgets, and restricted files are masked.';
-
-      document.getElementById('nav-vault-badge').innerText = role === 'STANDARD' ? '🔒 Restricted' : 'Cleared';
-      document.getElementById('nav-hr-badge').innerText = (role === 'EXECUTIVE' || role === 'LEAD') ? `${leaveRequests.filter(l=>l.status==='PENDING').length} Pending` : 'Calendar';
-      document.getElementById('dash-role-badge').innerText = `ACTIVE ROLE: ${role}`;
-
-      renderApp();
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('mm_current_user');
+      renderWorkspace();
     }
 
     function switchTab(tabId) {
@@ -705,23 +659,11 @@
 
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
       document.getElementById(`nav-${tabId}`).className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
-      renderApp();
+      renderAppContent();
     }
 
     function openModal(id) {
-      if (id === 'modal-edit-names') {
-        const execUser = users.find(u => u.role === 'EXECUTIVE') || users[0];
-        const leadUser = users.find(u => u.role === 'LEAD') || users[1] || users[0];
-        const stdUser = users.find(u => u.role === 'STANDARD') || users[2] || users[0];
-
-        document.getElementById('edit-company-name').value = companyName;
-        document.getElementById('edit-exec-name').value = execUser.name;
-        document.getElementById('edit-exec-title').value = execUser.title;
-        document.getElementById('edit-lead-name').value = leadUser.name;
-        document.getElementById('edit-lead-title').value = leadUser.title;
-        document.getElementById('edit-std-name').value = stdUser.name;
-        document.getElementById('edit-std-title').value = stdUser.title;
-      } else if (id === 'modal-project') {
+      if (id === 'modal-project') {
         document.getElementById('p-client').innerHTML = clients.length === 0 ? '<option value="">Create a Client first</option>' : clients.map(c => `<option value="${c.id}">${c.companyName}</option>`).join('');
         document.getElementById('p-manager').innerHTML = users.map(u => `<option value="${u.name}">${u.name} (${u.title})</option>`).join('');
       } else if (id === 'modal-task') {
@@ -733,52 +675,24 @@
 
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    function handleSavePeopleNames(e) {
-      e.preventDefault();
-      companyName = document.getElementById('edit-company-name').value;
-      
-      let execUser = users.find(u => u.role === 'EXECUTIVE');
-      if (execUser) {
-        execUser.name = document.getElementById('edit-exec-name').value;
-        execUser.title = document.getElementById('edit-exec-title').value;
-      }
-
-      let leadUser = users.find(u => u.role === 'LEAD');
-      if (leadUser) {
-        leadUser.name = document.getElementById('edit-lead-name').value;
-        leadUser.title = document.getElementById('edit-lead-title').value;
-      }
-
-      let stdUser = users.find(u => u.role === 'STANDARD');
-      if (stdUser) {
-        stdUser.name = document.getElementById('edit-std-name').value;
-        stdUser.title = document.getElementById('edit-std-title').value;
-      }
-
-      saveData();
-      closeModal('modal-edit-names');
-      setRole(currentRole);
-    }
-
     function handleCreateClient(e) {
       e.preventDefault();
-      const newClient = {
+      clients.push({
         id: `c${Date.now()}`,
         companyName: document.getElementById('c-name').value,
         contactPerson: document.getElementById('c-contact').value,
         region: document.getElementById('c-region').value,
         stage: document.getElementById('c-stage').value,
         contractValueSAR: parseFloat(document.getElementById('c-value').value)
-      };
-      clients.push(newClient);
+      });
       saveData();
       closeModal('modal-client');
-      renderApp();
+      renderAppContent();
     }
 
     function handleCreateProject(e) {
       e.preventDefault();
-      const newProj = {
+      projects.push({
         id: `p${Date.now()}`,
         name: document.getElementById('p-name').value,
         clientName: clients.find(c => c.id === document.getElementById('p-client').value)?.companyName || 'Enterprise Account',
@@ -786,16 +700,15 @@
         status: 'ACTIVE',
         budgetSAR: parseFloat(document.getElementById('p-budget').value),
         progressPercent: parseInt(document.getElementById('p-progress').value)
-      };
-      projects.push(newProj);
+      });
       saveData();
       closeModal('modal-project');
-      renderApp();
+      renderAppContent();
     }
 
     function handleCreateTask(e) {
       e.preventDefault();
-      const newTask = {
+      tasks.push({
         id: `t${Date.now()}`,
         name: document.getElementById('t-name').value,
         projectName: document.getElementById('t-project').value,
@@ -803,89 +716,123 @@
         dueDate: document.getElementById('t-date').value,
         priority: document.getElementById('t-priority').value,
         status: 'TODO'
-      };
-      tasks.push(newTask);
+      });
       saveData();
       closeModal('modal-task');
-      renderApp();
+      renderAppContent();
     }
 
     function handleUploadVault(e) {
       e.preventDefault();
-      const newDoc = {
+      documents.push({
         id: `d${Date.now()}`,
         title: document.getElementById('v-title').value,
         category: document.getElementById('v-category').value,
         clearance: document.getElementById('v-clearance').value,
-        uploadedByName: document.getElementById('user-name').innerText
-      };
-      documents.push(newDoc);
+        uploadedByName: currentUser.name
+      });
       saveData();
       closeModal('modal-vault');
-      renderApp();
+      renderAppContent();
     }
 
     function handleCreateLeave(e) {
       e.preventDefault();
-      const newLeave = {
+      leaveRequests.push({
         id: `l${Date.now()}`,
-        employeeName: document.getElementById('user-name').innerText,
-        title: document.getElementById('user-title').innerText,
-        department: 'Operations',
+        employeeName: currentUser.name,
+        title: currentUser.title,
+        department: currentUser.department || 'Operations',
         leaveType: document.getElementById('l-type').value,
         startDate: document.getElementById('l-start').value,
         endDate: document.getElementById('l-end').value,
         reason: document.getElementById('l-reason').value,
         status: 'PENDING'
-      };
-      leaveRequests.push(newLeave);
+      });
       saveData();
       closeModal('modal-leave');
-      renderApp();
+      renderAppContent();
     }
-
-    function deleteClient(id) { clients = clients.filter(c => c.id !== id); saveData(); renderApp(); }
-    function deleteProject(id) { projects = projects.filter(p => p.id !== id); saveData(); renderApp(); }
 
     function setProjectViewMode(mode) {
       projectViewMode = mode;
-      ['kanban', 'table', 'timeline'].forEach(m => {
-        document.getElementById(`mode-${m}-btn`).className = `px-3 py-1.5 rounded-lg text-xs font-semibold ${mode === m ? 'bg-indigo-600 text-white shadow' : 'text-slate-400'}`;
-      });
+      document.getElementById('mode-kanban-btn').className = `px-3 py-1.5 rounded-lg text-xs font-semibold ${mode === 'kanban' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400'}`;
+      document.getElementById('mode-table-btn').className = `px-3 py-1.5 rounded-lg text-xs font-semibold ${mode === 'table' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400'}`;
       renderProjects();
     }
 
-    function renderApp() {
-      document.getElementById('app-company-name').innerText = companyName;
-      document.getElementById('sys-users-count').innerText = `${users.length} Accounts`;
-      const isLeadOrHigher = currentRole === 'EXECUTIVE' || currentRole === 'LEAD';
+    function renderWorkspace() {
+      if (!currentUser) {
+        document.getElementById('screen-auth').classList.remove('hidden');
+        document.getElementById('screen-app').classList.add('hidden');
+        return;
+      }
 
-      document.getElementById('nav-crm-count').innerText = `${clients.length} Clients`;
-      document.getElementById('nav-proj-count').innerText = `${projects.length} Projects`;
+      document.getElementById('screen-auth').classList.add('hidden');
+      document.getElementById('screen-app').classList.remove('hidden');
+
+      // Update User Header Info
+      document.getElementById('user-display-name').innerText = currentUser.name;
+      document.getElementById('user-display-title').innerText = currentUser.title;
+      document.getElementById('user-display-avatar').src = currentUser.avatar;
+
+      const roleBadge = document.getElementById('badge-header-role');
+      const dashRoleBadge = document.getElementById('dash-badge-role');
+      const roleText = currentUser.role;
+
+      roleBadge.innerText = roleText === 'EXECUTIVE' ? '👑 EXECUTIVE' : roleText === 'LEAD' ? '🛡️ LEAD' : '👤 EMPLOYEE';
+      dashRoleBadge.innerText = `ROLE: ${roleText}`;
+
+      document.getElementById('dash-greeting').innerText = `Welcome back, ${currentUser.name}`;
+
+      // Set RBAC Visibility Rules
+      const isExec = currentUser.role === 'EXECUTIVE';
+      const isLeadOrHigher = isExec || currentUser.role === 'LEAD';
+
+      document.getElementById('sidebar-clearance-title').innerText = `${roleText} CLEARANCE`;
+      document.getElementById('sidebar-clearance-desc').innerText = 
+        isExec ? 'Full master financial, project budget, and strategic approval clearances active.' :
+        isLeadOrHigher ? 'Project creation, team task assignment, and leave approvals active.' :
+        'Employee task board & public document vault access active.';
+
+      // Hide restricted creation buttons from standard employees
+      if (!isLeadOrHigher) {
+        document.getElementById('btn-add-client')?.classList.add('hidden');
+        document.getElementById('btn-add-project')?.classList.add('hidden');
+        document.getElementById('btn-add-doc')?.classList.add('hidden');
+      } else {
+        document.getElementById('btn-add-client')?.classList.remove('hidden');
+        document.getElementById('btn-add-project')?.classList.remove('hidden');
+        document.getElementById('btn-add-doc')?.classList.remove('hidden');
+      }
+
+      renderAppContent();
+    }
+
+    function renderAppContent() {
+      const isLeadOrHigher = currentUser.role === 'EXECUTIVE' || currentUser.role === 'LEAD';
+
+      document.getElementById('nav-crm-badge').innerText = clients.length;
+      document.getElementById('nav-proj-badge').innerText = projects.length;
       document.getElementById('kpi-clients-count').innerText = `${clients.length} Clients`;
       document.getElementById('kpi-projects-count').innerText = `${projects.length} Active`;
-      document.getElementById('kpi-docs-count').innerText = `${documents.filter(d=>d.clearance==='RESTRICTED').length} Restricted`;
-      document.getElementById('kpi-hr-count').innerText = `${leaveRequests.filter(l=>l.status==='PENDING').length} Requests`;
+      document.getElementById('kpi-docs-count').innerText = `${documents.length} Files`;
+      document.getElementById('kpi-hr-count').innerText = `${leaveRequests.filter(l=>l.status==='PENDING').length} Pending`;
 
       const totalPipeline = clients.reduce((acc, c) => acc + (c.contractValueSAR || 0), 0);
-      document.getElementById('kpi-pipeline').innerText = isLeadOrHigher ? `SAR ${totalPipeline.toLocaleString()}` : '🔒 Masked (Lead+)';
-      document.getElementById('kpi-vault-status').innerText = isLeadOrHigher ? 'Download Cleared' : '🔒 Download Locked';
+      document.getElementById('kpi-pipeline').innerText = isLeadOrHigher ? `SAR ${totalPipeline.toLocaleString()}` : '🔒 Restricted';
+      document.getElementById('kpi-vault-status').innerText = isLeadOrHigher ? 'Cleared' : 'Standard Access';
 
-      if (isLeadOrHigher) { document.getElementById('role-warning-banner').classList.add('hidden'); }
-      else { document.getElementById('role-warning-banner').classList.remove('hidden'); }
-
+      // Render Projects Widget
       const projectsWidget = document.getElementById('projects-widget-list');
-      projectsWidget.innerHTML = projects.length === 0 ? '<p class="text-xs text-slate-500">No active projects created yet. Click + New Project above to create your first project!</p>' : projects.map(p => `
-        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+      projectsWidget.innerHTML = projects.length === 0 ? '<p class="text-xs text-slate-500">No active projects created yet.</p>' : projects.map(p => `
+        <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
           <div class="flex justify-between text-xs">
             <div>
               <span class="font-bold text-slate-200 font-outfit">${p.name}</span>
-              <span class="text-[10px] text-slate-500 block">${p.clientName} • Manager: ${p.managerName}</span>
+              <span class="text-[10px] text-slate-500 block">${p.clientName} • Lead: ${p.managerName}</span>
             </div>
-            <div class="text-right">
-              <span class="font-bold text-indigo-400 block">${isLeadOrHigher ? `SAR ${p.budgetSAR.toLocaleString()}` : '🔒 Budget Masked'}</span>
-              <button onclick="deleteProject('${p.id}')" class="text-[10px] text-rose-400 hover:underline">Delete</button>
-            </div>
+            <span class="font-bold text-indigo-400">${isLeadOrHigher ? `SAR ${p.budgetSAR.toLocaleString()}` : '🔒 Restricted'}</span>
           </div>
           <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
             <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" style="width: ${p.progressPercent}%"></div>
@@ -893,73 +840,75 @@
         </div>
       `).join('');
 
+      // Render CRM Table
       const crmBody = document.getElementById('crm-table-body');
-      crmBody.innerHTML = clients.length === 0 ? '<tr><td colspan="6" class="p-4 text-center text-slate-500">No clients created yet. Click + Add Client Account to create one!</td></tr>' : clients.map(c => `
+      crmBody.innerHTML = clients.length === 0 ? '<tr><td colspan="5" class="p-4 text-center text-slate-500">No clients registered.</td></tr>' : clients.map(c => `
         <tr class="hover:bg-slate-800/40">
           <td class="p-4 font-bold text-slate-100 font-outfit">${c.companyName}</td>
           <td class="p-4">${c.contactPerson}</td>
           <td class="p-4 text-slate-400">${c.region}</td>
-          <td class="p-4"><span class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-950 text-indigo-400 border border-indigo-800">${c.stage}</span></td>
-          <td class="p-4 text-right font-extrabold font-outfit text-sm">${isLeadOrHigher ? `SAR ${c.contractValueSAR.toLocaleString()}` : '<span class="text-amber-400 text-xs font-medium bg-amber-950/40 px-2 py-1 rounded border border-amber-800/50">🔒 Masked (Lead+)</span>'}</td>
-          <td class="p-4 text-center"><button onclick="deleteClient('${c.id}')" class="text-xs text-rose-400 hover:underline">Delete</button></td>
+          <td class="p-4"><span class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">${c.stage}</span></td>
+          <td class="p-4 text-right font-extrabold font-outfit text-sm">${isLeadOrHigher ? `SAR ${c.contractValueSAR.toLocaleString()}` : '<span class="text-amber-400 text-xs font-normal">🔒 Restricted</span>'}</td>
         </tr>
       `).join('');
 
       renderProjects();
 
+      // Render Vault
       const vaultGrid = document.getElementById('vault-grid');
-      vaultGrid.innerHTML = documents.length === 0 ? '<p class="text-xs text-slate-500">No vault documents uploaded yet. Click + Upload Document above!</p>' : documents.map(d => {
+      vaultGrid.innerHTML = documents.length === 0 ? '<p class="text-xs text-slate-500">No documents uploaded.</p>' : documents.map(d => {
         const isLocked = d.clearance === 'RESTRICTED' && !isLeadOrHigher;
         return `
           <div class="p-5 rounded-2xl border ${isLocked ? 'bg-slate-950 border-amber-900/50' : 'bg-slate-900/90 border-slate-800'} space-y-3 shadow">
             <div class="flex justify-between items-center text-xs">
-              <span class="text-[10px] text-slate-500 font-extrabold uppercase">${d.category}</span>
-              <span class="px-2.5 py-1 rounded text-[10px] font-bold ${d.clearance === 'RESTRICTED' ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">${d.clearance}</span>
+              <span class="text-[10px] text-slate-500 font-bold uppercase">${d.category}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${d.clearance === 'RESTRICTED' ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">${d.clearance}</span>
             </div>
             <h3 class="font-semibold text-sm ${isLocked ? 'blur-[3px] select-none text-slate-500' : 'text-slate-100'}">${d.title}</h3>
             <div class="flex justify-between items-center border-t border-slate-800/60 pt-3 text-xs">
-              <span class="text-[10px] text-slate-500">By: ${d.uploadedByName}</span>
-              ${isLocked ? '<span class="text-amber-400 text-xs font-bold bg-amber-950/60 px-3 py-1 rounded border border-amber-800">🔒 Download Locked</span>' : '<button class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow">Download</button>'}
+              <span class="text-[10px] text-slate-500">Uploaded by: ${d.uploadedByName}</span>
+              ${isLocked ? '<span class="text-amber-400 text-xs font-bold">🔒 Executive Only</span>' : '<button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow">Download</button>'}
             </div>
           </div>
         `;
       }).join('');
 
+      // Render HR
       const hrContainer = document.getElementById('hr-approval-container');
       if (isLeadOrHigher) {
         hrContainer.innerHTML = `
-          <div class="p-5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 space-y-4 shadow-xl">
-            <h3 class="font-bold text-slate-100 text-sm font-outfit">Private Executive & Manager Approval Queue</h3>
-            ${leaveRequests.filter(l => l.status === 'PENDING').length === 0 ? '<p class="text-xs text-slate-500">No pending leave requests awaiting approval.</p>' : leaveRequests.filter(l => l.status === 'PENDING').map(l => `
-              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+            <h3 class="font-bold text-white text-sm font-outfit">Manager Approval Queue</h3>
+            ${leaveRequests.filter(l => l.status === 'PENDING').length === 0 ? '<p class="text-xs text-slate-500">No pending leave requests.</p>' : leaveRequests.filter(l => l.status === 'PENDING').map(l => `
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                 <div>
                   <span class="font-bold text-slate-200 block">${l.employeeName} (${l.title})</span>
                   <span class="text-indigo-400 block">${l.leaveType} • ${l.startDate} to ${l.endDate}</span>
-                  <p class="text-slate-400 italic text-[11px] mt-1 bg-slate-900 px-2 py-1 rounded border border-slate-800">"${l.reason}"</p>
+                  <p class="text-slate-400 italic text-[11px] mt-1">"${l.reason}"</p>
                 </div>
                 <div class="flex gap-2">
-                  <button onclick="approveLeave('${l.id}')" class="px-3.5 py-1.5 bg-emerald-600 text-white rounded-lg font-bold shadow">Approve</button>
-                  <button onclick="rejectLeave('${l.id}')" class="px-3.5 py-1.5 bg-rose-950 text-rose-300 border border-rose-800 rounded-lg font-bold">Reject</button>
+                  <button onclick="approveLeave('${l.id}')" class="px-3 py-1 bg-emerald-600 text-white rounded-lg font-bold">Approve</button>
+                  <button onclick="rejectLeave('${l.id}')" class="px-3 py-1 bg-rose-950 text-rose-300 border border-rose-800 rounded-lg font-bold">Reject</button>
                 </div>
               </div>
             `).join('')}
           </div>
         `;
       } else {
-        hrContainer.innerHTML = `<div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl text-xs text-slate-400">🔒 Manager Approval Queue is restricted to Executive and Lead roles.</div>`;
+        hrContainer.innerHTML = `<div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl text-xs text-slate-400">🔒 Manager Approval Queue is restricted to Lead and Executive roles.</div>`;
       }
 
       const hrCalendar = document.getElementById('hr-calendar-list');
-      hrCalendar.innerHTML = leaveRequests.filter(l => l.status === 'APPROVED').length === 0 ? '<p class="text-xs text-slate-500">No approved absences scheduled.</p>' : leaveRequests.filter(l => l.status === 'APPROVED').map(l => `
-        <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+      hrCalendar.innerHTML = leaveRequests.filter(l => l.status === 'APPROVED').length === 0 ? '<p class="text-xs text-slate-500">No scheduled absences.</p>' : leaveRequests.filter(l => l.status === 'APPROVED').map(l => `
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
           <span class="font-semibold text-slate-200">${l.employeeName} (${l.department})</span>
           <span class="px-2.5 py-1 bg-amber-950 text-amber-400 border border-amber-800 rounded font-bold text-[10px]">OUT OF OFFICE (${l.startDate} → ${l.endDate})</span>
         </div>
       `).join('');
     }
 
-    function approveLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'APPROVED'; saveData(); renderApp(); }
-    function rejectLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'REJECTED'; saveData(); renderApp(); }
+    function approveLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'APPROVED'; saveData(); renderAppContent(); }
+    function rejectLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) rejectLeave(id); saveData(); renderAppContent(); }
 
     function renderProjects() {
       const container = document.getElementById('project-view-container');
@@ -980,7 +929,7 @@
             `).join('')}
           </div>
         `;
-      } else if (projectViewMode === 'table') {
+      } else {
         container.innerHTML = `
           <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
             <table class="w-full text-left text-xs text-slate-300">
@@ -1000,26 +949,10 @@
             </table>
           </div>
         `;
-      } else {
-        container.innerHTML = `
-          <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
-            <h3 class="font-bold text-slate-100 text-sm font-outfit">Horizontal Gantt Chart Schedule</h3>
-            <div class="space-y-3">
-              ${tasks.map(t => `
-                <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
-                  <span class="font-semibold text-slate-200">${t.name}</span>
-                  <div class="w-1/2 bg-slate-800 h-4 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" style="width: ${t.status === 'COMPLETE' ? '100%' : '65%'}"></div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
       }
     }
 
-    setRole('EXECUTIVE');
+    renderWorkspace();
   </script>
 </body>
 </html>
