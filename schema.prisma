@@ -1,0 +1,184 @@
+// Prisma Schema for Mind Masters KSA Workspace & CRM
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  EXECUTIVE
+  LEAD
+  STANDARD
+}
+
+enum ClearanceLevel {
+  PUBLIC
+  INTERNAL
+  RESTRICTED
+}
+
+enum DealStage {
+  LEAD
+  PROPOSAL
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  COMPLETE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum LeaveType {
+  VACATION
+  SICK
+  PERSONAL
+  MATERNITY_PATERNITY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String
+  avatar        String?
+  role          Role           @default(STANDARD)
+  department    String
+  title         String
+  salarySAR     Decimal?       // Private: Accessible only by EXECUTIVE
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relationships
+  managedProjects Project[]    @relation("ProjectManager")
+  assignedTasks   Task[]       @relation("TaskAssignee")
+  uploadedDocs    Document[]   @relation("DocUploader")
+  leaveRequests   LeaveRequest[] @relation("EmployeeLeaves")
+  approvedLeaves  LeaveRequest[] @relation("LeaveApprover")
+
+  @@map("users")
+}
+
+model Client {
+  id            String         @id @default(uuid())
+  companyName   String
+  contactPerson String
+  email         String
+  phone         String?
+  stage         DealStage      @default(LEAD)
+  contractValue Decimal        // Restrict view to EXECUTIVE & LEAD
+  ownerId       String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relationships
+  projects      Project[]
+  documents     ClientDocument[]
+
+  @@map("clients")
+}
+
+model ClientDocument {
+  id            String         @id @default(uuid())
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title         String
+  fileUrl       String
+  fileType      String
+  clearance     ClearanceLevel @default(RESTRICTED)
+  uploadedById  String
+  createdAt     DateTime       @default(now())
+
+  @@map("client_documents")
+}
+
+model Project {
+  id            String         @id @default(uuid())
+  name          String
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  managerId     String
+  manager       User           @relation("ProjectManager", fields: [managerId], references: [id])
+  startDate     DateTime
+  targetDate    DateTime
+  status        ProjectStatus  @default(PLANNING)
+  budgetSAR     Decimal        // Restrict view to EXECUTIVE & LEAD
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  tasks         Task[]
+
+  @@map("projects")
+}
+
+model Task {
+  id            String         @id @default(uuid())
+  projectId     String
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name          String
+  assigneeId    String
+  assignee      User           @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  priority      TaskPriority   @default(MEDIUM)
+  dueDate       DateTime
+  status        TaskStatus     @default(TODO)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("tasks")
+}
+
+model Document {
+  id            String         @id @default(uuid())
+  title         String
+  category      String
+  fileUrl       String
+  fileSize      String
+  clearance     ClearanceLevel @default(INTERNAL)
+  uploadedById  String
+  uploadedBy    User           @relation("DocUploader", fields: [uploadedById], references: [id])
+  createdAt     DateTime       @default(now())
+
+  @@map("documents")
+}
+
+model LeaveRequest {
+  id            String         @id @default(uuid())
+  employeeId    String
+  employee      User           @relation("EmployeeLeaves", fields: [employeeId], references: [id])
+  leaveType     LeaveType
+  startDate     DateTime
+  endDate       DateTime
+  reason        String         // Private: Revealed only to EXECUTIVE & LEAD
+  status        LeaveStatus    @default(PENDING)
+  reviewedById  String?
+  reviewedBy    User?          @relation("LeaveApprover", fields: [reviewedById], references: [id])
+  reviewedAt    DateTime?
+  createdAt     DateTime       @default(now())
+
+  @@map("leave_requests")
+}

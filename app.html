@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Masters KSA - Corporate Workspace & CRM</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#0f172a',
+              card: '#1e293b'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- React 18 & ReactDOM 18 & Babel CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      background-color: #030712;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+    }
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, createContext, useContext } = React;
+
+    // --- MOCK DATASET ---
+    const MOCK_USERS = [
+      { id: 'u1', name: 'Tariq Al-Mansoor', email: 'tariq.mansoor@mindmasters.sa', role: 'EXECUTIVE', title: 'Chief Executive Officer', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80', salarySAR: 120000 },
+      { id: 'u2', name: 'Dr. Reem Al-Saud', email: 'reem.alsaud@mindmasters.sa', role: 'EXECUTIVE', title: 'VP of Digital Transformation', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80', salarySAR: 95000 },
+      { id: 'u3', name: 'Sarah Al-Ghamdi', email: 'sarah.ghamdi@mindmasters.sa', role: 'LEAD', title: 'Head of PMO & Enterprise Delivery', department: 'Operations', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80', salarySAR: 48000 },
+      { id: 'u4', name: 'Eng. Omar Al-Zahrani', email: 'omar.zahrani@mindmasters.sa', role: 'LEAD', title: 'Lead Systems Architect', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80', salarySAR: 42000 },
+      { id: 'u5', name: 'Fahad K. Al-Otaibi', email: 'fahad.otaibi@mindmasters.sa', role: 'STANDARD', title: 'Senior Full Stack Developer', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80', salarySAR: 28000 },
+      { id: 'u6', name: 'Noura Al-Dosari', email: 'noura.dosari@mindmasters.sa', role: 'STANDARD', title: 'Lead UI/UX Product Designer', department: 'Design', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80', salarySAR: 26000 },
+      { id: 'u7', name: 'Youssef Al-Harbi', email: 'youssef.harbi@mindmasters.sa', role: 'STANDARD', title: 'DevOps & Cloud Engineer', department: 'Infrastructure', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80', salarySAR: 25000 }
+    ];
+
+    const MOCK_CLIENTS = [
+      { id: 'c1', companyName: 'Saudi Aramco Digital', contactPerson: 'Eng. Majed Al-Ruwaili', email: 'majed.ruwaili@aramco.com', phone: '+966 13 872 0000', stage: 'CLOSED_WON', contractValueSAR: 3850000, ownerName: 'Sarah Al-Ghamdi', region: 'Dhahran / Eastern Province', documentsCount: 4 },
+      { id: 'c2', companyName: 'NEOM Technology Hub', contactPerson: 'Dr. Faisal Al-Shehri', email: 'faisal.shehri@neom.sa', phone: '+966 14 400 1111', stage: 'PROPOSAL', contractValueSAR: 2400000, ownerName: 'Dr. Reem Al-Saud', region: 'Tabuk / NEOM Zone', documentsCount: 3 },
+      { id: 'c3', companyName: 'Red Sea Global (RSG)', contactPerson: 'Layla Al-Khatib', email: 'layla.khatib@redseaglobal.com', phone: '+966 11 299 8888', stage: 'LEAD', contractValueSAR: 1750000, ownerName: 'Tariq Al-Mansoor', region: 'Riyadh HQ', documentsCount: 2 },
+      { id: 'c4', companyName: 'Diriyah Gate Authority (DGDA)', contactPerson: 'Hassan Al-Husseini', email: 'hassan@dgda.gov.sa', phone: '+966 11 482 9999', stage: 'CLOSED_WON', contractValueSAR: 4200000, ownerName: 'Sarah Al-Ghamdi', region: 'Diriyah / Riyadh', documentsCount: 5 }
+    ];
+
+    const MOCK_PROJECTS = [
+      { id: 'p1', name: 'Aramco Cloud Intelligence Platform', clientId: 'c1', clientName: 'Saudi Aramco Digital', managerId: 'u3', managerName: 'Sarah Al-Ghamdi', startDate: '2026-06-01', targetDate: '2026-11-30', status: 'ACTIVE', budgetSAR: 3850000, progressPercent: 65, tasksCount: 12 },
+      { id: 'p2', name: 'NEOM Smart City Operations Core', clientId: 'c2', clientName: 'NEOM Technology Hub', managerId: 'u4', managerName: 'Eng. Omar Al-Zahrani', startDate: '2026-07-15', targetDate: '2026-12-20', status: 'PLANNING', budgetSAR: 2400000, progressPercent: 25, tasksCount: 8 },
+      { id: 'p3', name: 'DGDA Heritage Portal & AI Analytics', clientId: 'c4', clientName: 'Diriyah Gate Authority', managerId: 'u3', managerName: 'Sarah Al-Ghamdi', startDate: '2026-04-10', targetDate: '2026-09-30', status: 'ACTIVE', budgetSAR: 4200000, progressPercent: 82, tasksCount: 15 }
+    ];
+
+    const MOCK_TASKS = [
+      { id: 't1', projectId: 'p1', projectName: 'Aramco Cloud Intelligence', name: 'Implement OAuth2 / SAML SSO Integration with Aramco Directory', assigneeId: 'u5', assigneeName: 'Fahad K. Al-Otaibi', assigneeAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80', priority: 'URGENT', dueDate: '2026-08-15', status: 'IN_PROGRESS' },
+      { id: 't2', projectId: 'p1', projectName: 'Aramco Cloud Intelligence', name: 'Security Audit & Vulnerability Assessment Report', assigneeId: 'u7', assigneeName: 'Youssef Al-Harbi', assigneeAvatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80', priority: 'HIGH', dueDate: '2026-08-18', status: 'REVIEW' },
+      { id: 't3', projectId: 'p2', projectName: 'NEOM Smart City Operations', name: 'Draft Microservices Architecture & Data Flow Diagram', assigneeId: 'u4', assigneeName: 'Eng. Omar Al-Zahrani', assigneeAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80', priority: 'HIGH', dueDate: '2026-08-25', status: 'IN_PROGRESS' },
+      { id: 't4', projectId: 'p3', projectName: 'DGDA Heritage Portal', name: 'Finalize 3D Interactive Map Assets & UI Components', assigneeId: 'u6', assigneeName: 'Noura Al-Dosari', assigneeAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80', priority: 'MEDIUM', dueDate: '2026-08-22', status: 'COMPLETE' }
+    ];
+
+    const MOCK_DOCUMENTS = [
+      { id: 'd1', title: 'Mind Masters KSA Q3 Financial Audit & Revenue Projections.pdf', category: 'Finance & Strategy', fileSize: '4.2 MB', clearance: 'RESTRICTED', uploadedByName: 'Tariq Al-Mansoor', createdAt: '2026-08-01' },
+      { id: 'd2', title: 'Saudi Aramco Master Service Agreement (MSA)_Signed.pdf', category: 'Legal Contracts', fileSize: '8.7 MB', clearance: 'RESTRICTED', uploadedByName: 'Sarah Al-Ghamdi', createdAt: '2026-07-28' },
+      { id: 'd3', title: 'NEOM Smart City Tech Proposal v2.4.docx', category: 'Client Proposals', fileSize: '2.1 MB', clearance: 'INTERNAL', uploadedByName: 'Dr. Reem Al-Saud', createdAt: '2026-08-05' },
+      { id: 'd4', title: 'Corporate Employee Handbook & Conduct Policy 2026.pdf', category: 'Human Resources', fileSize: '1.4 MB', clearance: 'PUBLIC', uploadedByName: 'Mona Al-Mutairi', createdAt: '2026-01-10' }
+    ];
+
+    const MOCK_LEAVE_REQUESTS = [
+      { id: 'l1', employeeId: 'u5', employeeName: 'Fahad K. Al-Otaibi', employeeAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80', title: 'Senior Full Stack Dev', department: 'Engineering', leaveType: 'VACATION', startDate: '2026-08-20', endDate: '2026-08-27', reason: 'Annual family leave for Umrah and staying with relatives in Makkah.', status: 'PENDING' },
+      { id: 'l2', employeeId: 'u6', employeeName: 'Noura Al-Dosari', employeeAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80', title: 'Lead UI/UX Designer', department: 'Design', leaveType: 'PERSONAL', startDate: '2026-08-14', endDate: '2026-08-16', reason: 'Attending KSA Tech & Design Summit as guest speaker.', status: 'APPROVED', approvedByName: 'Sarah Al-Ghamdi' }
+    ];
+
+    // --- CONTEXT ---
+    const AuthRoleContext = createContext();
+    const AuthRoleProvider = ({ children }) => {
+      const [activeRole, setActiveRole] = useState('EXECUTIVE');
+      const currentUser = MOCK_USERS.find(u => u.role === activeRole) || MOCK_USERS[0];
+      const isLeadOrHigher = activeRole === 'EXECUTIVE' || activeRole === 'LEAD';
+
+      return (
+        <AuthRoleContext.Provider value={{
+          activeRole,
+          setActiveRole,
+          currentUser,
+          isExecutive: activeRole === 'EXECUTIVE',
+          isLeadOrHigher,
+          canViewFinancials: isLeadOrHigher,
+          canDownloadRestrictedDocs: isLeadOrHigher,
+          canApproveLeave: isLeadOrHigher,
+          canManageProjects: isLeadOrHigher
+        }}>
+          {children}
+        </AuthRoleContext.Provider>
+      );
+    };
+
+    const useAuthRole = () => useContext(AuthRoleContext);
+
+    // --- HEADER COMPONENT ---
+    const Header = () => {
+      const { activeRole, setActiveRole, currentUser, canViewFinancials } = useAuthRole();
+
+      return (
+        <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 shadow-lg shadow-indigo-500/20">
+              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-extrabold text-indigo-400 text-lg font-outfit">
+                MM
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-bold text-slate-100 tracking-tight text-base font-outfit">MIND MASTERS KSA</h1>
+                <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-full">KSA REGION</span>
+              </div>
+              <p className="text-xs text-slate-400">Enterprise Workspace & CRM Architecture</p>
+            </div>
+          </div>
+
+          {/* LIVE ROLE SWITCHER TOGGLE */}
+          <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shadow-inner">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2">Role Toggle:</span>
+            
+            <button
+              onClick={() => setActiveRole('EXECUTIVE')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeRole === 'EXECUTIVE' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              👑 Executive
+            </button>
+
+            <button
+              onClick={() => setActiveRole('LEAD')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeRole === 'LEAD' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              🛡️ Lead / Mgr
+            </button>
+
+            <button
+              onClick={() => setActiveRole('STANDARD')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeRole === 'STANDARD' ? 'bg-slate-800 text-cyan-300 border border-cyan-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              👤 Standard
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <span className="font-semibold text-xs text-slate-200 block">{currentUser.name}</span>
+              <span className="text-[10px] text-slate-400 block">{currentUser.title}</span>
+            </div>
+            <img src={currentUser.avatar} alt="User Avatar" className="w-9 h-9 rounded-xl object-cover ring-2 ring-indigo-500/30" />
+          </div>
+        </header>
+      );
+    };
+
+    // --- SIDEBAR COMPONENT ---
+    const Sidebar = ({ activeTab, setActiveTab }) => {
+      const { activeRole, isExecutive, canApproveLeave } = useAuthRole();
+
+      const items = [
+        { id: 'dashboard', label: 'Executive Overview', badge: isExecutive ? 'Full Access' : 'View' },
+        { id: 'crm', label: 'CRM & Clients', badge: '4 Clients' },
+        { id: 'projects', label: 'Projects & Tasks', badge: '3 Views' },
+        { id: 'vault', label: 'Document Vault', badge: activeRole === 'STANDARD' ? '🔒 Restricted' : 'Cleared' },
+        { id: 'hr', label: 'HR Absence Queue', badge: canApproveLeave ? '1 Pending' : 'Calendar' }
+      ];
+
+      return (
+        <aside className="w-full lg:w-64 bg-slate-900/60 border-r border-slate-800 p-4 flex flex-col justify-between shrink-0 space-y-6">
+          <div className="space-y-4">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">Core Workspace Modules</p>
+            <nav className="space-y-1.5">
+              {items.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                    activeTab === item.id ? 'bg-indigo-600 text-white font-semibold shadow-lg' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded ${
+                    activeTab === item.id ? 'bg-indigo-700 text-indigo-100' :
+                    item.badge.includes('🔒') ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {item.badge}
+                  </span>
+                </button>
+              ))}
+            </nav>
+
+            <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-2">
+              <span className="font-bold text-slate-200 block font-outfit uppercase tracking-wider">{activeRole} CLEARANCE ACTIVE</span>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                {activeRole === 'EXECUTIVE' && 'Full administrative, financial, project budget, and approval permissions enabled.'}
+                {activeRole === 'LEAD' && 'Project creation, task assignment, document upload, and leave approval clearances enabled.'}
+                {activeRole === 'STANDARD' && 'Task view mode. Client contract values, project budgets, and restricted files are masked.'}
+              </p>
+            </div>
+          </div>
+        </aside>
+      );
+    };
+
+    // --- DASHBOARD MODULE ---
+    const Dashboard = ({ setActiveTab }) => {
+      const { activeRole, canViewFinancials } = useAuthRole();
+      const totalPipeline = MOCK_CLIENTS.reduce((acc, c) => acc + c.contractValueSAR, 0);
+
+      return (
+        <div className="space-y-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 p-6 rounded-2xl border border-indigo-500/20 shadow-xl">
+            <div>
+              <h2 className="text-xl font-bold text-white font-outfit">Mind Masters KSA • Executive Dashboard</h2>
+              <p className="text-xs text-slate-400 mt-1">Real-time status monitor across Client CRM, Mega Projects, Document Vault & HR Operations</p>
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-indigo-400">
+              ACTIVE ROLE: {activeRole}
+            </div>
+          </div>
+
+          {!canViewFinancials && (
+            <div className="p-4 bg-amber-950/40 border border-amber-800/60 rounded-xl text-amber-200 text-xs">
+              <strong>Standard Employee Clearance Policy:</strong> Financial deal values, project budgets, and restricted document downloads are masked. Toggle role to Executive/Lead in the header to view unmasked data.
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+              <span className="text-xs text-slate-400 block font-medium">CRM Deal Pipeline</span>
+              <div className="text-xl font-extrabold text-slate-100 font-outfit">
+                {canViewFinancials ? `SAR ${(totalPipeline / 1000000).toFixed(2)}M` : <span className="text-amber-400 text-sm">🔒 Masked (Lead+)</span>}
+              </div>
+              <span className="text-[11px] text-slate-500 block">4 Enterprise Clients</span>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+              <span className="text-xs text-slate-400 block font-medium">Active Mega Projects</span>
+              <div className="text-xl font-extrabold text-slate-100 font-outfit">2 Active</div>
+              <span className="text-[11px] text-slate-500 block">Aramco, NEOM & DGDA</span>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+              <span className="text-xs text-slate-400 block font-medium">Restricted Vault Files</span>
+              <div className="text-xl font-extrabold text-slate-100 font-outfit">2 Restricted</div>
+              <span className="text-[11px] text-slate-500 block">{canViewFinancials ? 'Download Cleared' : '🔒 Download Locked'}</span>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+              <span className="text-xs text-slate-400 block font-medium">Pending HR Approvals</span>
+              <div className="text-xl font-extrabold text-slate-100 font-outfit">1 Request</div>
+              <span className="text-[11px] text-slate-500 block">Approval Queue</span>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- CRM MODULE ---
+    const CRMModule = () => {
+      const { canViewFinancials } = useAuthRole();
+      return (
+        <div className="space-y-6">
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-slate-100 font-outfit">CRM Client Accounts</h2>
+              <p className="text-xs text-slate-400">Enterprise KSA client relationships & deal stages</p>
+            </div>
+          </div>
+
+          <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                <tr>
+                  <th className="p-4">Company Name</th>
+                  <th className="p-4">Key Contact</th>
+                  <th className="p-4">Region</th>
+                  <th className="p-4">Deal Stage</th>
+                  <th className="p-4 text-right">Contract Value (SAR)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {MOCK_CLIENTS.map(c => (
+                  <tr key={c.id} className="hover:bg-slate-800/40">
+                    <td className="p-4 font-bold text-slate-100 font-outfit">{c.companyName}</td>
+                    <td className="p-4">{c.contactPerson}</td>
+                    <td className="p-4 text-slate-400">{c.region}</td>
+                    <td className="p-4">
+                      <span className="px-2 py-1 rounded text-[10px] font-bold bg-indigo-950 text-indigo-400 border border-indigo-800">
+                        {c.stage}
+                      </span>
+                    </td>
+                    <td className="p-4 text-right font-extrabold font-outfit">
+                      {canViewFinancials ? `SAR ${c.contractValueSAR.toLocaleString()}` : <span className="text-amber-400 font-medium">🔒 Masked (Lead+)</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+
+    // --- PROJECTS MODULE ---
+    const ProjectsModule = () => {
+      const { canViewFinancials } = useAuthRole();
+      const [viewMode, setViewMode] = useState('kanban');
+
+      return (
+        <div className="space-y-6">
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-slate-100 font-outfit">Project & Task Workspace</h2>
+              <p className="text-xs text-slate-400">Toggle between Table, Kanban, and Timeline/Gantt views</p>
+            </div>
+            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+              {['table', 'kanban', 'timeline'].map(mode => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase ${viewMode === mode ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {viewMode === 'kanban' && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {['TODO', 'IN_PROGRESS', 'REVIEW', 'COMPLETE'].map(status => (
+                <div key={status} className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                  <h3 className="font-bold text-slate-300 text-xs font-outfit uppercase border-b border-slate-800 pb-2">{status.replace('_', ' ')}</h3>
+                  {MOCK_TASKS.filter(t => t.status === status).map(t => (
+                    <div key={t.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                      <span className="text-[10px] text-indigo-400 block font-semibold">{t.projectName}</span>
+                      <h4 className="font-semibold text-slate-100 text-xs">{t.name}</h4>
+                      <span className="text-[10px] text-slate-400 block">Due: {t.dueDate} • {t.assigneeName}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {viewMode === 'table' && (
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                  <tr>
+                    <th className="p-4">Task Name</th>
+                    <th className="p-4">Project</th>
+                    <th className="p-4">Assignee</th>
+                    <th className="p-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {MOCK_TASKS.map(t => (
+                    <tr key={t.id}>
+                      <td className="p-4 font-bold text-slate-100">{t.name}</td>
+                      <td className="p-4 text-indigo-400">{t.projectName}</td>
+                      <td className="p-4">{t.assigneeName}</td>
+                      <td className="p-4"><span className="px-2 py-1 bg-slate-800 rounded text-[10px] font-bold">{t.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {viewMode === 'timeline' && (
+            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+              <h3 className="font-bold text-slate-100 text-sm font-outfit">Horizontal Gantt Chart Schedule</h3>
+              <div className="space-y-3">
+                {MOCK_TASKS.map(t => (
+                  <div key={t.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-200">{t.name}</span>
+                    <div className="w-1/2 bg-slate-800 h-4 rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-600 rounded-full" style={{ width: t.status === 'COMPLETE' ? '100%' : '60%' }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // --- VAULT MODULE ---
+    const VaultModule = () => {
+      const { canDownloadRestrictedDocs } = useAuthRole();
+      return (
+        <div className="space-y-6">
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800">
+            <h2 className="text-lg font-bold text-slate-100 font-outfit">Restricted Document Vault</h2>
+            <p className="text-xs text-slate-400">Granular document clearance & RBAC download rules</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {MOCK_DOCUMENTS.map(d => {
+              const isLocked = d.clearance === 'RESTRICTED' && !canDownloadRestrictedDocs;
+              return (
+                <div key={d.id} className={`p-5 rounded-2xl border relative overflow-hidden space-y-3 ${isLocked ? 'bg-slate-950 border-amber-900/50' : 'bg-slate-900 border-slate-800'}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-slate-500 uppercase font-semibold">{d.category}</span>
+                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold ${d.clearance === 'RESTRICTED' ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}`}>
+                      {d.clearance}
+                    </span>
+                  </div>
+                  <h3 className={`font-semibold text-sm ${isLocked ? 'blur-[3px] select-none text-slate-500' : 'text-slate-100'}`}>{d.title}</h3>
+                  <div className="flex items-center justify-between border-t border-slate-800 pt-3 text-xs">
+                    <span className="text-[10px] text-slate-500">By: {d.uploadedByName}</span>
+                    {isLocked ? (
+                      <span className="text-amber-400 text-xs font-bold bg-amber-950/60 px-3 py-1 rounded border border-amber-800">🔒 Download Locked</span>
+                    ) : (
+                      <button className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-semibold">Download</button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    };
+
+    // --- HR MODULE ---
+    const HRModule = () => {
+      const { canApproveLeave } = useAuthRole();
+      return (
+        <div className="space-y-6">
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800">
+            <h2 className="text-lg font-bold text-slate-100 font-outfit">HR & Absence Management</h2>
+            <p className="text-xs text-slate-400">Leave approval queue & sanitized team out-of-office calendar</p>
+          </div>
+
+          {canApproveLeave && (
+            <div className="p-5 rounded-2xl bg-slate-900 border border-indigo-500/30 space-y-4">
+              <h3 className="font-bold text-slate-100 text-sm font-outfit">Private Executive & Manager Approval Queue</h3>
+              {MOCK_LEAVE_REQUESTS.filter(l => l.status === 'PENDING').map(l => (
+                <div key={l.id} className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs">
+                  <div>
+                    <span className="font-bold text-slate-200 block">{l.employeeName} ({l.title})</span>
+                    <span className="text-indigo-400 block">{l.leaveType} • {l.startDate} to {l.endDate}</span>
+                    <p className="text-slate-400 italic text-[11px] mt-1">"{l.reason}"</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="px-3 py-1.5 bg-emerald-600 text-white rounded font-bold">Approve</button>
+                    <button className="px-3 py-1.5 bg-rose-950 text-rose-300 rounded font-bold border border-rose-800">Reject</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+            <h3 className="font-bold text-slate-100 text-sm font-outfit">Team Out-of-Office Calendar (Sanitized)</h3>
+            {MOCK_LEAVE_REQUESTS.filter(l => l.status === 'APPROVED').map(l => (
+              <div key={l.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+                <span className="font-semibold text-slate-200">{l.employeeName} ({l.department})</span>
+                <span className="px-2.5 py-1 bg-amber-950 text-amber-400 border border-amber-800 rounded font-bold">OUT OF OFFICE ({l.startDate} → {l.endDate})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    // --- MAIN APP ASSEMBLY ---
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('dashboard');
+
+      return (
+        <AuthRoleProvider>
+          <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+            <Header />
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+              <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+              <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+                {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+                {activeTab === 'crm' && <CRMModule />}
+                {activeTab === 'projects' && <ProjectsModule />}
+                {activeTab === 'vault' && <VaultModule />}
+                {activeTab === 'hr' && <HRModule />}
+              </main>
+            </div>
+          </div>
+        </AuthRoleProvider>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

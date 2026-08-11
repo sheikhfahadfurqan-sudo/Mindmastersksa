@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Masters KSA - Corporate Workspace & CRM</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { dark: '#030712', card: '#0f172a', surface: '#1e293b' }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { background-color: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif; }
+    .font-outfit { font-family: 'Outfit', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 px-4 md:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 shadow-lg shadow-indigo-500/20">
+        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-extrabold text-indigo-400 text-lg font-outfit">
+          MM
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 id="app-company-name" class="font-bold text-slate-100 tracking-tight text-base font-outfit">MIND MASTERS KSA</h1>
+          <span class="px-2.5 py-0.5 text-[10px] font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-full">KSA HQ</span>
+        </div>
+        <p class="text-xs text-slate-400">Enterprise Workspace & Client CRM System</p>
+      </div>
+    </div>
+
+    <!-- LIVE RBAC ROLE SWITCHER -->
+    <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shadow-inner">
+      <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2">Role Toggle:</span>
+      <button id="role-exec-btn" onclick="setRole('EXECUTIVE')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-indigo-500/20 text-amber-300 border border-amber-500/40 shadow-sm">👑 Executive</button>
+      <button id="role-lead-btn" onclick="setRole('LEAD')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">🛡️ Lead / Mgr</button>
+      <button id="role-std-btn" onclick="setRole('STANDARD')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">👤 Standard</button>
+    </div>
+
+    <!-- EDIT NAMES MODAL BUTTON & USER PROFILE -->
+    <div class="flex items-center gap-3">
+      <button onclick="openModal('modal-edit-names')" title="Customize Executive, Lead & Employee Names" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow flex items-center gap-1">
+        ✏️ Edit People Names
+      </button>
+      <div class="text-right hidden sm:block">
+        <span id="user-name" class="font-bold text-xs text-slate-200 block">Executive User</span>
+        <span id="user-title" class="text-[10px] text-slate-400 block">Managing Director</span>
+      </div>
+      <img id="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-500/40 shadow">
+    </div>
+  </header>
+
+  <!-- SUPABASE STATUS BANNER -->
+  <div class="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-indigo-950/80 border-b border-emerald-800/40 px-6 py-2 flex items-center justify-between text-xs text-emerald-300">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="font-semibold">Supabase Integration Mode:</span>
+      <span class="text-slate-300">To customize Executive & Team names live, click <strong class="text-indigo-300 font-bold">"✏️ Edit People Names"</strong> in the top header bar!</span>
+    </div>
+    <span class="text-[10px] text-slate-400">Mind Masters KSA v1.0</span>
+  </div>
+
+  <!-- MAIN BODY LAYOUT -->
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-full lg:w-64 bg-slate-900/70 border-r border-slate-800 p-4 flex flex-col justify-between shrink-0 space-y-6">
+      <div class="space-y-4">
+        <p class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Core Modules</p>
+        <nav class="space-y-1.5">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+            <span>📊 Executive Overview</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-700 text-indigo-100 font-bold">Full</span>
+          </button>
+          <button onclick="switchTab('crm')" id="nav-crm" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+            <span>🏢 CRM & Clients</span>
+            <span id="nav-crm-count" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0 Clients</span>
+          </button>
+          <button onclick="switchTab('projects')" id="nav-projects" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+            <span>📋 Projects & Tasks</span>
+            <span id="nav-proj-count" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0 Projects</span>
+          </button>
+          <button onclick="switchTab('vault')" id="nav-vault" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+            <span>🔒 Document Vault</span>
+            <span id="nav-vault-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Cleared</span>
+          </button>
+          <button onclick="switchTab('hr')" id="nav-hr" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
+            <span>📅 HR Absence Queue</span>
+            <span id="nav-hr-badge" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">0 Pending</span>
+          </button>
+        </nav>
+
+        <div class="p-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 text-xs space-y-2">
+          <span id="clearance-box-title" class="font-bold text-slate-200 block font-outfit uppercase tracking-wider">EXECUTIVE CLEARANCE</span>
+          <p id="clearance-box-desc" class="text-[11px] text-slate-400 leading-relaxed">
+            Full administrative, financial, project budget, and approval permissions enabled.
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT WORKSPACE -->
+    <main class="flex-1 p-4 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
+      
+      <!-- DASHBOARD TAB -->
+      <section id="tab-dashboard" class="space-y-6">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 p-6 rounded-2xl border border-indigo-500/30 shadow-xl">
+          <div>
+            <h2 class="text-xl font-bold text-white font-outfit">Mind Masters KSA • Executive Dashboard</h2>
+            <p class="text-xs text-slate-400 mt-1">Real-time status monitor across Client CRM, Mega Projects, Document Vault & HR Operations</p>
+          </div>
+          <div id="dash-role-badge" class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-extrabold text-amber-400 shadow">
+            ACTIVE ROLE: EXECUTIVE
+          </div>
+        </div>
+
+        <div id="role-warning-banner" class="hidden p-4 bg-amber-950/40 border border-amber-800/60 rounded-2xl text-amber-200 text-xs">
+          🔒 <strong>Standard Employee Role Active:</strong> Client deal values, project budgets, and restricted document downloads are masked. Toggle role to Executive/Lead to view full permissions.
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <span class="text-xs text-slate-400 block font-medium">CRM Deal Pipeline</span>
+            <div id="kpi-pipeline" class="text-xl font-extrabold text-slate-100 font-outfit">SAR 0.00</div>
+            <span id="kpi-clients-count" class="text-[11px] text-slate-500 block">0 Clients</span>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <span class="text-xs text-slate-400 block font-medium">Active Mega Projects</span>
+            <div id="kpi-projects-count" class="text-xl font-extrabold text-slate-100 font-outfit">0 Active</div>
+            <span class="text-[11px] text-slate-500 block">KSA Enterprise Projects</span>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <span class="text-xs text-slate-400 block font-medium">Restricted Vault Files</span>
+            <div id="kpi-docs-count" class="text-xl font-extrabold text-slate-100 font-outfit">0 Restricted</div>
+            <span id="kpi-vault-status" class="text-[11px] text-slate-500 block">Download Cleared</span>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <span class="text-xs text-slate-400 block font-medium">Pending HR Approvals</span>
+            <div id="kpi-hr-count" class="text-xl font-extrabold text-slate-100 font-outfit">0 Requests</div>
+            <span class="text-[11px] text-slate-500 block">Approval Queue</span>
+          </div>
+        </div>
+
+        <!-- ACTIVE PROJECTS WIDGET -->
+        <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-slate-100 text-sm font-outfit">Active Mega Projects Progress</h3>
+            <button onclick="openModal('modal-project')" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ New Project</button>
+          </div>
+          <div class="space-y-3" id="projects-widget-list"></div>
+        </div>
+      </section>
+
+      <!-- CRM TAB -->
+      <section id="tab-crm" class="hidden space-y-6">
+        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100 font-outfit">CRM & Client Accounts</h2>
+            <p class="text-xs text-slate-400">Enterprise KSA client portfolio & deal pipeline</p>
+          </div>
+          <button onclick="openModal('modal-client')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Add Client Account</button>
+        </div>
+
+        <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+              <tr>
+                <th class="p-4">Company Name</th>
+                <th class="p-4">Key Contact</th>
+                <th class="p-4">Region</th>
+                <th class="p-4">Deal Stage</th>
+                <th class="p-4 text-right">Contract Value (SAR)</th>
+                <th class="p-4 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="crm-table-body" class="divide-y divide-slate-800"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PROJECTS TAB -->
+      <section id="tab-projects" class="hidden space-y-6">
+        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100 font-outfit">Project & Task Workspace</h2>
+            <p class="text-xs text-slate-400">3 Interactive View Modes</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openModal('modal-task')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-800/60 rounded-xl text-xs font-bold">+ Add Task</button>
+            <button onclick="openModal('modal-project')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ New Project</button>
+            <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+              <button onclick="setProjectViewMode('kanban')" id="mode-kanban-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">Kanban</button>
+              <button onclick="setProjectViewMode('table')" id="mode-table-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400">Table</button>
+              <button onclick="setProjectViewMode('timeline')" id="mode-timeline-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400">Timeline</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="project-view-container"></div>
+      </section>
+
+      <!-- VAULT TAB -->
+      <section id="tab-vault" class="hidden space-y-6">
+        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100 font-outfit">Restricted Document Vault</h2>
+            <p class="text-xs text-slate-400">Granular document clearance & RBAC download rules</p>
+          </div>
+          <button onclick="openModal('modal-vault')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Upload Document</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="vault-grid"></div>
+      </section>
+
+      <!-- HR TAB -->
+      <section id="tab-hr" class="hidden space-y-6">
+        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100 font-outfit">HR & Absence Management</h2>
+            <p class="text-xs text-slate-400">Leave approval queue & sanitized team out-of-office calendar</p>
+          </div>
+          <button onclick="openModal('modal-leave')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">+ Submit Leave Request</button>
+        </div>
+
+        <div id="hr-approval-container"></div>
+
+        <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+          <h3 class="font-bold text-slate-100 text-sm font-outfit">Team Out-of-Office Calendar (Sanitized)</h3>
+          <div class="space-y-3" id="hr-calendar-list"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- EDIT NAMES MODAL (CUSTOMIZE EXECUTIVE, LEAD & EMPLOYEE NAMES) -->
+  <div id="modal-edit-names" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">✏️ Customize Team & Role Names</h3>
+        <button onclick="closeModal('modal-edit-names')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleSavePeopleNames(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Company / Hub Name</label>
+          <input required id="edit-company-name" type="text" value="MIND MASTERS KSA" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+        </div>
+
+        <!-- Executive Role Name -->
+        <div class="p-3 bg-amber-950/30 border border-amber-800/40 rounded-xl space-y-2">
+          <span class="font-bold text-amber-300 block">👑 Executive Level Profile</span>
+          <div class="grid grid-cols-2 gap-2">
+            <input required id="edit-exec-name" type="text" placeholder="Executive Name" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+            <input required id="edit-exec-title" type="text" placeholder="Executive Title" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+          </div>
+        </div>
+
+        <!-- Lead / Mgr Role Name -->
+        <div class="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-xl space-y-2">
+          <span class="font-bold text-indigo-300 block">🛡️ Lead / Manager Level Profile</span>
+          <div class="grid grid-cols-2 gap-2">
+            <input required id="edit-lead-name" type="text" placeholder="Lead Name" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+            <input required id="edit-lead-title" type="text" placeholder="Lead Title" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+          </div>
+        </div>
+
+        <!-- Standard Employee Role Name -->
+        <div class="p-3 bg-cyan-950/30 border border-cyan-800/40 rounded-xl space-y-2">
+          <span class="font-bold text-cyan-300 block">👤 Standard Employee Profile</span>
+          <div class="grid grid-cols-2 gap-2">
+            <input required id="edit-std-name" type="text" placeholder="Employee Name" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+            <input required id="edit-std-title" type="text" placeholder="Employee Title" class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-slate-200" />
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Save Custom Names</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- OTHER CREATION MODALS -->
+  <div id="modal-client" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">Add New Client Account</h3>
+        <button onclick="closeModal('modal-client')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleCreateClient(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Company Name</label>
+          <input required id="c-name" type="text" placeholder="e.g. Al Rajhi Bank Digital" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Contact Person</label>
+            <input required id="c-contact" type="text" placeholder="Eng. Fahad Al-Saud" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Region / City</label>
+            <input required id="c-region" type="text" placeholder="Riyadh HQ" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Deal Stage</label>
+            <select id="c-stage" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
+              <option value="LEAD">LEAD</option>
+              <option value="PROPOSAL">PROPOSAL</option>
+              <option value="CLOSED_WON">CLOSED_WON</option>
+              <option value="CLOSED_LOST">CLOSED_LOST</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Contract Value (SAR)</label>
+            <input required id="c-value" type="number" placeholder="2500000" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Save Client Account</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-project" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">Create New KSA Mega Project</h3>
+        <button onclick="closeModal('modal-project')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleCreateProject(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Project Name</label>
+          <input required id="p-name" type="text" placeholder="e.g. Smart Logistics Platform" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Client Link</label>
+            <select id="p-client" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none"></select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Project Manager</label>
+            <select id="p-manager" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none"></select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Budget (SAR)</label>
+            <input required id="p-budget" type="number" placeholder="1800000" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Initial Progress %</label>
+            <input required id="p-progress" type="number" min="0" max="100" value="15" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Create Mega Project</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-task" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">Add New Project Task</h3>
+        <button onclick="closeModal('modal-task')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleCreateTask(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Task Title</label>
+          <input required id="t-name" type="text" placeholder="e.g. Design Payment Gateway Architecture" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Target Project</label>
+            <select id="t-project" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none"></select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Assignee</label>
+            <select id="t-assignee" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none"></select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Priority</label>
+            <select id="t-priority" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
+              <option value="URGENT">URGENT</option>
+              <option value="HIGH">HIGH</option>
+              <option value="MEDIUM" selected>MEDIUM</option>
+              <option value="LOW">LOW</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Due Date</label>
+            <input required id="t-date" type="date" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Add Task to Board</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-vault" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">Upload Vault Document</h3>
+        <button onclick="closeModal('modal-vault')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleUploadVault(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Document Title</label>
+          <input required id="v-title" type="text" placeholder="e.g. Al Rajhi Bank MSA Signed.pdf" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Category</label>
+            <select id="v-category" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
+              <option value="Finance & Strategy">Finance & Strategy</option>
+              <option value="Legal Contracts">Legal Contracts</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Client Proposals">Client Proposals</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Clearance Level</label>
+            <select id="v-clearance" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
+              <option value="PUBLIC">🟢 Public</option>
+              <option value="INTERNAL" selected>🟡 Internal-Only</option>
+              <option value="RESTRICTED">🔴 Restricted (Exec+)</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Upload Vault Document</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-user" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">Add Team Member / Account</h3>
+        <button onclick="closeModal('modal-user')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleCreateUser(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Full Name</label>
+          <input required id="u-name" type="text" placeholder="Eng. Sultan Al-Otaibi" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Job Title</label>
+            <input required id="u-title" type="text" placeholder="Senior AI Engineer" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Department</label>
+            <input required id="u-dept" type="text" placeholder="Engineering" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">RBAC Role Clearance</label>
+          <select id="u-role" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
+            <option value="EXECUTIVE">👑 EXECUTIVE (Full Read/Write/Delete/Financials)</option>
+            <option value="LEAD">🛡️ LEAD (Project Creation, Task Assignment, Leave Approvals)</option>
+            <option value="STANDARD" selected>👤 STANDARD (Assigned Tasks, Masked Financials)</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Add Member Account</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-leave" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base">Submit Leave Request</h3>
+        <button onclick="closeModal('modal-leave')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleCreateLeave(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Leave Type</label>
+          <select id="l-type" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none">
+            <option value="VACATION">Annual Vacation</option>
+            <option value="SICK">Medical / Sick Leave</option>
+            <option value="PERSONAL">Personal Emergency</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-400 block mb-1">Start Date</label>
+            <input required id="l-start" type="date" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">End Date</label>
+            <input required id="l-end" type="date" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">Private Reason (Visible to Manager Only)</label>
+          <textarea required id="l-reason" rows="2" placeholder="Leave justification..." class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 font-bold text-white rounded-xl shadow mt-2">Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC WITH CUSTOM NAMES MANAGEMENT & LOCALSTORAGE -->
+  <script>
+    let companyName = localStorage.getItem('mm_company_name') || 'MIND MASTERS KSA';
+
+    let users = JSON.parse(localStorage.getItem('mm_users')) || [
+      { id: 'u1', name: 'Executive Director', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u2', name: 'Operations Lead', role: 'LEAD', title: 'Head of PMO', department: 'Operations', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u3', name: 'Standard Employee', role: 'STANDARD', title: 'Senior Software Engineer', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' }
+    ];
+
+    let clients = JSON.parse(localStorage.getItem('mm_clients')) || [];
+    let projects = JSON.parse(localStorage.getItem('mm_projects')) || [];
+    let tasks = JSON.parse(localStorage.getItem('mm_tasks')) || [];
+    let documents = JSON.parse(localStorage.getItem('mm_documents')) || [];
+    let leaveRequests = JSON.parse(localStorage.getItem('mm_leaves')) || [];
+
+    function saveData() {
+      localStorage.setItem('mm_company_name', companyName);
+      localStorage.setItem('mm_users', JSON.stringify(users));
+      localStorage.setItem('mm_clients', JSON.stringify(clients));
+      localStorage.setItem('mm_projects', JSON.stringify(projects));
+      localStorage.setItem('mm_tasks', JSON.stringify(tasks));
+      localStorage.setItem('mm_documents', JSON.stringify(documents));
+      localStorage.setItem('mm_leaves', JSON.stringify(leaveRequests));
+    }
+
+    let currentRole = 'EXECUTIVE';
+    let activeTab = 'dashboard';
+    let projectViewMode = 'kanban';
+
+    function setRole(role) {
+      currentRole = role;
+
+      document.getElementById('role-exec-btn').className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${role === 'EXECUTIVE' ? 'bg-gradient-to-r from-amber-500/20 to-indigo-500/20 text-amber-300 border border-amber-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`;
+      document.getElementById('role-lead-btn').className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${role === 'LEAD' ? 'bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`;
+      document.getElementById('role-std-btn').className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${role === 'STANDARD' ? 'bg-slate-800 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`;
+
+      const activeUser = users.find(u => u.role === role) || users[0];
+      document.getElementById('user-name').innerText = activeUser.name;
+      document.getElementById('user-title').innerText = activeUser.title;
+      document.getElementById('user-avatar').src = activeUser.avatar;
+
+      document.getElementById('clearance-box-title').innerText = `${role} CLEARANCE`;
+      document.getElementById('clearance-box-desc').innerText = 
+        role === 'EXECUTIVE' ? 'Full administrative, financial, project budget, and approval permissions enabled.' :
+        role === 'LEAD' ? 'Project creation, task assignment, document upload, and leave approval clearances enabled.' :
+        'Task view mode. Client contract values, project budgets, and restricted files are masked.';
+
+      document.getElementById('nav-vault-badge').innerText = role === 'STANDARD' ? '🔒 Restricted' : 'Cleared';
+      document.getElementById('nav-hr-badge').innerText = (role === 'EXECUTIVE' || role === 'LEAD') ? `${leaveRequests.filter(l=>l.status==='PENDING').length} Pending` : 'Calendar';
+      document.getElementById('dash-role-badge').innerText = `ACTIVE ROLE: ${role}`;
+
+      renderApp();
+    }
+
+    function switchTab(tabId) {
+      activeTab = tabId;
+      ['dashboard', 'crm', 'projects', 'vault', 'hr'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        document.getElementById(`nav-${t}`).className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60";
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`nav-${tabId}`).className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+      renderApp();
+    }
+
+    function openModal(id) {
+      if (id === 'modal-edit-names') {
+        const execUser = users.find(u => u.role === 'EXECUTIVE') || users[0];
+        const leadUser = users.find(u => u.role === 'LEAD') || users[1] || users[0];
+        const stdUser = users.find(u => u.role === 'STANDARD') || users[2] || users[0];
+
+        document.getElementById('edit-company-name').value = companyName;
+        document.getElementById('edit-exec-name').value = execUser.name;
+        document.getElementById('edit-exec-title').value = execUser.title;
+        document.getElementById('edit-lead-name').value = leadUser.name;
+        document.getElementById('edit-lead-title').value = leadUser.title;
+        document.getElementById('edit-std-name').value = stdUser.name;
+        document.getElementById('edit-std-title').value = stdUser.title;
+      } else if (id === 'modal-project') {
+        document.getElementById('p-client').innerHTML = clients.length === 0 ? '<option value="">Create a Client first</option>' : clients.map(c => `<option value="${c.id}">${c.companyName}</option>`).join('');
+        document.getElementById('p-manager').innerHTML = users.map(u => `<option value="${u.name}">${u.name} (${u.title})</option>`).join('');
+      } else if (id === 'modal-task') {
+        document.getElementById('t-project').innerHTML = projects.length === 0 ? '<option value="">Create a Project first</option>' : projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+        document.getElementById('t-assignee').innerHTML = users.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+      }
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function handleSavePeopleNames(e) {
+      e.preventDefault();
+      companyName = document.getElementById('edit-company-name').value;
+      
+      let execUser = users.find(u => u.role === 'EXECUTIVE');
+      if (execUser) {
+        execUser.name = document.getElementById('edit-exec-name').value;
+        execUser.title = document.getElementById('edit-exec-title').value;
+      }
+
+      let leadUser = users.find(u => u.role === 'LEAD');
+      if (leadUser) {
+        leadUser.name = document.getElementById('edit-lead-name').value;
+        leadUser.title = document.getElementById('edit-lead-title').value;
+      }
+
+      let stdUser = users.find(u => u.role === 'STANDARD');
+      if (stdUser) {
+        stdUser.name = document.getElementById('edit-std-name').value;
+        stdUser.title = document.getElementById('edit-std-title').value;
+      }
+
+      saveData();
+      closeModal('modal-edit-names');
+      setRole(currentRole);
+    }
+
+    function handleCreateClient(e) {
+      e.preventDefault();
+      const newClient = {
+        id: `c${Date.now()}`,
+        companyName: document.getElementById('c-name').value,
+        contactPerson: document.getElementById('c-contact').value,
+        region: document.getElementById('c-region').value,
+        stage: document.getElementById('c-stage').value,
+        contractValueSAR: parseFloat(document.getElementById('c-value').value)
+      };
+      clients.push(newClient);
+      saveData();
+      closeModal('modal-client');
+      renderApp();
+    }
+
+    function handleCreateProject(e) {
+      e.preventDefault();
+      const newProj = {
+        id: `p${Date.now()}`,
+        name: document.getElementById('p-name').value,
+        clientName: clients.find(c => c.id === document.getElementById('p-client').value)?.companyName || 'Enterprise Account',
+        managerName: document.getElementById('p-manager').value,
+        status: 'ACTIVE',
+        budgetSAR: parseFloat(document.getElementById('p-budget').value),
+        progressPercent: parseInt(document.getElementById('p-progress').value)
+      };
+      projects.push(newProj);
+      saveData();
+      closeModal('modal-project');
+      renderApp();
+    }
+
+    function handleCreateTask(e) {
+      e.preventDefault();
+      const newTask = {
+        id: `t${Date.now()}`,
+        name: document.getElementById('t-name').value,
+        projectName: document.getElementById('t-project').value,
+        assigneeName: document.getElementById('t-assignee').value,
+        dueDate: document.getElementById('t-date').value,
+        priority: document.getElementById('t-priority').value,
+        status: 'TODO'
+      };
+      tasks.push(newTask);
+      saveData();
+      closeModal('modal-task');
+      renderApp();
+    }
+
+    function handleUploadVault(e) {
+      e.preventDefault();
+      const newDoc = {
+        id: `d${Date.now()}`,
+        title: document.getElementById('v-title').value,
+        category: document.getElementById('v-category').value,
+        clearance: document.getElementById('v-clearance').value,
+        uploadedByName: document.getElementById('user-name').innerText
+      };
+      documents.push(newDoc);
+      saveData();
+      closeModal('modal-vault');
+      renderApp();
+    }
+
+    function handleCreateUser(e) {
+      e.preventDefault();
+      const newUser = {
+        id: `u${Date.now()}`,
+        name: document.getElementById('u-name').value,
+        title: document.getElementById('u-title').value,
+        department: document.getElementById('u-dept').value,
+        role: document.getElementById('u-role').value,
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
+      };
+      users.push(newUser);
+      saveData();
+      closeModal('modal-user');
+      renderApp();
+    }
+
+    function handleCreateLeave(e) {
+      e.preventDefault();
+      const newLeave = {
+        id: `l${Date.now()}`,
+        employeeName: document.getElementById('user-name').innerText,
+        title: document.getElementById('user-title').innerText,
+        department: 'Operations',
+        leaveType: document.getElementById('l-type').value,
+        startDate: document.getElementById('l-start').value,
+        endDate: document.getElementById('l-end').value,
+        reason: document.getElementById('l-reason').value,
+        status: 'PENDING'
+      };
+      leaveRequests.push(newLeave);
+      saveData();
+      closeModal('modal-leave');
+      renderApp();
+    }
+
+    function deleteClient(id) { clients = clients.filter(c => c.id !== id); saveData(); renderApp(); }
+    function deleteProject(id) { projects = projects.filter(p => p.id !== id); saveData(); renderApp(); }
+
+    function setProjectViewMode(mode) {
+      projectViewMode = mode;
+      ['kanban', 'table', 'timeline'].forEach(m => {
+        document.getElementById(`mode-${m}-btn`).className = `px-3 py-1.5 rounded-lg text-xs font-semibold ${mode === m ? 'bg-indigo-600 text-white shadow' : 'text-slate-400'}`;
+      });
+      renderProjects();
+    }
+
+    function renderApp() {
+      document.getElementById('app-company-name').innerText = companyName;
+      const isLeadOrHigher = currentRole === 'EXECUTIVE' || currentRole === 'LEAD';
+
+      document.getElementById('nav-crm-count').innerText = `${clients.length} Clients`;
+      document.getElementById('nav-proj-count').innerText = `${projects.length} Projects`;
+      document.getElementById('kpi-clients-count').innerText = `${clients.length} Clients`;
+      document.getElementById('kpi-projects-count').innerText = `${projects.length} Active`;
+      document.getElementById('kpi-docs-count').innerText = `${documents.filter(d=>d.clearance==='RESTRICTED').length} Restricted`;
+      document.getElementById('kpi-hr-count').innerText = `${leaveRequests.filter(l=>l.status==='PENDING').length} Requests`;
+
+      const totalPipeline = clients.reduce((acc, c) => acc + (c.contractValueSAR || 0), 0);
+      document.getElementById('kpi-pipeline').innerText = isLeadOrHigher ? `SAR ${totalPipeline.toLocaleString()}` : '🔒 Masked (Lead+)';
+      document.getElementById('kpi-vault-status').innerText = isLeadOrHigher ? 'Download Cleared' : '🔒 Download Locked';
+
+      if (isLeadOrHigher) { document.getElementById('role-warning-banner').classList.add('hidden'); }
+      else { document.getElementById('role-warning-banner').classList.remove('hidden'); }
+
+      const projectsWidget = document.getElementById('projects-widget-list');
+      projectsWidget.innerHTML = projects.length === 0 ? '<p class="text-xs text-slate-500">No active projects created yet. Click + New Project above to create your first project!</p>' : projects.map(p => `
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+          <div class="flex justify-between text-xs">
+            <div>
+              <span class="font-bold text-slate-200 font-outfit">${p.name}</span>
+              <span class="text-[10px] text-slate-500 block">${p.clientName} • Manager: ${p.managerName}</span>
+            </div>
+            <div class="text-right">
+              <span class="font-bold text-indigo-400 block">${isLeadOrHigher ? `SAR ${p.budgetSAR.toLocaleString()}` : '🔒 Budget Masked'}</span>
+              <button onclick="deleteProject('${p.id}')" class="text-[10px] text-rose-400 hover:underline">Delete</button>
+            </div>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" style="width: ${p.progressPercent}%"></div>
+          </div>
+        </div>
+      `).join('');
+
+      const crmBody = document.getElementById('crm-table-body');
+      crmBody.innerHTML = clients.length === 0 ? '<tr><td colspan="6" class="p-4 text-center text-slate-500">No clients created yet. Click + Add Client Account to create one!</td></tr>' : clients.map(c => `
+        <tr class="hover:bg-slate-800/40">
+          <td class="p-4 font-bold text-slate-100 font-outfit">${c.companyName}</td>
+          <td class="p-4">${c.contactPerson}</td>
+          <td class="p-4 text-slate-400">${c.region}</td>
+          <td class="p-4"><span class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-950 text-indigo-400 border border-indigo-800">${c.stage}</span></td>
+          <td class="p-4 text-right font-extrabold font-outfit text-sm">${isLeadOrHigher ? `SAR ${c.contractValueSAR.toLocaleString()}` : '<span class="text-amber-400 text-xs font-medium bg-amber-950/40 px-2 py-1 rounded border border-amber-800/50">🔒 Masked (Lead+)</span>'}</td>
+          <td class="p-4 text-center"><button onclick="deleteClient('${c.id}')" class="text-xs text-rose-400 hover:underline">Delete</button></td>
+        </tr>
+      `).join('');
+
+      renderProjects();
+
+      const vaultGrid = document.getElementById('vault-grid');
+      vaultGrid.innerHTML = documents.length === 0 ? '<p class="text-xs text-slate-500">No vault documents uploaded yet. Click + Upload Document above!</p>' : documents.map(d => {
+        const isLocked = d.clearance === 'RESTRICTED' && !isLeadOrHigher;
+        return `
+          <div class="p-5 rounded-2xl border ${isLocked ? 'bg-slate-950 border-amber-900/50' : 'bg-slate-900/90 border-slate-800'} space-y-3 shadow">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-[10px] text-slate-500 font-extrabold uppercase">${d.category}</span>
+              <span class="px-2.5 py-1 rounded text-[10px] font-bold ${d.clearance === 'RESTRICTED' ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">${d.clearance}</span>
+            </div>
+            <h3 class="font-semibold text-sm ${isLocked ? 'blur-[3px] select-none text-slate-500' : 'text-slate-100'}">${d.title}</h3>
+            <div class="flex justify-between items-center border-t border-slate-800/60 pt-3 text-xs">
+              <span class="text-[10px] text-slate-500">By: ${d.uploadedByName}</span>
+              ${isLocked ? '<span class="text-amber-400 text-xs font-bold bg-amber-950/60 px-3 py-1 rounded border border-amber-800">🔒 Download Locked</span>' : '<button class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow">Download</button>'}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const hrContainer = document.getElementById('hr-approval-container');
+      if (isLeadOrHigher) {
+        hrContainer.innerHTML = `
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 space-y-4 shadow-xl">
+            <h3 class="font-bold text-slate-100 text-sm font-outfit">Private Executive & Manager Approval Queue</h3>
+            ${leaveRequests.filter(l => l.status === 'PENDING').length === 0 ? '<p class="text-xs text-slate-500">No pending leave requests awaiting approval.</p>' : leaveRequests.filter(l => l.status === 'PENDING').map(l => `
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+                <div>
+                  <span class="font-bold text-slate-200 block">${l.employeeName} (${l.title})</span>
+                  <span class="text-indigo-400 block">${l.leaveType} • ${l.startDate} to ${l.endDate}</span>
+                  <p class="text-slate-400 italic text-[11px] mt-1 bg-slate-900 px-2 py-1 rounded border border-slate-800">"${l.reason}"</p>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="approveLeave('${l.id}')" class="px-3.5 py-1.5 bg-emerald-600 text-white rounded-lg font-bold shadow">Approve</button>
+                  <button onclick="rejectLeave('${l.id}')" class="px-3.5 py-1.5 bg-rose-950 text-rose-300 border border-rose-800 rounded-lg font-bold">Reject</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        hrContainer.innerHTML = `<div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl text-xs text-slate-400">🔒 Manager Approval Queue is restricted to Executive and Lead roles.</div>`;
+      }
+
+      const hrCalendar = document.getElementById('hr-calendar-list');
+      hrCalendar.innerHTML = leaveRequests.filter(l => l.status === 'APPROVED').length === 0 ? '<p class="text-xs text-slate-500">No approved absences scheduled.</p>' : leaveRequests.filter(l => l.status === 'APPROVED').map(l => `
+        <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+          <span class="font-semibold text-slate-200">${l.employeeName} (${l.department})</span>
+          <span class="px-2.5 py-1 bg-amber-950 text-amber-400 border border-amber-800 rounded font-bold text-[10px]">OUT OF OFFICE (${l.startDate} → ${l.endDate})</span>
+        </div>
+      `).join('');
+    }
+
+    function approveLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'APPROVED'; saveData(); renderApp(); }
+    function rejectLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'REJECTED'; saveData(); renderApp(); }
+
+    function renderProjects() {
+      const container = document.getElementById('project-view-container');
+      if (projectViewMode === 'kanban') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            ${['TODO', 'IN_PROGRESS', 'REVIEW', 'COMPLETE'].map(status => `
+              <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-lg">
+                <h3 class="font-bold text-slate-300 text-xs font-outfit uppercase border-b border-slate-800 pb-2">${status.replace('_', ' ')}</h3>
+                ${tasks.filter(t => t.status === status).map(t => `
+                  <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                    <span class="text-[10px] text-indigo-400 block font-semibold">${t.projectName}</span>
+                    <h4 class="font-semibold text-slate-100 text-xs">${t.name}</h4>
+                    <span class="text-[10px] text-slate-400 block">Due: ${t.dueDate} • ${t.assigneeName}</span>
+                  </div>
+                `).join('')}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (projectViewMode === 'table') {
+        container.innerHTML = `
+          <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                <tr><th class="p-4">Task Name</th><th class="p-4">Project</th><th class="p-4">Assignee</th><th class="p-4">Status</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${tasks.map(t => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-4 font-bold text-slate-100">${t.name}</td>
+                    <td class="p-4 text-indigo-400 font-medium">${t.projectName}</td>
+                    <td class="p-4">${t.assigneeName}</td>
+                    <td class="p-4"><span class="px-2.5 py-1 bg-slate-800 rounded text-[10px] font-bold">${t.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+            <h3 class="font-bold text-slate-100 text-sm font-outfit">Horizontal Gantt Chart Schedule</h3>
+            <div class="space-y-3">
+              ${tasks.map(t => `
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+                  <span class="font-semibold text-slate-200">${t.name}</span>
+                  <div class="w-1/2 bg-slate-800 h-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" style="width: ${t.status === 'COMPLETE' ? '100%' : '65%'}"></div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    setRole('EXECUTIVE');
+  </script>
+</body>
+</html>
