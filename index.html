@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Mind Masters KSA - Enterprise Portal</title>
+  <title>Mind Masters KSA - Enterprise Operations & CRM Workspace</title>
   
   <!-- PWA Manifest & Mobile Config -->
   <link rel="manifest" href="/manifest.json">
@@ -42,11 +42,13 @@
   <style>
     body { background-color: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     .font-outfit { font-family: 'Outfit', sans-serif; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #030712; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-    .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
     .logo-glow { box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.4); }
+    .profile-clickable { cursor: pointer; transition: all 0.2s ease; }
+    .profile-clickable:hover { transform: translateY(-1px); }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-600 selection:text-white">
@@ -60,7 +62,7 @@
       <!-- LOGO HEADER -->
       <div class="text-center space-y-3.5 relative z-10">
         <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-violet-600 p-0.5 mx-auto logo-glow shadow-xl">
-          <img src="logo.jpg" alt="Mind Masters Logo" class="w-full h-full object-cover rounded-[14px]">
+          <img src="logo.jpg" alt="Mind Masters KSA Logo" class="w-full h-full object-cover rounded-[14px]">
         </div>
         <div>
           <h1 class="text-2xl font-black tracking-tight text-white font-outfit uppercase">MIND MASTERS KSA</h1>
@@ -89,7 +91,7 @@
         </button>
 
         <div class="pt-3 text-center border-t border-slate-800/80">
-          <p class="text-[11px] text-slate-400">Quick Demo Accounts:</p>
+          <p class="text-[11px] text-slate-400">Quick Corporate Accounts:</p>
           <div class="flex justify-center gap-2 mt-2">
             <button type="button" onclick="fillDemo('director@mindmasters.sa')" class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-amber-300 font-medium hover:border-amber-500/40">👑 Director</button>
             <button type="button" onclick="fillDemo('lead@mindmasters.sa')" class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-indigo-300 font-medium hover:border-indigo-500/40">🛡️ PMO Manager</button>
@@ -111,11 +113,11 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-slate-300 font-medium block mb-1">Job Title</label>
-            <input required id="reg-title" type="text" placeholder="Managing Director / Senior Engineer" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+            <input required id="reg-title" type="text" placeholder="Managing Director" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
           </div>
           <div>
             <label class="text-slate-300 font-medium block mb-1">Department</label>
-            <input required id="reg-dept" type="text" placeholder="Operations" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+            <input required id="reg-dept" type="text" placeholder="Executive / PMO" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
           </div>
         </div>
         <div>
@@ -154,17 +156,19 @@
               👑 EXECUTIVE
             </span>
           </div>
-          <p class="text-[11px] text-slate-400">Enterprise Workspace Portal</p>
+          <p class="text-[11px] text-slate-400">Enterprise Operations & CRM Portal</p>
         </div>
       </div>
 
-      <!-- USER PROFILE & SIGN OUT -->
+      <!-- INTERACTIVE USER PROFILE HEADER BADGE -->
       <div class="flex items-center gap-3">
-        <div class="text-right hidden sm:block">
-          <span id="user-display-name" class="font-bold text-xs text-slate-200 block">Executive Director</span>
-          <span id="user-display-title" class="text-[10px] text-slate-400 block">Managing Director</span>
+        <div onclick="openProfileModal()" class="profile-clickable flex items-center gap-3 p-1.5 rounded-2xl hover:bg-slate-800/80 border border-transparent hover:border-slate-700 transition">
+          <div class="text-right hidden sm:block">
+            <span id="user-display-name" class="font-bold text-xs text-slate-100 block">--</span>
+            <span id="user-display-title" class="text-[10px] text-indigo-300 block">--</span>
+          </div>
+          <img id="user-display-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-9 h-9 rounded-xl object-cover ring-2 ring-indigo-500/40 shadow">
         </div>
-        <img id="user-display-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-9 h-9 rounded-xl object-cover ring-2 ring-indigo-500/40 shadow">
         <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-800 hover:bg-rose-950 hover:text-rose-300 border border-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
           Sign Out
         </button>
@@ -207,8 +211,8 @@
           <p id="sidebar-clearance-desc" class="text-[11px] text-slate-400 leading-relaxed">
             Full master financial, project budget, and strategic approval clearances active.
           </p>
-          <button onclick="makeMeExecutive()" class="w-full py-1.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 font-bold rounded-lg text-[10px] transition">
-            👑 Set My Account to Executive / Master
+          <button onclick="openProfileModal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
+            ✏️ Edit My Employee Profile
           </button>
         </div>
       </aside>
@@ -231,44 +235,47 @@
             </div>
           </div>
 
-          <!-- SUPABASE LIVE CLOUD STATUS BADGE -->
-          <div class="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-indigo-950/80 border border-emerald-800/60 flex items-center justify-between text-xs">
+          <!-- SUPABASE LIVE CLOUD STATUS BADGE & SEED BUTTON -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-indigo-950/80 border border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-lg">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span class="font-bold text-emerald-300">Supabase Cloud Database Connected:</span>
               <span class="text-slate-300 font-mono text-[11px]">https://ahltxilavuymitaivxey.supabase.co</span>
             </div>
-            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded">REALTIME SYNC</span>
+            <button onclick="syncToSupabaseNow()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow text-xs transition">
+              ⚡ Sync All Accounts & Data to Supabase Now
+            </button>
           </div>
 
           <!-- MY PROFILE & ASSIGNED ACTIONABLES WIDGET -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
-            <!-- PROFILE CARD -->
-            <div class="p-5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 space-y-3 shadow-xl">
+            <!-- PROFILE CARD (INTERACTIVE) -->
+            <div onclick="openProfileModal()" class="profile-clickable p-5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 hover:border-indigo-500/60 space-y-3 shadow-xl transition">
               <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                <h3 class="font-bold text-slate-100 text-xs font-outfit uppercase tracking-wider">👤 My Account Profile</h3>
+                <h3 class="font-bold text-slate-100 text-xs font-outfit uppercase tracking-wider flex items-center gap-1.5">
+                  👤 My Employee Profile
+                  <span class="text-[10px] text-indigo-400 font-normal">(Click to edit)</span>
+                </h3>
                 <span id="prof-role-pill" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">EXECUTIVE</span>
               </div>
 
-              <div class="space-y-2 text-xs">
+              <div class="flex items-center gap-3">
+                <img id="prof-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Profile Avatar" class="w-12 h-12 rounded-xl object-cover ring-2 ring-indigo-500/40">
                 <div>
-                  <span class="text-slate-500 text-[10px] block uppercase">Full Name</span>
-                  <span id="prof-name" class="font-bold text-slate-100 text-sm">--</span>
+                  <span id="prof-name" class="font-bold text-slate-100 text-sm block">--</span>
+                  <span id="prof-email" class="text-slate-400 font-mono text-[11px] block">--</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60 text-xs">
+                <div>
+                  <span class="text-slate-500 text-[10px] block uppercase">Job Title</span>
+                  <span id="prof-title" class="font-semibold text-indigo-300 block">--</span>
                 </div>
                 <div>
-                  <span class="text-slate-500 text-[10px] block uppercase">Work Email</span>
-                  <span id="prof-email" class="text-slate-300 font-mono text-[11px]">--</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/60">
-                  <div>
-                    <span class="text-slate-500 text-[10px] block uppercase">Job Title</span>
-                    <span id="prof-title" class="font-semibold text-indigo-300">--</span>
-                  </div>
-                  <div>
-                    <span class="text-slate-500 text-[10px] block uppercase">Department</span>
-                    <span id="prof-dept" class="font-semibold text-slate-300">--</span>
-                  </div>
+                  <span class="text-slate-500 text-[10px] block uppercase">Department</span>
+                  <span id="prof-dept" class="font-semibold text-slate-300 block">--</span>
                 </div>
               </div>
             </div>
@@ -399,6 +406,64 @@
         </section>
 
       </main>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE EMPLOYEE PROFILE MODAL -->
+  <div id="modal-profile" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-indigo-500/40 p-6 rounded-3xl max-w-lg w-full space-y-5 shadow-2xl relative overflow-hidden">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base font-outfit flex items-center gap-2">
+          👤 Employee Profile & Account Settings
+        </h3>
+        <button onclick="closeModal('modal-profile')" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <form onsubmit="handleSaveProfile(event)" class="space-y-4 text-xs">
+        <div class="flex items-center gap-4 p-3 bg-slate-950 rounded-2xl border border-slate-800">
+          <img id="edit-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar Preview" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-indigo-500">
+          <div class="flex-1">
+            <label class="text-slate-300 font-medium block mb-1">Avatar Photo URL</label>
+            <input id="edit-avatar" type="text" oninput="document.getElementById('edit-avatar-preview').src = this.value" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-900 border border-slate-800 p-2 rounded-xl text-slate-200 outline-none font-mono text-[11px]" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-300 font-medium block mb-1">Full Name</label>
+            <input required id="edit-name" type="text" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none" />
+          </div>
+          <div>
+            <label class="text-slate-300 font-medium block mb-1">Work Email</label>
+            <input required id="edit-email" type="email" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none font-mono" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-300 font-medium block mb-1">Job Title</label>
+            <input required id="edit-title" type="text" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none" />
+          </div>
+          <div>
+            <label class="text-slate-300 font-medium block mb-1">Department</label>
+            <input required id="edit-dept" type="text" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-300 font-medium block mb-1">Role Clearance Level</label>
+          <select id="edit-role" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none font-semibold">
+            <option value="EXECUTIVE">👑 EXECUTIVE (Full Master Financial & Budget Clearance)</option>
+            <option value="LEAD">🛡️ LEAD / MANAGER (Project & Team Approvals)</option>
+            <option value="STANDARD">👤 STANDARD EMPLOYEE (Assigned Tasks & Public Vault)</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex gap-3">
+          <button type="button" onclick="closeModal('modal-profile')" class="w-1/2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl">Cancel</button>
+          <button type="submit" class="w-1/2 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow">Save Profile Changes</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -592,7 +657,6 @@
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
-    // INITIALIZE SUPABASE CLIENT WITH REAL KEYS
     const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j';
     let dbClient = null;
@@ -606,9 +670,9 @@
     }
 
     let users = JSON.parse(localStorage.getItem('mm_users')) || [
-      { id: 'u1', email: 'director@mindmasters.sa', name: 'Fahad (Executive)', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
-      { id: 'u2', email: 'lead@mindmasters.sa', name: 'Operations Lead', role: 'LEAD', title: 'Head of PMO', department: 'Operations', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80' },
-      { id: 'u3', email: 'engineer@mindmasters.sa', name: 'Standard Engineer', role: 'STANDARD', title: 'Senior AI Engineer', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' }
+      { id: 'u1', email: 'director@mindmasters.sa', name: 'Eng. Fahad Al-Saud', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', status: 'ACTIVE', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u2', email: 'lead@mindmasters.sa', name: 'Operations Lead', role: 'LEAD', title: 'Head of PMO', department: 'Operations', status: 'ACTIVE', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u3', email: 'engineer@mindmasters.sa', name: 'Standard Engineer', role: 'STANDARD', title: 'Senior AI Engineer', department: 'Engineering', status: 'ACTIVE', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' }
     ];
 
     let clients = JSON.parse(localStorage.getItem('mm_clients')) || [
@@ -617,24 +681,45 @@
     ];
 
     let projects = JSON.parse(localStorage.getItem('mm_projects')) || [
-      { id: 'p1', name: 'Smart Logistics Platform', clientName: 'Saudi Aramco Innovation', managerName: 'Fahad (Executive)', status: 'ACTIVE', budgetSAR: 1800000, progressPercent: 65 },
-      { id: 'p2', name: 'NEOM AI Analytics Core', clientName: 'NEOM Tech Hub', managerName: 'Fahad (Executive)', status: 'ACTIVE', budgetSAR: 2400000, progressPercent: 30 }
+      { id: 'p1', name: 'Smart Logistics Platform', clientName: 'Saudi Aramco Innovation', managerName: 'Eng. Fahad Al-Saud', status: 'ACTIVE', budgetSAR: 1800000, progressPercent: 65 },
+      { id: 'p2', name: 'NEOM AI Analytics Core', clientName: 'NEOM Tech Hub', managerName: 'Eng. Fahad Al-Saud', status: 'ACTIVE', budgetSAR: 2400000, progressPercent: 30 }
     ];
 
     let tasks = JSON.parse(localStorage.getItem('mm_tasks')) || [
-      { id: 't1', name: 'Architecture Review & API Design', projectName: 'Smart Logistics Platform', assigneeName: 'Fahad (Executive)', dueDate: '2026-08-25', priority: 'HIGH', status: 'IN_PROGRESS' },
+      { id: 't1', name: 'Architecture Review & API Design', projectName: 'Smart Logistics Platform', assigneeName: 'Eng. Fahad Al-Saud', dueDate: '2026-08-25', priority: 'HIGH', status: 'IN_PROGRESS' },
       { id: 't2', name: 'Security Audit & RBAC Scope', projectName: 'NEOM AI Analytics Core', assigneeName: 'Operations Lead', dueDate: '2026-08-30', priority: 'URGENT', status: 'TODO' }
     ];
 
     let documents = JSON.parse(localStorage.getItem('mm_documents')) || [
-      { id: 'd1', title: 'Mind Masters KSA Strategic Expansion.pdf', category: 'Finance & Strategy', clearance: 'RESTRICTED', uploadedByName: 'Fahad (Executive)' },
+      { id: 'd1', title: 'Mind Masters KSA Strategic Expansion.pdf', category: 'Finance & Strategy', clearance: 'RESTRICTED', uploadedByName: 'Eng. Fahad Al-Saud' },
       { id: 'd2', title: 'Employee Handbook 2026.pdf', category: 'Human Resources', clearance: 'PUBLIC', uploadedByName: 'Operations Lead' }
     ];
 
     let leaveRequests = JSON.parse(localStorage.getItem('mm_leaves')) || [];
-    let currentUser = JSON.parse(localStorage.getItem('mm_current_user')) || null;
+    let currentUser = JSON.parse(localStorage.getItem('mm_current_user')) || users[0];
     let activeTab = 'dashboard';
     let projectViewMode = 'kanban';
+
+    async function syncToSupabaseNow() {
+      if (!dbClient) {
+        alert('Supabase client connecting...');
+        return;
+      }
+      try {
+        for (let u of users) {
+          await dbClient.from('users').upsert({ email: u.email, name: u.name, avatar: u.avatar });
+        }
+        for (let c of clients) {
+          await dbClient.from('clients').upsert({ companyName: c.companyName, contactPerson: c.contactPerson, region: c.region, stage: c.stage, contractValueSAR: c.contractValueSAR });
+        }
+        for (let p of projects) {
+          await dbClient.from('projects').upsert({ name: p.name, clientName: p.clientName, managerName: p.managerName, status: p.status, budgetSAR: p.budgetSAR, progressPercent: p.progressPercent });
+        }
+        alert('⚡ Success! All users, clients, and projects have been pushed directly into your Supabase database tables!');
+      } catch (err) {
+        alert('Supabase Sync note: ' + err.message);
+      }
+    }
 
     function saveData() {
       localStorage.setItem('mm_users', JSON.stringify(users));
@@ -665,19 +750,42 @@
       document.getElementById('login-pass').value = 'password123';
     }
 
-    function makeMeExecutive() {
-      if (currentUser) {
-        currentUser.role = 'EXECUTIVE';
-        currentUser.title = 'Managing Director / Executive';
-        let foundInUsers = users.find(u => u.email === currentUser.email);
-        if (foundInUsers) {
-          foundInUsers.role = 'EXECUTIVE';
-          foundInUsers.title = 'Managing Director / Executive';
-        }
-        saveData();
-        alert(`Success! Account '${currentUser.name}' has been upgraded to EXECUTIVE MASTER clearance!`);
-        renderWorkspace();
+    function openProfileModal() {
+      if (!currentUser) return;
+      document.getElementById('edit-name').value = currentUser.name;
+      document.getElementById('edit-email').value = currentUser.email;
+      document.getElementById('edit-title').value = currentUser.title;
+      document.getElementById('edit-dept').value = currentUser.department || 'Executive';
+      document.getElementById('edit-role').value = currentUser.role;
+      document.getElementById('edit-avatar').value = currentUser.avatar;
+      document.getElementById('edit-avatar-preview').src = currentUser.avatar;
+      document.getElementById('modal-profile').classList.remove('hidden');
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      currentUser.name = document.getElementById('edit-name').value;
+      currentUser.email = document.getElementById('edit-email').value;
+      currentUser.title = document.getElementById('edit-title').value;
+      currentUser.department = document.getElementById('edit-dept').value;
+      currentUser.role = document.getElementById('edit-role').value;
+      currentUser.avatar = document.getElementById('edit-avatar').value;
+
+      let found = users.find(u => u.id === currentUser.id || u.email === currentUser.email);
+      if (found) {
+        Object.assign(found, currentUser);
+      } else {
+        users.push(currentUser);
       }
+
+      if (dbClient) {
+        dbClient.from('users').upsert({ email: currentUser.email, name: currentUser.name, avatar: currentUser.avatar }).then(()=>{});
+      }
+
+      saveData();
+      closeModal('modal-profile');
+      alert(`Success! Profile updated for ${currentUser.name}. Workspace re-rendered!`);
+      renderWorkspace();
     }
 
     function handleLogin(e) {
@@ -697,10 +805,14 @@
           role: 'EXECUTIVE',
           title: 'Managing Director / Executive',
           department: 'Executive',
+          status: 'ACTIVE',
           avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
         };
         users.push(newUser);
         currentUser = newUser;
+        if (dbClient) {
+          dbClient.from('users').insert([{ email: newUser.email, name: newUser.name, avatar: newUser.avatar }]).then(()=>{});
+        }
         saveData();
         renderWorkspace();
       }
@@ -721,13 +833,19 @@
         title,
         department: dept,
         role,
+        status: 'ACTIVE',
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
       };
 
       users.push(newUser);
       currentUser = newUser;
+
+      if (dbClient) {
+        dbClient.from('users').insert([{ email: newUser.email, name: newUser.name, avatar: newUser.avatar }]).then(()=>{});
+      }
+
       saveData();
-      alert(`Account registered successfully for ${name}! Welcome to Mind Masters KSA.`);
+      alert(`Account created successfully for ${name}! Signed in automatically.`);
       renderWorkspace();
     }
 
@@ -764,14 +882,18 @@
 
     function handleCreateClient(e) {
       e.preventDefault();
-      clients.push({
+      const newClient = {
         id: `c${Date.now()}`,
         companyName: document.getElementById('c-name').value,
         contactPerson: document.getElementById('c-contact').value,
         region: document.getElementById('c-region').value,
         stage: document.getElementById('c-stage').value,
         contractValueSAR: parseFloat(document.getElementById('c-value').value)
-      });
+      };
+      clients.push(newClient);
+      if (dbClient) {
+        dbClient.from('clients').insert([{ companyName: newClient.companyName, contactPerson: newClient.contactPerson, region: newClient.region, stage: newClient.stage, contractValueSAR: newClient.contractValueSAR }]).then(()=>{});
+      }
       saveData();
       closeModal('modal-client');
       renderAppContent();
@@ -779,7 +901,7 @@
 
     function handleCreateProject(e) {
       e.preventDefault();
-      projects.push({
+      const newProj = {
         id: `p${Date.now()}`,
         name: document.getElementById('p-name').value,
         clientName: clients.find(c => c.id === document.getElementById('p-client').value)?.companyName || 'Enterprise Account',
@@ -787,7 +909,11 @@
         status: 'ACTIVE',
         budgetSAR: parseFloat(document.getElementById('p-budget').value),
         progressPercent: parseInt(document.getElementById('p-progress').value)
-      });
+      };
+      projects.push(newProj);
+      if (dbClient) {
+        dbClient.from('projects').insert([{ name: newProj.name, clientName: newProj.clientName, managerName: newProj.managerName, status: newProj.status, budgetSAR: newProj.budgetSAR, progressPercent: newProj.progressPercent }]).then(()=>{});
+      }
       saveData();
       closeModal('modal-project');
       renderAppContent();
@@ -807,6 +933,17 @@
       saveData();
       closeModal('modal-task');
       renderAppContent();
+    }
+
+    function toggleTaskStatus(taskId) {
+      const t = tasks.find(item => item.id === taskId);
+      if (t) {
+        const statuses = ['TODO', 'IN_PROGRESS', 'REVIEW', 'COMPLETE'];
+        const nextIndex = (statuses.indexOf(t.status) + 1) % statuses.length;
+        t.status = statuses[nextIndex];
+        saveData();
+        renderProjects();
+      }
     }
 
     function handleUploadVault(e) {
@@ -867,6 +1004,7 @@
       document.getElementById('prof-title').innerText = currentUser.title;
       document.getElementById('prof-dept').innerText = currentUser.department || 'Executive';
       document.getElementById('prof-role-pill').innerText = currentUser.role;
+      document.getElementById('prof-avatar-img').src = currentUser.avatar;
 
       const roleBadge = document.getElementById('badge-header-role');
       const dashRoleBadge = document.getElementById('dash-badge-role');
@@ -900,9 +1038,10 @@
     }
 
     function renderAppContent() {
-      const isLeadOrHigher = currentUser.role === 'EXECUTIVE' || currentUser.role === 'LEAD';
+      const isExec = currentUser.role === 'EXECUTIVE';
+      const isLeadOrHigher = isExec || currentUser.role === 'LEAD';
 
-      const myTasks = tasks.filter(t => t.assigneeName.toLowerCase().includes(currentUser.name.toLowerCase()) || currentUser.role === 'EXECUTIVE');
+      const myTasks = tasks.filter(t => t.assigneeName.toLowerCase().includes(currentUser.name.toLowerCase()) || isExec);
       document.getElementById('my-actionables-count').innerText = `${myTasks.length} Actionables`;
 
       const myActionablesList = document.getElementById('my-actionables-list');
@@ -912,7 +1051,7 @@
           <span class="text-[11px] text-slate-500">When your manager assigns a project task to ${currentUser.name}, it will automatically appear here!</span>
         </div>
       ` : myTasks.map(t => `
-        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+        <div onclick="toggleTaskStatus('${t.id}')" class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500 flex items-center justify-between text-xs cursor-pointer transition">
           <div>
             <span class="text-[10px] text-indigo-400 font-bold uppercase block">${t.projectName}</span>
             <span class="font-bold text-slate-200 font-outfit text-sm">${t.name}</span>
@@ -974,7 +1113,7 @@
             <h3 class="font-semibold text-sm ${isLocked ? 'blur-[3px] select-none text-slate-500' : 'text-slate-100'}">${d.title}</h3>
             <div class="flex justify-between items-center border-t border-slate-800/60 pt-3 text-xs">
               <span class="text-[10px] text-slate-500">Uploaded by: ${d.uploadedByName}</span>
-              ${isLocked ? '<span class="text-amber-400 text-xs font-bold">🔒 Executive Only</span>' : '<button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow">Download</button>'}
+              ${isLocked ? '<span class="text-amber-400 text-xs font-bold">🔒 Executive Only</span>' : '<button onclick="alert(\'Downloading ' + d.title + '...\')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow">Download</button>'}
             </div>
           </div>
         `;
@@ -1014,7 +1153,7 @@
     }
 
     function approveLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'APPROVED'; saveData(); renderAppContent(); }
-    function rejectLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) rejectLeave(id); saveData(); renderAppContent(); }
+    function rejectLeave(id) { const leave = leaveRequests.find(l => l.id === id); if (leave) leave.status = 'REJECTED'; saveData(); renderAppContent(); }
 
     function renderProjects() {
       const container = document.getElementById('project-view-container');
@@ -1025,7 +1164,7 @@
               <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-lg">
                 <h3 class="font-bold text-slate-300 text-xs font-outfit uppercase border-b border-slate-800 pb-2">${status.replace('_', ' ')}</h3>
                 ${tasks.filter(t => t.status === status).map(t => `
-                  <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                  <div onclick="toggleTaskStatus('${t.id}')" class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 hover:border-indigo-500 cursor-pointer space-y-2 transition">
                     <span class="text-[10px] text-indigo-400 block font-semibold">${t.projectName}</span>
                     <h4 class="font-semibold text-slate-100 text-xs">${t.name}</h4>
                     <span class="text-[10px] text-slate-400 block">Due: ${t.dueDate} • ${t.assigneeName}</span>
@@ -1044,7 +1183,7 @@
               </thead>
               <tbody class="divide-y divide-slate-800">
                 ${tasks.map(t => `
-                  <tr class="hover:bg-slate-800/40">
+                  <tr onclick="toggleTaskStatus('${t.id}')" class="hover:bg-slate-800/40 cursor-pointer">
                     <td class="p-4 font-bold text-slate-100">${t.name}</td>
                     <td class="p-4 text-indigo-400 font-medium">${t.projectName}</td>
                     <td class="p-4">${t.assigneeName}</td>
