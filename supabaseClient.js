@@ -1,11 +1,9 @@
-// Supabase Cloud Client Integration for Mind Masters KSA
+/**
+ * Supabase Client Initialization for Mind Masters KSA
+ */
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || 'https://your-supabase-project.supabase.co';
-const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export const isSupabaseConfigured = () => {
-  return import.meta.env?.VITE_SUPABASE_URL && import.meta.env?.VITE_SUPABASE_ANON_KEY;
-};
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

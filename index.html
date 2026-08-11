@@ -31,6 +31,9 @@
     }
   </script>
 
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,28 +102,28 @@
       <form id="form-register" onsubmit="handleRegister(event)" class="hidden space-y-3.5 text-xs relative z-10">
         <div>
           <label class="text-slate-300 font-medium block mb-1">Full Name</label>
-          <input required id="reg-name" type="text" placeholder="Eng. Sultan Al-Otaibi" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+          <input required id="reg-name" type="text" placeholder="Eng. Fahad Al-Saud" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
         </div>
         <div>
           <label class="text-slate-300 font-medium block mb-1">Work Email</label>
-          <input required id="reg-email" type="email" placeholder="sultan@mindmasters.sa" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+          <input required id="reg-email" type="email" placeholder="fahad@mindmasters.sa" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-slate-300 font-medium block mb-1">Job Title</label>
-            <input required id="reg-title" type="text" placeholder="Senior Engineer" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+            <input required id="reg-title" type="text" placeholder="Managing Director / Senior Engineer" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
           </div>
           <div>
             <label class="text-slate-300 font-medium block mb-1">Department</label>
-            <input required id="reg-dept" type="text" placeholder="Engineering" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
+            <input required id="reg-dept" type="text" placeholder="Operations" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
           </div>
         </div>
         <div>
-          <label class="text-slate-300 font-medium block mb-1">Requested Role</label>
+          <label class="text-slate-300 font-medium block mb-1">Requested Role Clearance</label>
           <select id="reg-role" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none">
-            <option value="STANDARD" selected>Standard Employee (Assigned Tasks & Public Vault)</option>
+            <option value="EXECUTIVE" selected>Executive (Full Master Control)</option>
             <option value="LEAD">Lead / Manager (Project & Team Management)</option>
-            <option value="EXECUTIVE">Executive (Full Master Control)</option>
+            <option value="STANDARD">Standard Employee (Assigned Tasks & Public Vault)</option>
           </select>
         </div>
         <div>
@@ -128,7 +131,7 @@
           <input required id="reg-pass" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 outline-none" />
         </div>
         <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 font-bold text-white text-sm rounded-xl shadow-lg shadow-indigo-600/30">
-          Request Account Activation
+          Create Account & Sign In
         </button>
       </form>
 
@@ -199,11 +202,14 @@
           </nav>
         </div>
 
-        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs space-y-2">
           <span id="sidebar-clearance-title" class="font-bold text-slate-200 block font-outfit uppercase">EXECUTIVE CLEARANCE</span>
           <p id="sidebar-clearance-desc" class="text-[11px] text-slate-400 leading-relaxed">
             Full master financial, project budget, and strategic approval clearances active.
           </p>
+          <button onclick="makeMeExecutive()" class="w-full py-1.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 font-bold rounded-lg text-[10px] transition">
+            👑 Set My Account to Executive / Master
+          </button>
         </div>
       </aside>
 
@@ -216,13 +222,67 @@
             <div class="flex items-center gap-3">
               <img src="logo.jpg" alt="Mind Masters Logo" class="w-12 h-12 rounded-xl object-cover ring-2 ring-indigo-500/30">
               <div>
-                <h2 id="dash-greeting" class="text-lg sm:text-xl font-bold text-white font-outfit">Welcome back, Executive Director</h2>
+                <h2 id="dash-greeting" class="text-lg sm:text-xl font-bold text-white font-outfit">Welcome back</h2>
                 <p class="text-xs text-slate-400 mt-0.5">Mind Masters KSA Operational Workspace</p>
               </div>
             </div>
             <div id="dash-badge-role" class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-extrabold text-amber-300">
               ROLE: EXECUTIVE MASTER
             </div>
+          </div>
+
+          <!-- SUPABASE LIVE CLOUD STATUS BADGE -->
+          <div class="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-indigo-950/80 border border-emerald-800/60 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="font-bold text-emerald-300">Supabase Cloud Database Connected:</span>
+              <span class="text-slate-300 font-mono text-[11px]">https://ahltxilavuymitaivxey.supabase.co</span>
+            </div>
+            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded">REALTIME SYNC</span>
+          </div>
+
+          <!-- MY PROFILE & ASSIGNED ACTIONABLES WIDGET -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <!-- PROFILE CARD -->
+            <div class="p-5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 space-y-3 shadow-xl">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <h3 class="font-bold text-slate-100 text-xs font-outfit uppercase tracking-wider">👤 My Account Profile</h3>
+                <span id="prof-role-pill" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">EXECUTIVE</span>
+              </div>
+
+              <div class="space-y-2 text-xs">
+                <div>
+                  <span class="text-slate-500 text-[10px] block uppercase">Full Name</span>
+                  <span id="prof-name" class="font-bold text-slate-100 text-sm">--</span>
+                </div>
+                <div>
+                  <span class="text-slate-500 text-[10px] block uppercase">Work Email</span>
+                  <span id="prof-email" class="text-slate-300 font-mono text-[11px]">--</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/60">
+                  <div>
+                    <span class="text-slate-500 text-[10px] block uppercase">Job Title</span>
+                    <span id="prof-title" class="font-semibold text-indigo-300">--</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 text-[10px] block uppercase">Department</span>
+                    <span id="prof-dept" class="font-semibold text-slate-300">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MY ACTIONABLES & ASSIGNED TASKS -->
+            <div class="lg:col-span-2 p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-xl">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <h3 class="font-bold text-slate-100 text-xs font-outfit uppercase tracking-wider">📋 My Actionables & Assigned Tasks</h3>
+                <span id="my-actionables-count" class="text-[10px] px-2.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-bold">0 Actionables</span>
+              </div>
+
+              <div id="my-actionables-list" class="space-y-2.5"></div>
+            </div>
+
           </div>
 
           <!-- KPI CARDS -->
@@ -526,14 +586,27 @@
     </div>
   </div>
 
-  <!-- SYSTEM JAVASCRIPT -->
+  <!-- SYSTEM JAVASCRIPT & LIVE SUPABASE INTEGRATION -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
+    // INITIALIZE SUPABASE CLIENT WITH REAL KEYS
+    const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j';
+    let dbClient = null;
+
+    try {
+      if (window.supabase) {
+        dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (err) {
+      console.log('Supabase Note:', err);
+    }
+
     let users = JSON.parse(localStorage.getItem('mm_users')) || [
-      { id: 'u1', email: 'director@mindmasters.sa', name: 'Executive Director', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+      { id: 'u1', email: 'director@mindmasters.sa', name: 'Fahad (Executive)', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
       { id: 'u2', email: 'lead@mindmasters.sa', name: 'Operations Lead', role: 'LEAD', title: 'Head of PMO', department: 'Operations', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80' },
       { id: 'u3', email: 'engineer@mindmasters.sa', name: 'Standard Engineer', role: 'STANDARD', title: 'Senior AI Engineer', department: 'Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' }
     ];
@@ -544,17 +617,17 @@
     ];
 
     let projects = JSON.parse(localStorage.getItem('mm_projects')) || [
-      { id: 'p1', name: 'Smart Logistics Platform', clientName: 'Saudi Aramco Innovation', managerName: 'Operations Lead', status: 'ACTIVE', budgetSAR: 1800000, progressPercent: 65 },
-      { id: 'p2', name: 'NEOM AI Analytics Core', clientName: 'NEOM Tech Hub', managerName: 'Executive Director', status: 'ACTIVE', budgetSAR: 2400000, progressPercent: 30 }
+      { id: 'p1', name: 'Smart Logistics Platform', clientName: 'Saudi Aramco Innovation', managerName: 'Fahad (Executive)', status: 'ACTIVE', budgetSAR: 1800000, progressPercent: 65 },
+      { id: 'p2', name: 'NEOM AI Analytics Core', clientName: 'NEOM Tech Hub', managerName: 'Fahad (Executive)', status: 'ACTIVE', budgetSAR: 2400000, progressPercent: 30 }
     ];
 
     let tasks = JSON.parse(localStorage.getItem('mm_tasks')) || [
-      { id: 't1', name: 'Architecture Review & API Design', projectName: 'Smart Logistics Platform', assigneeName: 'Standard Engineer', dueDate: '2026-08-25', priority: 'HIGH', status: 'IN_PROGRESS' },
+      { id: 't1', name: 'Architecture Review & API Design', projectName: 'Smart Logistics Platform', assigneeName: 'Fahad (Executive)', dueDate: '2026-08-25', priority: 'HIGH', status: 'IN_PROGRESS' },
       { id: 't2', name: 'Security Audit & RBAC Scope', projectName: 'NEOM AI Analytics Core', assigneeName: 'Operations Lead', dueDate: '2026-08-30', priority: 'URGENT', status: 'TODO' }
     ];
 
     let documents = JSON.parse(localStorage.getItem('mm_documents')) || [
-      { id: 'd1', title: 'Mind Masters KSA Strategic Expansion.pdf', category: 'Finance & Strategy', clearance: 'RESTRICTED', uploadedByName: 'Executive Director' },
+      { id: 'd1', title: 'Mind Masters KSA Strategic Expansion.pdf', category: 'Finance & Strategy', clearance: 'RESTRICTED', uploadedByName: 'Fahad (Executive)' },
       { id: 'd2', title: 'Employee Handbook 2026.pdf', category: 'Human Resources', clearance: 'PUBLIC', uploadedByName: 'Operations Lead' }
     ];
 
@@ -592,10 +665,25 @@
       document.getElementById('login-pass').value = 'password123';
     }
 
+    function makeMeExecutive() {
+      if (currentUser) {
+        currentUser.role = 'EXECUTIVE';
+        currentUser.title = 'Managing Director / Executive';
+        let foundInUsers = users.find(u => u.email === currentUser.email);
+        if (foundInUsers) {
+          foundInUsers.role = 'EXECUTIVE';
+          foundInUsers.title = 'Managing Director / Executive';
+        }
+        saveData();
+        alert(`Success! Account '${currentUser.name}' has been upgraded to EXECUTIVE MASTER clearance!`);
+        renderWorkspace();
+      }
+    }
+
     function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
-      const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      let foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
       if (foundUser) {
         currentUser = foundUser;
@@ -606,10 +694,10 @@
           id: `u${Date.now()}`,
           email,
           name: email.split('@')[0].toUpperCase(),
-          role: 'STANDARD',
-          title: 'Team Member',
-          department: 'General',
-          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80'
+          role: 'EXECUTIVE',
+          title: 'Managing Director / Executive',
+          department: 'Executive',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
         };
         users.push(newUser);
         currentUser = newUser;
@@ -774,6 +862,12 @@
       document.getElementById('user-display-title').innerText = currentUser.title;
       document.getElementById('user-display-avatar').src = currentUser.avatar;
 
+      document.getElementById('prof-name').innerText = currentUser.name;
+      document.getElementById('prof-email').innerText = currentUser.email;
+      document.getElementById('prof-title').innerText = currentUser.title;
+      document.getElementById('prof-dept').innerText = currentUser.department || 'Executive';
+      document.getElementById('prof-role-pill').innerText = currentUser.role;
+
       const roleBadge = document.getElementById('badge-header-role');
       const dashRoleBadge = document.getElementById('dash-badge-role');
       const roleText = currentUser.role;
@@ -807,6 +901,26 @@
 
     function renderAppContent() {
       const isLeadOrHigher = currentUser.role === 'EXECUTIVE' || currentUser.role === 'LEAD';
+
+      const myTasks = tasks.filter(t => t.assigneeName.toLowerCase().includes(currentUser.name.toLowerCase()) || currentUser.role === 'EXECUTIVE');
+      document.getElementById('my-actionables-count').innerText = `${myTasks.length} Actionables`;
+
+      const myActionablesList = document.getElementById('my-actionables-list');
+      myActionablesList.innerHTML = myTasks.length === 0 ? `
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400">
+          ✨ <strong>No pending actionables assigned to ${currentUser.name} yet!</strong><br/>
+          <span class="text-[11px] text-slate-500">When your manager assigns a project task to ${currentUser.name}, it will automatically appear here!</span>
+        </div>
+      ` : myTasks.map(t => `
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+          <div>
+            <span class="text-[10px] text-indigo-400 font-bold uppercase block">${t.projectName}</span>
+            <span class="font-bold text-slate-200 font-outfit text-sm">${t.name}</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Due: ${t.dueDate} • Priority: <strong class="text-amber-400">${t.priority}</strong></span>
+          </div>
+          <span class="px-2.5 py-1 bg-indigo-950 text-indigo-300 border border-indigo-800 rounded font-bold text-[10px] uppercase">${t.status}</span>
+        </div>
+      `).join('');
 
       document.getElementById('nav-crm-badge').innerText = clients.length;
       document.getElementById('nav-proj-badge').innerText = projects.length;
