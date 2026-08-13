@@ -637,102 +637,152 @@
     };
 
     // --- MAIN APP ASSEMBLY ---
-    const WorkspaceInner = () => {
-      const [activeTab, setActiveTab] = useState('dashboard');
-      const { isLoggedIn, login } = useAuthRole();
+    function WorkspaceInner() {
+        const { isLoggedIn, login } = useAuthRole();
+        const [email, setEmail] = React.useState('naem@mindmastersksa.com');
+        const [password, setPassword] = React.useState('ExecSecret2026!');
+        const [authError, setAuthError] = React.useState('');
 
-      if (!isLoggedIn) {
-        return (
-          <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans relative overflow-hidden">
-            <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-6 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 mx-auto shadow-xl shadow-indigo-500/20">
-                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-extrabold text-indigo-400 text-2xl font-outfit">
-                  MM
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          setAuthError('');
+          try {
+            login(email, password);
+          } catch (err) {
+            setAuthError(err.message);
+          }
+        };
+
+        const handleQuickSelect = (roleKey) => {
+          setAuthError('');
+          if (roleKey === 'EXECUTIVE') {
+            setEmail('naem@mindmastersksa.com');
+            setPassword('ExecSecret2026!');
+          } else if (roleKey === 'ADMIN') {
+            setEmail('admin@mindmastersksa.com');
+            setPassword('AdminSecret2026!');
+          } else {
+            setEmail('fahad@mindmastersksa.com');
+            setPassword('EmpSecret2026!');
+          }
+        };
+
+        if (!isLoggedIn) {
+          return (
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans relative overflow-hidden">
+              <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-6 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 mx-auto shadow-xl shadow-indigo-500/20">
+                  <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-extrabold text-indigo-400 text-2xl font-outfit">
+                    MM
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-slate-100 font-outfit">MIND MASTERS KSA</h2>
-                <p className="text-xs text-slate-400 mt-1">Enterprise Workspace & CRM Architecture</p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-2">
-                <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
-                  <span>🛡️ Select Your Access Level to Sign In</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-100 font-outfit">MIND MASTERS KSA</h2>
+                  <p className="text-xs text-slate-400 mt-1">Enterprise Workspace & CRM Architecture</p>
                 </div>
-                <p className="text-xs text-slate-400">
-                  Corporate authentication is restricted to Executive, Admin, and Employee clearances.
+
+                <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-1">
+                  <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
+                    <span>🛡️ Corporate SSO Sign In</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Select your access level to populate corporate credentials, then click <strong>Sign In</strong>.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleQuickSelect('EXECUTIVE')}
+                    className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 rounded-xl text-center space-y-0.5 transition"
+                  >
+                    <span className="text-sm">👑</span>
+                    <span className="font-bold text-[10px] block text-amber-300">Executive</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleQuickSelect('ADMIN')}
+                    className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/40 rounded-xl text-center space-y-0.5 transition"
+                  >
+                    <span className="text-sm">🛡️</span>
+                    <span className="font-bold text-[10px] block text-indigo-300">Admin</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleQuickSelect('EMPLOYEE')}
+                    className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/40 rounded-xl text-center space-y-0.5 transition"
+                  >
+                    <span className="text-sm">👤</span>
+                    <span className="font-bold text-[10px] block text-cyan-300">Employee</span>
+                  </button>
+                </div>
+
+                {authError && (
+                  <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-800 text-rose-300 text-xs font-semibold text-left">
+                    {authError}
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4 text-left">
+                  <div>
+                    <label className="text-slate-300 text-xs font-semibold block mb-1">Company Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="name@mindmastersksa.com"
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 text-xs outline-none font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-slate-300 text-xs font-semibold block mb-1">Corporate Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-3 rounded-xl text-slate-100 text-xs outline-none font-mono"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition active:scale-[0.98]"
+                  >
+                    <span>🔑 Authenticate & Sign In</span>
+                  </button>
+                </form>
+
+                <p className="text-[10px] text-slate-500 pt-1">
+                  Official KSA Region Workspace • Password Security System
                 </p>
               </div>
+            </div>
+          );
+        }
 
-              <div className="space-y-2.5">
-                <button
-                  onClick={() => login('EXECUTIVE')}
-                  className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 hover:border-amber-500/50 border border-amber-500/30 text-amber-300 rounded-2xl transition active:scale-[0.98]"
-                >
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center font-bold text-amber-300">👑</div>
-                    <div>
-                      <span className="font-bold text-xs block text-slate-100 font-outfit">Executive Access</span>
-                      <span className="text-[10px] text-slate-400 block">C-Suite, Financials & Governance</span>
-                    </div>
-                  </div>
-                  <span className="text-amber-400 text-xs font-bold">Sign In →</span>
-                </button>
-
-                <button
-                  onClick={() => login('ADMIN')}
-                  className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-900 hover:border-indigo-500/50 border border-indigo-500/30 text-indigo-300 rounded-2xl transition active:scale-[0.98]"
-                >
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center font-bold text-indigo-300">🛡️</div>
-                    <div>
-                      <span className="font-bold text-xs block text-slate-100 font-outfit">Admin Access</span>
-                      <span className="text-[10px] text-slate-400 block">Management, HR Queue & Delivery</span>
-                    </div>
-                  </div>
-                  <span className="text-indigo-400 text-xs font-bold">Sign In →</span>
-                </button>
-
-                <button
-                  onClick={() => login('EMPLOYEE')}
-                  className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 hover:border-cyan-500/50 border border-cyan-500/30 text-cyan-300 rounded-2xl transition active:scale-[0.98]"
-                >
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center font-bold text-cyan-300">👤</div>
-                    <div>
-                      <span className="font-bold text-xs block text-slate-100 font-outfit">Employee Access</span>
-                      <span className="text-[10px] text-slate-400 block">Tasks, Worksheets & Payslips</span>
-                    </div>
-                  </div>
-                  <span className="text-cyan-400 text-xs font-bold">Sign In →</span>
-                </button>
-              </div>
-
-              <p className="text-[11px] text-slate-500 pt-2">
-                Official KSA Region Enterprise Workspace • 3-Tier Security SSO
-              </p>
+        return (
+          <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+            <Header />
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+              <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+              <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+                {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+                {activeTab === 'crm' && <CRMModule />}
+                {activeTab === 'projects' && <ProjectsModule />}
+                {activeTab === 'vault' && <VaultModule />}
+                {activeTab === 'hr' && <HRModule />}
+              </main>
             </div>
           </div>
         );
       }
-
-      return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-          <Header />
-          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-            <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
-              {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
-              {activeTab === 'crm' && <CRMModule />}
-              {activeTab === 'projects' && <ProjectsModule />}
-              {activeTab === 'vault' && <VaultModule />}
-              {activeTab === 'hr' && <HRModule />}
-            </main>
-          </div>
-        </div>
-      );
-    };
 
     const App = () => {
       return (

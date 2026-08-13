@@ -1295,6 +1295,13 @@
             <input required id="p-progress" type="number" min="0" max="100" value="0" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none focus:border-indigo-500" />
           </div>
         </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+          <label class="flex items-center gap-2.5 cursor-pointer">
+            <input id="p-show-financials" type="checkbox" class="w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-0 cursor-pointer" />
+            <span class="font-bold text-slate-200 text-xs font-outfit">Allow Employees to View Project Financial Budget</span>
+          </label>
+          <p class="text-[10px] text-slate-500 pl-6.5">When unchecked (default), project budget figures are strictly masked as Confidential for Employee users.</p>
+        </div>
         <div>
           <label class="text-slate-400 block mb-1">Assign Team Members (Hold Ctrl/Cmd to select multiple)</label>
           <select id="p-assignees" multiple class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none focus:border-indigo-500 min-h-[75px]"></select>
@@ -1490,6 +1497,10 @@
             <input required id="emp-iban" type="text" placeholder="SA82 1000 0001 2345 6789 0000" value="SA82 1000 0001 2345 6789 0000" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 outline-none focus:border-indigo-500" />
           </div>
         </div>
+        <div>
+          <label class="text-slate-400 block mb-1 font-medium">Assign Password for Login</label>
+          <input required id="emp-pass" type="text" value="EmpSecret2026!" placeholder="EmpSecret2026!" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-slate-200 font-mono outline-none focus:border-indigo-500" />
+        </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closeModal('modal-employee')" class="px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-xl active-press">Cancel</button>
           <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow transition active-press">Add Staff Member</button>
@@ -1619,20 +1630,25 @@
 
     // 3-TIER GENERAL ACCESS LEVELS: EXECUTIVE (LEVEL 1), ADMIN (LEVEL 2), EMPLOYEE (LEVEL 3)
     let defaultUsers = [
-      { id: 'a0000000-0000-0000-0000-000000000000', email: 'naem@mindmastersksa.com', name: 'Naem Bou Assy', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive Management', basicSalarySAR: 25000, iban: 'SA82 1000 0001 2345 6789 0000', payrollStatus: 'PAID' },
-      { id: 'a1111111-1111-1111-1111-111111111111', email: 'fahad@mindmastersksa.com', name: 'Fahad', role: 'EMPLOYEE', title: 'Software Systems Developer', department: 'Engineering', basicSalarySAR: 0, iban: 'Confidential', payrollStatus: 'N/A' },
-      { id: 'a2222222-2222-2222-2222-222222222222', email: 'accounts@mindmastersksa.com', name: 'Accounts Manager', role: 'ADMIN', title: 'Finance & Accounts Manager', department: 'Finance & Accounts', basicSalarySAR: 18000, iban: 'SA14 2000 0002 9876 5432 0202', payrollStatus: 'UNPROCESSED' },
-      { id: 'a3333333-3333-3333-3333-333333333333', email: 'hr@mindmastersksa.com', name: 'HR Administrator', role: 'ADMIN', title: 'HR & Operations Manager', department: 'Human Resources', basicSalarySAR: 18000, iban: 'SA45 3000 0003 4567 8901 0303', payrollStatus: 'UNPROCESSED' },
-      { id: 'a4444444-4444-4444-4444-444444444444', email: 'engineer@mindmastersksa.com', name: 'Systems Engineer', role: 'EMPLOYEE', title: 'Senior AI Systems Engineer', department: 'Engineering', basicSalarySAR: 15000, iban: 'SA90 4000 0004 1122 3344 0404', payrollStatus: 'UNPROCESSED' }
+      { id: 'a0000000-0000-0000-0000-000000000000', email: 'naem@mindmastersksa.com', password: 'ExecSecret2026!', name: 'Naem Bou Assy', role: 'EXECUTIVE', title: 'Managing Director', department: 'Executive Management', basicSalarySAR: 25000, iban: 'SA82 1000 0001 2345 6789 0000', payrollStatus: 'PAID' },
+      { id: 'a1111111-1111-1111-1111-111111111111', email: 'fahad@mindmastersksa.com', password: 'EmpSecret2026!', name: 'Fahad', role: 'EMPLOYEE', title: 'Software Systems Developer', department: 'Engineering', basicSalarySAR: 0, iban: 'Confidential', payrollStatus: 'N/A' },
+      { id: 'a2222222-2222-2222-2222-222222222222', email: 'accounts@mindmastersksa.com', password: 'AdminSecret2026!', name: 'Accounts Manager', role: 'ADMIN', title: 'Finance & Accounts Manager', department: 'Finance & Accounts', basicSalarySAR: 18000, iban: 'SA14 2000 0002 9876 5432 0202', payrollStatus: 'UNPROCESSED' },
+      { id: 'a3333333-3333-3333-3333-333333333333', email: 'hr@mindmastersksa.com', password: 'AdminSecret2026!', name: 'HR Administrator', role: 'ADMIN', title: 'HR & Operations Manager', department: 'Human Resources', basicSalarySAR: 18000, iban: 'SA45 3000 0003 4567 8901 0303', payrollStatus: 'UNPROCESSED' },
+      { id: 'a4444444-4444-4444-4444-444444444444', email: 'engineer@mindmastersksa.com', password: 'EmpSecret2026!', name: 'Systems Engineer', role: 'EMPLOYEE', title: 'Senior AI Systems Engineer', department: 'Engineering', basicSalarySAR: 15000, iban: 'SA90 4000 0004 1122 3344 0404', payrollStatus: 'UNPROCESSED' }
     ];
 
     let users = JSON.parse(localStorage.getItem('mm_users')) || defaultUsers;
 
-    // Sanitize user roles: Ensure Naem Bou Assy is Executive, Fahad is Employee, and salaries are sanitized
+    // Sanitize user roles & passwords
     const defaultSalaryMap = { 'EXECUTIVE': 25000, 'ADMIN': 18000, 'EMPLOYEE': 15000 };
     users.forEach(u => {
       if (u.role === 'ACCOUNTS' || u.role === 'HR_ADMIN' || u.role === 'LEAD') u.role = 'ADMIN';
       if (u.role === 'STANDARD') u.role = 'EMPLOYEE';
+      if (!u.password) {
+        if (u.role === 'EXECUTIVE') u.password = 'ExecSecret2026!';
+        else if (u.role === 'ADMIN') u.password = 'AdminSecret2026!';
+        else u.password = 'EmpSecret2026!';
+      }
       if (u.email && u.email.toLowerCase() === 'fahad@mindmastersksa.com') {
         u.name = 'Fahad';
         u.role = 'EMPLOYEE';
@@ -1832,7 +1848,8 @@
 
     function fillDemo(email) {
       document.getElementById('login-email').value = email;
-      document.getElementById('login-pass').value = 'password123';
+      const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      document.getElementById('login-pass').value = found && found.password ? found.password : 'ExecSecret2026!';
     }
 
     // REAL-TIME NOTIFICATION SYSTEM WITH SUPABASE SYNC & MARK AS READ
@@ -2025,9 +2042,10 @@
     function handleLogin(e) {
       e.preventDefault();
       const emailInput = document.getElementById('login-email').value.trim();
+      const passInput = document.getElementById('login-pass').value.trim();
       
       if (!isValidEmail(emailInput)) {
-        alert("⚠️ Invalid Email Format: Please enter a valid email address (e.g. fahad@mindmastersksa.com or employee@mindmasters.com).");
+        alert("⚠️ Invalid Email Format: Please enter a valid company email address.");
         return;
       }
 
@@ -2038,14 +2056,20 @@
 
       let foundUser = users.find(u => u.email.toLowerCase() === emailInput.toLowerCase());
 
-      if (foundUser) {
-        currentUser = foundUser;
-      } else {
+      if (!foundUser) {
         alert("⚠️ No account found with this company email. Please create your account using the 'Register Account' tab.");
         switchAuthTab('register');
         document.getElementById('reg-email').value = emailInput;
         return;
       }
+
+      // REAL STRICT PASSWORD VERIFICATION
+      if (!passInput || (foundUser.password && foundUser.password !== passInput)) {
+        alert("⚠️ Access Denied: Incorrect password entered for " + emailInput + ". Access denied.");
+        return;
+      }
+
+      currentUser = foundUser;
       localStorage.setItem('mm_current_user', JSON.stringify(currentUser));
       saveData();
       renderWorkspace();
@@ -2097,6 +2121,21 @@
       saveData();
       renderWorkspace();
       alert(`✅ Account Created Successfully! Welcome to Mind Masters KSA, ${name}.`);
+    }
+
+    function handleDeleteEmployee(id) {
+      if (!currentUser || currentUser.role !== 'EXECUTIVE') {
+        alert("🔒 Access Denied: Only Executive directors can remove staff members.");
+        return;
+      }
+      const targetUser = users.find(u => u.id === id);
+      if (!targetUser) return;
+      if (confirm(`⚠️ Confirm Staff Removal:\nAre you sure you want to remove ${targetUser.name} (${targetUser.title}) from Mind Masters KSA?`)) {
+        users = users.filter(u => u.id !== id);
+        saveData();
+        renderWorkspace();
+        alert(`✅ ${targetUser.name} has been removed from corporate records.`);
+      }
     }
 
     function handleLogout() {
@@ -2353,6 +2392,7 @@
         const projName = document.getElementById('p-name')?.value || 'New Project';
         const budgetSAR = parseFloat(document.getElementById('p-budget')?.value || 0) || 0;
         const progressPercent = parseInt(document.getElementById('p-progress')?.value || 0) || 0;
+        const showFinancialsToEmployee = document.getElementById('p-show-financials')?.checked || false;
 
         const newProj = {
           id: `p${Date.now()}`,
@@ -2361,6 +2401,7 @@
           managerName: managerName,
           status: 'ACTIVE',
           budgetSAR: budgetSAR,
+          showFinancialsToEmployee: showFinancialsToEmployee,
           progressPercent: progressPercent,
           assignedUserIds: assignedUserIds,
           files: attachedFiles
@@ -3328,6 +3369,17 @@
               ${(isExec || isAccounts || isHR) ? `
                 <div class="pt-2 border-t border-slate-800/60 flex justify-between items-center text-xs">
                   <div>
+                    <span class="text-[10px] text-slate-500 block uppercase">Monthly Salary</span>
+                    <span class="font-extrabold text-emerald-400 font-outfit">SAR ${(u.basicSalarySAR || 0).toLocaleString()}.00</span>
+                  </div>
+                  ${isExec ? `
+                    <button onclick="handleDeleteEmployee('${u.id}')" class="px-2.5 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded-lg text-[10px] font-bold transition active-press flex items-center gap-1">
+                      <svg class="w-3 h-3 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      <span>Remove</span>
+                    </button>
+                  ` : ''}
+                </div>
+              ` : ''}
                     <span class="text-[10px] text-slate-500 block uppercase font-bold font-outfit">Net Salary</span>
                     <span class="font-bold text-emerald-400 font-outfit">SAR ${pay.net.toLocaleString()}.00 / mo</span>
                   </div>
