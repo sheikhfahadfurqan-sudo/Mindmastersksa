@@ -1677,14 +1677,32 @@
 
     // STANDALONE LOCAL DATABASE PERSISTENCE ENGINE & SUPABASE AUTO-SYNC
     function saveData() {
-      localStorage.setItem('mm_users', JSON.stringify(users));
-      localStorage.setItem('mm_clients', JSON.stringify(clients));
-      localStorage.setItem('mm_projects', JSON.stringify(projects));
-      localStorage.setItem('mm_tasks', JSON.stringify(tasks));
-      localStorage.setItem('mm_documents', JSON.stringify(documents));
-      localStorage.setItem('mm_leaves', JSON.stringify(leaveRequests));
-      localStorage.setItem('mm_notifications', JSON.stringify(notifications));
-      localStorage.setItem('mm_current_user', JSON.stringify(currentUser));
+      try { localStorage.setItem('mm_users', JSON.stringify(users)); } catch (e) {}
+      try { localStorage.setItem('mm_clients', JSON.stringify(clients)); } catch (e) {}
+      
+      try {
+        localStorage.setItem('mm_projects', JSON.stringify(projects));
+      } catch (e) {
+        // LocalStorage quota exceeded due to large PDF/file base64 data. Save lightweight metadata locally.
+        const lightProjects = projects.map(p => ({
+          ...p,
+          files: (p.files || []).map(f => ({ id: f.id, name: f.name, size: f.size, type: f.type, uploadedAt: f.uploadedAt }))
+        }));
+        try { localStorage.setItem('mm_projects', JSON.stringify(lightProjects)); } catch (err) {}
+      }
+
+      try { localStorage.setItem('mm_tasks', JSON.stringify(tasks)); } catch (e) {}
+
+      try {
+        localStorage.setItem('mm_documents', JSON.stringify(documents));
+      } catch (e) {
+        const lightDocs = documents.map(d => ({ id: d.id, title: d.title, category: d.category, clearance: d.clearance, fileSize: d.fileSize, uploadedByName: d.uploadedByName }));
+        try { localStorage.setItem('mm_documents', JSON.stringify(lightDocs)); } catch (err) {}
+      }
+
+      try { localStorage.setItem('mm_leaves', JSON.stringify(leaveRequests)); } catch (e) {}
+      try { localStorage.setItem('mm_notifications', JSON.stringify(notifications)); } catch (e) {}
+      try { localStorage.setItem('mm_current_user', JSON.stringify(currentUser)); } catch (e) {}
 
       // Seamless Real-Time Cloud Sync across all Supabase Tables
       if (dbClient) {
