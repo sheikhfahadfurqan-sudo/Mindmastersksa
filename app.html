@@ -115,13 +115,20 @@
     const AuthRoleContext = createContext();
     const AuthRoleProvider = ({ children }) => {
       const [activeRole, setActiveRole] = useState('EXECUTIVE');
+      const [isLoggedIn, setIsLoggedIn] = useState(true);
       const currentUser = MOCK_USERS.find(u => u.role === activeRole) || MOCK_USERS[0];
       const isLeadOrHigher = activeRole === 'EXECUTIVE' || activeRole === 'LEAD';
+
+      const logout = () => setIsLoggedIn(false);
+      const login = () => setIsLoggedIn(true);
 
       return (
         <AuthRoleContext.Provider value={{
           activeRole,
           setActiveRole,
+          isLoggedIn,
+          login,
+          logout,
           currentUser,
           isExecutive: activeRole === 'EXECUTIVE',
           isLeadOrHigher,
@@ -139,7 +146,7 @@
 
     // --- HEADER COMPONENT ---
     const Header = () => {
-      const { activeRole, setActiveRole, currentUser, canViewFinancials } = useAuthRole();
+      const { activeRole, setActiveRole, currentUser, canViewFinancials, logout } = useAuthRole();
 
       return (
         <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -172,21 +179,21 @@
             </button>
 
             <button
-              onClick={() => setActiveRole('LEAD')}
+              onClick={() => setActiveRole('ADMIN')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeRole === 'LEAD' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
+                activeRole === 'ADMIN' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🛡️ Lead / Mgr
+              🛡️ Admin
             </button>
 
             <button
-              onClick={() => setActiveRole('STANDARD')}
+              onClick={() => setActiveRole('EMPLOYEE')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeRole === 'STANDARD' ? 'bg-slate-800 text-cyan-300 border border-cyan-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
+                activeRole === 'EMPLOYEE' ? 'bg-slate-800 text-cyan-300 border border-cyan-500/40 shadow' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              👤 Standard
+              👤 Employee
             </button>
           </div>
 
@@ -196,6 +203,18 @@
               <span className="text-[10px] text-slate-400 block">{currentUser.title}</span>
             </div>
             <img src={currentUser.avatar} alt="User Avatar" className="w-9 h-9 rounded-xl object-cover ring-2 ring-indigo-500/30" />
+
+            {/* Prominent Log Out Button */}
+            <button
+              onClick={logout}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 hover:bg-rose-950/80 hover:text-rose-300 border border-slate-800 hover:border-rose-800/80 text-slate-300 text-xs font-bold rounded-xl transition group shadow-sm"
+              title="Sign Out of Session"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-300 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         </header>
       );
@@ -203,7 +222,7 @@
 
     // --- SIDEBAR COMPONENT ---
     const Sidebar = ({ activeTab, setActiveTab }) => {
-      const { activeRole, isExecutive, canApproveLeave } = useAuthRole();
+      const { activeRole, isExecutive, canApproveLeave, logout } = useAuthRole();
 
       const items = [
         { id: 'dashboard', label: 'Executive Overview', badge: isExecutive ? 'Full Access' : 'View' },
@@ -246,6 +265,18 @@
               </p>
             </div>
           </div>
+
+          <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500 space-y-2">
+            <button
+              onClick={logout}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-950 hover:bg-rose-950/80 hover:text-rose-300 border border-slate-800 hover:border-rose-800/80 text-slate-400 text-xs font-semibold rounded-xl transition group"
+            >
+              <svg className="w-4 h-4 text-slate-400 group-hover:text-rose-300 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Log Out of Workspace</span>
+            </button>
+          </div>
         </aside>
       );
     };
@@ -254,52 +285,141 @@
     const Dashboard = ({ setActiveTab }) => {
       const { activeRole, canViewFinancials } = useAuthRole();
       const totalPipeline = MOCK_CLIENTS.reduce((acc, c) => acc + c.contractValueSAR, 0);
+      const isExec = activeRole === 'EXECUTIVE';
+      const isAccounts = activeRole === 'ACCOUNTS';
+      const isHR = activeRole === 'HR_ADMIN';
+      const isEmployee = activeRole === 'EMPLOYEE';
 
       return (
         <div className="space-y-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 p-6 rounded-2xl border border-indigo-500/20 shadow-xl">
             <div>
-              <h2 className="text-xl font-bold text-white font-outfit">Mind Masters KSA • Executive Dashboard</h2>
-              <p className="text-xs text-slate-400 mt-1">Real-time status monitor across Client CRM, Mega Projects, Document Vault & HR Operations</p>
+              <h2 className="text-xl font-bold text-white font-outfit">
+                Mind Masters KSA • {isExec ? 'Executive Command Center' : isAccounts ? 'Accounts Controller Hub' : isHR ? 'Human Capital & Personnel Workspace' : 'Personal Employee Work Hub'}
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                {isExec ? 'Strategic overview of client deal pipelines, mega projects, and corporate performance.' :
+                 isAccounts ? 'Financial receivables, contract stage valuations, and SAMA WPS payroll status.' :
+                 isHR ? 'Workforce headcount, manager absence queue, and out-of-office schedules.' :
+                 'My assigned actionables, leave balances, and August net salary disbursal.'}
+              </p>
             </div>
             <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-indigo-400">
               ACTIVE ROLE: {activeRole}
             </div>
           </div>
 
-          {!canViewFinancials && (
-            <div className="p-4 bg-amber-950/40 border border-amber-800/60 rounded-xl text-amber-200 text-xs">
-              <strong>Standard Employee Clearance Policy:</strong> Financial deal values, project budgets, and restricted document downloads are masked. Toggle role to Executive/Lead in the header to view unmasked data.
+          {/* EXECUTIVE DASHBOARD */}
+          {isExec && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">CRM Deal Pipeline</span>
+                  <div className="text-xl font-extrabold text-slate-100 font-outfit">SAR {(totalPipeline / 1000000).toFixed(2)}M</div>
+                  <span className="text-[11px] text-slate-500 block">4 Enterprise Clients</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Active Mega Projects</span>
+                  <div className="text-xl font-extrabold text-slate-100 font-outfit">2 Active</div>
+                  <span className="text-[11px] text-slate-500 block">Aramco & NEOM Portfolio</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Monthly Corporate Overhead</span>
+                  <div className="text-xl font-extrabold text-emerald-400 font-outfit">SAR 207,000</div>
+                  <span className="text-[11px] text-slate-500 block">Staff Payroll</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Pending Approvals</span>
+                  <div className="text-xl font-extrabold text-amber-400 font-outfit">1 Request</div>
+                  <span className="text-[11px] text-slate-500 block">Leave Sign-off</span>
+                </div>
+              </div>
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-              <span className="text-xs text-slate-400 block font-medium">CRM Deal Pipeline</span>
-              <div className="text-xl font-extrabold text-slate-100 font-outfit">
-                {canViewFinancials ? `SAR ${(totalPipeline / 1000000).toFixed(2)}M` : <span className="text-amber-400 text-sm">🔒 Masked (Lead+)</span>}
+          {/* ACCOUNTS DASHBOARD */}
+          {isAccounts && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 space-y-2">
+                  <span class="text-xs text-slate-400 block font-medium">Total Contract Valuation</span>
+                  <div className="text-xl font-extrabold text-emerald-400 font-outfit">SAR {(totalPipeline / 1000000).toFixed(2)}M</div>
+                  <span className="text-[11px] text-slate-500 block">Account Receivables</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Disbursed Net Payroll</span>
+                  <div className="text-xl font-extrabold text-white font-outfit">SAR 207,000</div>
+                  <span className="text-[11px] text-slate-500 block">SAMA WPS Batch</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Project Capital Allocations</span>
+                  <div className="text-xl font-extrabold text-white font-outfit">SAR 15.5M</div>
+                  <span className="text-[11px] text-slate-500 block">Budgets Total</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">WPS Batch Status</span>
+                  <div className="text-xl font-extrabold text-indigo-400 font-outfit">READY</div>
+                  <span className="text-[11px] text-slate-500 block">August 2026 Batch</span>
+                </div>
               </div>
-              <span className="text-[11px] text-slate-500 block">4 Enterprise Clients</span>
             </div>
+          )}
 
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-              <span className="text-xs text-slate-400 block font-medium">Active Mega Projects</span>
-              <div className="text-xl font-extrabold text-slate-100 font-outfit">2 Active</div>
-              <span className="text-[11px] text-slate-500 block">Aramco, NEOM & DGDA</span>
+          {/* HR DASHBOARD */}
+          {isHR && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Active Headcount</span>
+                  <div className="text-xl font-extrabold text-white font-outfit">4 Personnel</div>
+                  <span className="text-[11px] text-slate-500 block">Registered Employees</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-amber-500/30 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Pending Leave Queue</span>
+                  <div className="text-xl font-extrabold text-amber-400 font-outfit">1 Request</div>
+                  <span className="text-[11px] text-slate-500 block">Approval Queue</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Out of Office Today</span>
+                  <div className="text-xl font-extrabold text-indigo-400 font-outfit">0 Scheduled</div>
+                  <span className="text-[11px] text-slate-500 block">Absence Calendar</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">WPS Readiness Rate</span>
+                  <div className="text-xl font-extrabold text-emerald-400 font-outfit">100%</div>
+                  <span className="text-[11px] text-slate-500 block">Personnel Configured</span>
+                </div>
+              </div>
             </div>
+          )}
 
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-              <span className="text-xs text-slate-400 block font-medium">Restricted Vault Files</span>
-              <div className="text-xl font-extrabold text-slate-100 font-outfit">2 Restricted</div>
-              <span className="text-[11px] text-slate-500 block">{canViewFinancials ? 'Download Cleared' : '🔒 Download Locked'}</span>
+          {/* EMPLOYEE DASHBOARD */}
+          {isEmployee && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-indigo-500/30 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">My Pending Tasks</span>
+                  <div className="text-xl font-extrabold text-indigo-300 font-outfit">2 Tasks</div>
+                  <span className="text-[11px] text-slate-500 block">Assigned Items</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Annual Leave Balance</span>
+                  <div className="text-xl font-extrabold text-white font-outfit">21 Days</div>
+                  <span className="text-[11px] text-slate-500 block">Vacation Days</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">August Net Salary</span>
+                  <div className="text-xl font-extrabold text-emerald-400 font-outfit">SAR 26,020</div>
+                  <span className="text-[11px] text-slate-500 block">Disbursed SAMA WPS</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                  <span className="text-xs text-slate-400 block font-medium">Completed Deliverables</span>
+                  <div className="text-xl font-extrabold text-white font-outfit">5 Done</div>
+                  <span className="text-[11px] text-slate-500 block">Milestones</span>
+                </div>
+              </div>
             </div>
-
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-              <span className="text-xs text-slate-400 block font-medium">Pending HR Approvals</span>
-              <div className="text-xl font-extrabold text-slate-100 font-outfit">1 Request</div>
-              <span className="text-[11px] text-slate-500 block">Approval Queue</span>
-            </div>
-          </div>
+          )}
         </div>
       );
     };
@@ -517,24 +637,107 @@
     };
 
     // --- MAIN APP ASSEMBLY ---
-    const App = () => {
+    const WorkspaceInner = () => {
       const [activeTab, setActiveTab] = useState('dashboard');
+      const { isLoggedIn, login } = useAuthRole();
 
-      return (
-        <AuthRoleProvider>
-          <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-            <Header />
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-              <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-              <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
-                {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
-                {activeTab === 'crm' && <CRMModule />}
-                {activeTab === 'projects' && <ProjectsModule />}
-                {activeTab === 'vault' && <VaultModule />}
-                {activeTab === 'hr' && <HRModule />}
-              </main>
+      if (!isLoggedIn) {
+        return (
+          <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans relative overflow-hidden">
+            <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-6 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-emerald-400 p-0.5 mx-auto shadow-xl shadow-indigo-500/20">
+                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-extrabold text-indigo-400 text-2xl font-outfit">
+                  MM
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-bold text-slate-100 font-outfit">MIND MASTERS KSA</h2>
+                <p className="text-xs text-slate-400 mt-1">Enterprise Workspace & CRM Architecture</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-2">
+                <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
+                  <span>🛡️ Select Your Access Level to Sign In</span>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Corporate authentication is restricted to Executive, Admin, and Employee clearances.
+                </p>
+              </div>
+
+              <div className="space-y-2.5">
+                <button
+                  onClick={() => login('EXECUTIVE')}
+                  className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 hover:border-amber-500/50 border border-amber-500/30 text-amber-300 rounded-2xl transition active:scale-[0.98]"
+                >
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center font-bold text-amber-300">👑</div>
+                    <div>
+                      <span className="font-bold text-xs block text-slate-100 font-outfit">Executive Access</span>
+                      <span className="text-[10px] text-slate-400 block">C-Suite, Financials & Governance</span>
+                    </div>
+                  </div>
+                  <span className="text-amber-400 text-xs font-bold">Sign In →</span>
+                </button>
+
+                <button
+                  onClick={() => login('ADMIN')}
+                  className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-900 hover:border-indigo-500/50 border border-indigo-500/30 text-indigo-300 rounded-2xl transition active:scale-[0.98]"
+                >
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center font-bold text-indigo-300">🛡️</div>
+                    <div>
+                      <span className="font-bold text-xs block text-slate-100 font-outfit">Admin Access</span>
+                      <span className="text-[10px] text-slate-400 block">Management, HR Queue & Delivery</span>
+                    </div>
+                  </div>
+                  <span className="text-indigo-400 text-xs font-bold">Sign In →</span>
+                </button>
+
+                <button
+                  onClick={() => login('EMPLOYEE')}
+                  className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 hover:border-cyan-500/50 border border-cyan-500/30 text-cyan-300 rounded-2xl transition active:scale-[0.98]"
+                >
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center font-bold text-cyan-300">👤</div>
+                    <div>
+                      <span className="font-bold text-xs block text-slate-100 font-outfit">Employee Access</span>
+                      <span className="text-[10px] text-slate-400 block">Tasks, Worksheets & Payslips</span>
+                    </div>
+                  </div>
+                  <span className="text-cyan-400 text-xs font-bold">Sign In →</span>
+                </button>
+              </div>
+
+              <p className="text-[11px] text-slate-500 pt-2">
+                Official KSA Region Enterprise Workspace • 3-Tier Security SSO
+              </p>
             </div>
           </div>
+        );
+      }
+
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+          <Header />
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+            <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+              {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+              {activeTab === 'crm' && <CRMModule />}
+              {activeTab === 'projects' && <ProjectsModule />}
+              {activeTab === 'vault' && <VaultModule />}
+              {activeTab === 'hr' && <HRModule />}
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    const App = () => {
+      return (
+        <AuthRoleProvider>
+          <WorkspaceInner />
         </AuthRoleProvider>
       );
     };

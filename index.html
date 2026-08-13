@@ -210,19 +210,19 @@
         </button>
 
         <div class="pt-3 text-center border-t border-slate-800/80">
-          <p class="text-[11px] text-slate-400 mb-2 font-medium">Quick Demo Credentials:</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="fillDemo('naem@mindmastersksa.com')" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 rounded-xl text-[11px] text-amber-300 font-medium transition active-press flex items-center justify-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Naem Bou Assy (MD)
+          <p class="text-[11px] text-slate-400 mb-2 font-medium font-outfit uppercase">Select Clearance to Sign In:</p>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="fillDemo('naem@mindmastersksa.com')" class="px-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 rounded-xl text-[11px] text-amber-300 font-bold transition active-press flex flex-col items-center justify-center gap-1">
+              <span class="text-sm">👑</span>
+              <span>Executive</span>
             </button>
-            <button type="button" onclick="fillDemo('fahad@mindmastersksa.com')" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 rounded-xl text-[11px] text-cyan-300 font-medium transition active-press flex items-center justify-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Fahad (Developer)
+            <button type="button" onclick="fillDemo('accounts@mindmastersksa.com')" class="px-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 rounded-xl text-[11px] text-indigo-300 font-bold transition active-press flex flex-col items-center justify-center gap-1">
+              <span class="text-sm">🛡️</span>
+              <span>Admin</span>
             </button>
-            <button type="button" onclick="fillDemo('accounts@mindmastersksa.com')" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-[11px] text-emerald-300 font-medium transition active-press flex items-center justify-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Accounts Manager
-            </button>
-            <button type="button" onclick="fillDemo('hr@mindmastersksa.com')" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-violet-500/50 rounded-xl text-[11px] text-violet-300 font-medium transition active-press flex items-center justify-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span> HR Admin
+            <button type="button" onclick="fillDemo('fahad@mindmastersksa.com')" class="px-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 rounded-xl text-[11px] text-cyan-300 font-bold transition active-press flex flex-col items-center justify-center gap-1">
+              <span class="text-sm">👤</span>
+              <span>Employee</span>
             </button>
           </div>
         </div>
@@ -252,10 +252,9 @@
         <div>
           <label class="text-slate-300 font-medium block mb-1">Clearance Level</label>
           <select id="reg-role" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none font-semibold">
-            <option value="EXECUTIVE" selected>Executive Master Portal</option>
-            <option value="ACCOUNTS">Accounts & Finance Portal</option>
-            <option value="HR_ADMIN">HR & Personnel Portal</option>
-            <option value="EMPLOYEE">Standard Employee Workspace</option>
+            <option value="EXECUTIVE" selected>👑 Executive Level</option>
+            <option value="ADMIN">🛡️ Admin Level</option>
+            <option value="EMPLOYEE">👤 Employee Level</option>
           </select>
         </div>
         <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 font-bold text-white text-sm rounded-xl shadow-lg shadow-indigo-600/30 transition active-press">
@@ -336,7 +335,7 @@
             <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-300 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span class="hidden sm:inline">Sign Out</span>
+            <span class="inline">Sign Out</span>
           </button>
         </div>
       </div>
@@ -402,6 +401,13 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
             <span>Edit Role Profile</span>
+          </button>
+
+          <button onclick="handleLogout()" class="w-full py-2.5 bg-slate-950 hover:bg-rose-950/80 hover:text-rose-300 border border-slate-800 hover:border-rose-800/80 text-slate-400 text-xs font-semibold rounded-xl transition active-press flex items-center justify-center gap-2 group mt-2">
+            <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-300 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Sign Out of Session</span>
           </button>
         </div>
       </aside>
@@ -1048,6 +1054,10 @@
         <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         <span>Team</span>
       </button>
+      <button onclick="handleLogout()" id="mobile-nav-logout" class="flex flex-col items-center gap-0.5 text-[10px] font-bold text-rose-400 active-press py-1 px-2" title="Sign Out">
+        <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span>Logout</span>
+      </button>
     </nav>
   </div>
 
@@ -1188,16 +1198,23 @@
         <div>
           <label class="text-slate-300 font-medium block mb-1">Clearance Role</label>
           <select id="edit-role" class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 p-2.5 rounded-xl text-slate-100 outline-none font-semibold">
-            <option value="EXECUTIVE">Executive Master Portal</option>
-            <option value="ACCOUNTS">Accounts & Finance Portal</option>
-            <option value="HR_ADMIN">HR & Personnel Portal</option>
-            <option value="EMPLOYEE">Standard Employee Workspace</option>
+            <option value="EXECUTIVE">👑 Executive Level</option>
+            <option value="ADMIN">🛡️ Admin Level</option>
+            <option value="EMPLOYEE">👤 Employee Level</option>
           </select>
         </div>
 
-        <div class="pt-2 flex gap-3">
-          <button type="button" onclick="closeModal('modal-profile')" class="w-1/2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl active-press">Cancel</button>
-          <button type="submit" class="w-1/2 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow active-press">Save Profile</button>
+        <div class="pt-3 border-t border-slate-800 flex justify-between items-center gap-3">
+          <button type="button" onclick="closeModal('modal-profile'); handleLogout();" class="px-4 py-2.5 bg-slate-950 hover:bg-rose-950/80 hover:text-rose-300 border border-slate-800 hover:border-rose-800/80 text-rose-400 text-xs font-bold rounded-xl transition flex items-center gap-1.5 active-press">
+            <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Log Out</span>
+          </button>
+          <div class="flex gap-2">
+            <button type="button" onclick="closeModal('modal-profile')" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl active-press">Cancel</button>
+            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow active-press">Save Profile</button>
+          </div>
         </div>
       </form>
     </div>
@@ -1612,9 +1629,10 @@
     let users = JSON.parse(localStorage.getItem('mm_users')) || defaultUsers;
 
     // Sanitize user roles: Ensure Naem Bou Assy is Executive, Fahad is Employee, and salaries are sanitized
-    const defaultSalaryMap = { 'EXECUTIVE': 25000, 'ADMIN': 18000, 'ACCOUNTS': 18000, 'HR_ADMIN': 18000, 'EMPLOYEE': 15000 };
+    const defaultSalaryMap = { 'EXECUTIVE': 25000, 'ADMIN': 18000, 'EMPLOYEE': 15000 };
     users.forEach(u => {
-      if (u.role === 'ACCOUNTS' || u.role === 'HR_ADMIN') u.role = 'ADMIN';
+      if (u.role === 'ACCOUNTS' || u.role === 'HR_ADMIN' || u.role === 'LEAD') u.role = 'ADMIN';
+      if (u.role === 'STANDARD') u.role = 'EMPLOYEE';
       if (u.email && u.email.toLowerCase() === 'fahad@mindmastersksa.com') {
         u.name = 'Fahad';
         u.role = 'EMPLOYEE';
@@ -2759,9 +2777,9 @@
       }
 
       // MODULE ACCESS PERMISSIONS
-      const canManageClients = roleText === 'EXECUTIVE' || roleText === 'ACCOUNTS';
-      const canManageProjects = roleText === 'EXECUTIVE' || roleText === 'ACCOUNTS' || roleText === 'HR_ADMIN';
-      const canManageVault = roleText === 'EXECUTIVE' || roleText === 'ACCOUNTS' || roleText === 'HR_ADMIN';
+      const canManageClients = roleText === 'EXECUTIVE' || roleText === 'ADMIN' || roleText === 'ACCOUNTS';
+      const canManageProjects = roleText === 'EXECUTIVE' || roleText === 'ADMIN' || roleText === 'ACCOUNTS' || roleText === 'HR_ADMIN';
+      const canManageVault = roleText === 'EXECUTIVE' || roleText === 'ADMIN' || roleText === 'ACCOUNTS' || roleText === 'HR_ADMIN';
 
       if (!canManageClients) document.getElementById('btn-add-client')?.classList.add('hidden');
       else document.getElementById('btn-add-client')?.classList.remove('hidden');
@@ -2772,7 +2790,7 @@
       if (!canManageVault) document.getElementById('btn-add-doc')?.classList.add('hidden');
       else document.getElementById('btn-add-doc')?.classList.remove('hidden');
 
-      if (roleText !== 'EXECUTIVE' && roleText !== 'HR_ADMIN' && roleText !== 'ACCOUNTS') {
+      if (roleText !== 'EXECUTIVE' && roleText !== 'ADMIN' && roleText !== 'HR_ADMIN' && roleText !== 'ACCOUNTS') {
         document.getElementById('btn-add-employee')?.classList.add('hidden');
       } else {
         document.getElementById('btn-add-employee')?.classList.remove('hidden');
@@ -2786,6 +2804,8 @@
     function renderAppContent() {
       const isExec = currentUser.role === 'EXECUTIVE';
       const isAdmin = currentUser.role === 'ADMIN' || currentUser.role === 'ACCOUNTS' || currentUser.role === 'HR_ADMIN';
+      const isAccounts = isAdmin || currentUser.role === 'ACCOUNTS';
+      const isHR = isAdmin || currentUser.role === 'HR_ADMIN';
       const isEmployee = currentUser.role === 'EMPLOYEE';
 
       // TOGGLE DASHBOARD SUB-VIEWS BASED ON ROLE (FAIL-SAFE TO ALWAYS SHOW DASHBOARD)
