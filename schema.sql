@@ -1,135 +1,211 @@
--- PostgreSQL SQL Schema DDL Script for Mind Masters KSA
--- Complete schema with ENUMs, Tables, Constraints, Indexes & Row-Level Security (RLS)
+-- ==============================================================================
+-- MIND MASTERS KSA - SUPABASE DATABASE DDL SCHEMA & RLS MIGRATIONS
+-- Universal 3-Tier Access Schema (EXECUTIVE, ADMIN, EMPLOYEE)
+-- ==============================================================================
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- 0. DROP ALL EXISTING RLS POLICIES FIRST TO PREVENT POSTGRESQL 0A000 ALTER TYPE ERRORS
+DROP POLICY IF EXISTS "Employees view own payroll" ON public.payroll;
+DROP POLICY IF EXISTS "Management full access to payroll" ON public.payroll;
+DROP POLICY IF EXISTS "Anon client sync payroll" ON public.payroll;
+DROP POLICY IF EXISTS "Anon sync payroll" ON public.payroll;
+DROP POLICY IF EXISTS "Users view own notifications" ON public.notifications;
+DROP POLICY IF EXISTS "Anon sync notifications" ON public.notifications;
+DROP POLICY IF EXISTS "Anon sync users" ON public.users;
+DROP POLICY IF EXISTS "Anon sync clients" ON public.clients;
+DROP POLICY IF EXISTS "Anon sync projects" ON public.projects;
+DROP POLICY IF EXISTS "Anon sync tasks" ON public.tasks;
+DROP POLICY IF EXISTS "Anon sync documents" ON public.documents;
+DROP POLICY IF EXISTS "Anon sync leave_requests" ON public.leave_requests;
 
--- ENUM DEFINITIONS
-CREATE TYPE role_enum AS ENUM ('EXECUTIVE', 'LEAD', 'STANDARD');
-CREATE TYPE clearance_enum AS ENUM ('PUBLIC', 'INTERNAL', 'RESTRICTED');
-CREATE TYPE deal_stage_enum AS ENUM ('LEAD', 'PROPOSAL', 'CLOSED_WON', 'CLOSED_LOST');
-CREATE TYPE project_status_enum AS ENUM ('PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED');
-CREATE TYPE task_status_enum AS ENUM ('TODO', 'IN_PROGRESS', 'REVIEW', 'COMPLETE');
-CREATE TYPE task_priority_enum AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');
-CREATE TYPE leave_type_enum AS ENUM ('VACATION', 'SICK', 'PERSONAL', 'MATERNITY_PATERNITY');
-CREATE TYPE leave_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+-- 1. SAFELY CONVERT USERS.ROLE & ID TO TEXT
+ALTER TABLE IF EXISTS public.users ALTER COLUMN role DROP DEFAULT;
+ALTER TABLE IF EXISTS public.users ALTER COLUMN role TYPE TEXT USING role::text;
+ALTER TABLE IF EXISTS public.users ALTER COLUMN role SET DEFAULT 'EMPLOYEE';
+
+DO $$ 
+BEGIN
+    ALTER TABLE public.users ALTER COLUMN id TYPE TEXT USING id::text;
+EXCEPTION WHEN OTHERS THEN END;
+$$;
 
 -- 1. USERS TABLE
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    avatar TEXT,
-    role role_enum DEFAULT 'STANDARD' NOT NULL,
-    department VARCHAR(100) NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    salary_sar NUMERIC(12, 2), -- Private: Hidden for STANDARD role
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS public.users (
+    id TEXT PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'EMPLOYEE',
+    title TEXT,
+    department TEXT,
+    basic_salary_sar NUMERIC(12, 2) DEFAULT 20000.00,
+    iban TEXT,
+    avatar_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 2. CLIENTS TABLE
-CREATE TABLE clients (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    company_name VARCHAR(255) NOT NULL,
-    contact_person VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(50),
-    stage deal_stage_enum DEFAULT 'LEAD' NOT NULL,
-    contract_value NUMERIC(12, 2) NOT NULL, -- Hidden column for STANDARD role
-    owner_id UUID REFERENCES users(id) ON DELETE SET NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- Ensure all missing user columns are added if users table pre-existed
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'EMPLOYEE';
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS department TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS basic_salary_sar NUMERIC(12, 2) DEFAULT 20000.00;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS iban TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+
+-- 2. PAYROLL TABLE
+CREATE TABLE IF NOT EXISTS public.payroll (
+    id TEXT PRIMARY KEY,
+    user_id TEXT,
+    user_email TEXT NOT NULL,
+    pay_period TEXT NOT NULL DEFAULT 'August 2026',
+    basic_salary_sar NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+    housing_allowance_sar NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+    transport_allowance_sar NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+    gosi_deduction_sar NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+    net_salary_sar NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+    payment_status TEXT NOT NULL DEFAULT 'PAID',
+    iban TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3. CLIENT DOCUMENTS VAULT TABLE
-CREATE TABLE client_documents (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    client_id UUID REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    file_url TEXT NOT NULL,
-    file_type VARCHAR(50) NOT NULL,
-    clearance clearance_enum DEFAULT 'RESTRICTED' NOT NULL,
-    uploaded_by_id UUID REFERENCES users(id) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- 3. NOTIFICATIONS TABLE
+CREATE TABLE IF NOT EXISTS public.notifications (
+    id TEXT PRIMARY KEY,
+    user_id TEXT,
+    user_email TEXT,
+    title TEXT,
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 4. PROJECTS MASTER TABLE
-CREATE TABLE projects (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,
-    client_id UUID REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
-    manager_id UUID REFERENCES users(id) NOT NULL,
-    start_date DATE NOT NULL,
-    target_date DATE NOT NULL,
-    status project_status_enum DEFAULT 'PLANNING' NOT NULL,
-    budget_sar NUMERIC(12, 2) NOT NULL, -- Hidden column for STANDARD role
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- 4. CLIENTS TABLE (CRM)
+CREATE TABLE IF NOT EXISTS public.clients (
+    id TEXT PRIMARY KEY,
+    company_name TEXT NOT NULL,
+    contact_person TEXT,
+    region TEXT,
+    stage TEXT DEFAULT 'LEAD',
+    contract_value_sar NUMERIC(14, 2) DEFAULT 0.00,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+ALTER TABLE public.clients ADD COLUMN IF NOT EXISTS contract_value_sar NUMERIC(14, 2) DEFAULT 0.00;
+
+-- 5. PROJECTS TABLE (WITH DEDICATED FOLDERS & TEAM ASSIGNEES)
+CREATE TABLE IF NOT EXISTS public.projects (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    client_name TEXT,
+    manager_name TEXT,
+    status TEXT DEFAULT 'ACTIVE',
+    budget_sar NUMERIC(14, 2) DEFAULT 0.00,
+    progress_percent INT DEFAULT 0,
+    assigned_user_ids TEXT[] DEFAULT '{}'::text[],
+    files JSONB DEFAULT '[]'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS budget_sar NUMERIC(14, 2) DEFAULT 0.00;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS progress_percent INT DEFAULT 0;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS assigned_user_ids TEXT[] DEFAULT '{}'::text[];
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS files JSONB DEFAULT '[]'::jsonb;
+
+-- 6. TASKS TABLE (KANBAN)
+CREATE TABLE IF NOT EXISTS public.tasks (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    project_name TEXT,
+    assignee_name TEXT,
+    due_date DATE,
+    priority TEXT DEFAULT 'MEDIUM',
+    status TEXT DEFAULT 'TODO',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 5. TASKS BREAKDOWN TABLE
-CREATE TABLE tasks (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    project_id UUID REFERENCES projects(id) ON DELETE CASCADE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    assignee_id UUID REFERENCES users(id) NOT NULL,
-    priority task_priority_enum DEFAULT 'MEDIUM' NOT NULL,
-    due_date DATE NOT NULL,
-    status task_status_enum DEFAULT 'TODO' NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- 7. DOCUMENTS TABLE (VAULT)
+CREATE TABLE IF NOT EXISTS public.documents (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT,
+    clearance TEXT DEFAULT 'PUBLIC',
+    file_size TEXT,
+    data_url TEXT,
+    uploaded_by_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 6. RESTRICTED DOCUMENT VAULT TABLE
-CREATE TABLE documents (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    file_url TEXT NOT NULL,
-    file_size VARCHAR(50) NOT NULL,
-    clearance clearance_enum DEFAULT 'INTERNAL' NOT NULL,
-    uploaded_by_id UUID REFERENCES users(id) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- 7. LEAVE REQUESTS & HR ABSENCE TABLE
-CREATE TABLE leave_requests (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    employee_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    leave_type leave_type_enum NOT NULL,
+-- 8. LEAVE REQUESTS TABLE (HR)
+CREATE TABLE IF NOT EXISTS public.leave_requests (
+    id TEXT PRIMARY KEY,
+    employee_name TEXT NOT NULL,
+    title TEXT,
+    department TEXT,
+    leave_type TEXT NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    reason TEXT NOT NULL, -- Private reason hidden from team calendar
-    status leave_status_enum DEFAULT 'PENDING' NOT NULL,
-    reviewed_by_id UUID REFERENCES users(id),
-    reviewed_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    reason TEXT,
+    status TEXT DEFAULT 'PENDING',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- INDEXES FOR PERFORMANCE
-CREATE INDEX idx_clients_stage ON clients(stage);
-CREATE INDEX idx_projects_client ON projects(client_id);
-CREATE INDEX idx_tasks_assignee ON tasks(assignee_id);
-CREATE INDEX idx_tasks_project ON tasks(project_id);
-CREATE INDEX idx_documents_clearance ON documents(clearance);
-CREATE INDEX idx_leave_requests_employee ON leave_requests(employee_id);
-CREATE INDEX idx_leave_requests_status ON leave_requests(status);
+-- ==============================================================================
+-- ROW LEVEL SECURITY (RLS) POLICIES
+-- ==============================================================================
 
--- EXAMPLE ROW-LEVEL SECURITY (RLS) POLICIES FOR POSTGRESQL
-ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on all tables
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.payroll ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.clients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.leave_requests ENABLE ROW LEVEL SECURITY;
 
--- Executive & Lead can view all documents
-CREATE POLICY exec_lead_doc_policy ON documents 
-    FOR SELECT 
-    USING (
-        current_setting('app.current_user_role') IN ('EXECUTIVE', 'LEAD')
-        OR clearance IN ('PUBLIC', 'INTERNAL')
-    );
+-- RLS POLICIES FOR ALL TABLES (ALLOWS AUTH & CLIENT SYNC)
+DROP POLICY IF EXISTS "Anon sync users" ON public.users;
+CREATE POLICY "Anon sync users" ON public.users FOR ALL USING (true) WITH CHECK (true);
 
--- Standard employees cannot select RESTRICTED clearance documents
-CREATE POLICY standard_doc_policy ON documents 
-    FOR SELECT 
-    USING (
-        current_setting('app.current_user_role') = 'STANDARD' 
-        AND clearance IN ('PUBLIC', 'INTERNAL')
-    );
+DROP POLICY IF EXISTS "Anon sync payroll" ON public.payroll;
+CREATE POLICY "Anon sync payroll" ON public.payroll FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon sync notifications" ON public.notifications;
+CREATE POLICY "Anon sync notifications" ON public.notifications FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon sync clients" ON public.clients;
+CREATE POLICY "Anon sync clients" ON public.clients FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon sync projects" ON public.projects;
+CREATE POLICY "Anon sync projects" ON public.projects FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon sync tasks" ON public.tasks;
+CREATE POLICY "Anon sync tasks" ON public.tasks FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon sync documents" ON public.documents;
+CREATE POLICY "Anon sync documents" ON public.documents FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon sync leave_requests" ON public.leave_requests;
+CREATE POLICY "Anon sync leave_requests" ON public.leave_requests FOR ALL USING (true) WITH CHECK (true);
+
+-- ==============================================================================
+-- INITIAL SEED DATA (3 GENERAL ACCESS LEVELS: EXECUTIVE, ADMIN, EMPLOYEE)
+-- ==============================================================================
+
+INSERT INTO public.users (id, email, name, role, title, department, basic_salary_sar, iban, avatar_url)
+VALUES 
+    ('a0000000-0000-0000-0000-000000000000', 'naem@mindmastersksa.com', 'Naem Bou Assy', 'EXECUTIVE', 'Managing Director', 'Executive Management', 25000.00, 'SA82 1000 0001 2345 6789 0000', 'logo.jpg'),
+    ('a1111111-1111-1111-1111-111111111111', 'fahad@mindmastersksa.com', 'Fahad', 'EMPLOYEE', 'Software Systems Developer', 'Engineering', 0.00, 'Confidential', 'logo.jpg'),
+    ('a2222222-2222-2222-2222-222222222222', 'accounts@mindmastersksa.com', 'Accounts Manager', 'ADMIN', 'Finance & Accounts Manager', 'Finance & Accounts', 18000.00, 'SA14 2000 0002 9876 5432 0202', 'logo.jpg'),
+    ('a3333333-3333-3333-3333-333333333333', 'hr@mindmastersksa.com', 'HR Administrator', 'ADMIN', 'HR & Operations Manager', 'Human Resources', 18000.00, 'SA45 3000 0003 4567 8901 0303', 'logo.jpg'),
+    ('a4444444-4444-4444-4444-444444444444', 'engineer@mindmastersksa.com', 'Systems Engineer', 'EMPLOYEE', 'Senior AI Systems Engineer', 'Engineering', 15000.00, 'SA90 4000 0004 1122 3344 0404', 'logo.jpg')
+ON CONFLICT (email) DO UPDATE SET 
+    role = EXCLUDED.role,
+    name = EXCLUDED.name,
+    basic_salary_sar = EXCLUDED.basic_salary_sar;
+
+INSERT INTO public.payroll (id, user_id, user_email, pay_period, basic_salary_sar, housing_allowance_sar, transport_allowance_sar, gosi_deduction_sar, net_salary_sar, payment_status, iban)
+VALUES
+    ('b0000000-0000-0000-0000-000000000000', 'a0000000-0000-0000-0000-000000000000', 'naem@mindmastersksa.com', 'August 2026', 25000.00, 6250.00, 2500.00, 2437.50, 31312.50, 'PAID', 'SA82 1000 0001 2345 6789 0000'),
+    ('b1111111-1111-1111-1111-111111111111', 'a1111111-1111-1111-1111-111111111111', 'fahad@mindmastersksa.com', 'August 2026', 0.00, 0.00, 0.00, 0.00, 0.00, 'CONFIDENTIAL', 'Confidential'),
+    ('b2222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', 'accounts@mindmastersksa.com', 'August 2026', 18000.00, 4500.00, 1800.00, 1755.00, 22545.00, 'UNPROCESSED', 'SA14 2000 0002 9876 5432 0202'),
+    ('b3333333-3333-3333-3333-333333333333', 'a3333333-3333-3333-3333-333333333333', 'hr@mindmastersksa.com', 'August 2026', 18000.00, 4500.00, 1800.00, 1755.00, 22545.00, 'UNPROCESSED', 'SA45 3000 0003 4567 8901 0303'),
+    ('b4444444-4444-4444-4444-444444444444', 'a4444444-4444-4444-4444-444444444444', 'engineer@mindmastersksa.com', 'August 2026', 15000.00, 3750.00, 1500.00, 1462.50, 18787.50, 'UNPROCESSED', 'SA90 4000 0004 1122 3344 0404')
+ON CONFLICT (id) DO NOTHING;

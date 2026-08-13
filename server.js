@@ -20,13 +20,21 @@ const server = http.createServer((req, res) => {
   if (ext === '.js') contentType = 'text/javascript';
   if (ext === '.css') contentType = 'text/css';
   if (ext === '.json') contentType = 'application/json';
+  if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+  if (ext === '.png') contentType = 'image/png';
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
       res.writeHead(500);
       res.end('Server Error');
     } else {
-      res.writeHead(200, { 'Content-Type': contentType });
+      // Force zero cache so phone and browser refresh immediately
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
       res.end(content, 'utf-8');
     }
   });
