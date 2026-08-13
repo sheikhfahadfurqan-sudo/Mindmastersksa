@@ -2252,79 +2252,102 @@
 
     function handleCreateClient(e) {
       e.preventDefault();
-      const newClient = {
-        id: `c${Date.now()}`,
-        companyName: document.getElementById('c-name').value,
-        contactPerson: document.getElementById('c-contact').value,
-        region: document.getElementById('c-region').value,
-        stage: document.getElementById('c-stage').value,
-        contractValueSAR: parseFloat(document.getElementById('c-value').value) || 0
-      };
-      clients.push(newClient);
+      try {
+        const nameVal = document.getElementById('c-name')?.value || 'Client Account';
+        const contactVal = document.getElementById('c-contact')?.value || 'Operations Lead';
+        const regionVal = document.getElementById('c-region')?.value || 'Riyadh';
+        const stageVal = document.getElementById('c-stage')?.value || 'LEAD';
+        const valueVal = parseFloat(document.getElementById('c-value')?.value || 0) || 0;
 
-      // Create Real-time Notifications for Executive / Accounts team
-      users.filter(u => u.role === 'EXECUTIVE' || u.role === 'ACCOUNTS').forEach(execUser => {
-        createRealtimeNotification(execUser.email, execUser.id, "New CRM Account Created", `Client "${newClient.companyName}" added in stage "${newClient.stage}" by ${currentUser.name}.`);
-      });
+        const newClient = {
+          id: `c${Date.now()}`,
+          companyName: nameVal,
+          contactPerson: contactVal,
+          region: regionVal,
+          stage: stageVal,
+          contractValueSAR: valueVal
+        };
+        clients.push(newClient);
 
-      saveData();
-      closeModal('modal-client');
-      renderAppContent();
+        // Notifications for Executive / Admin team
+        users.filter(u => u.role === 'EXECUTIVE' || u.role === 'ADMIN' || u.role === 'ACCOUNTS').forEach(execUser => {
+          createRealtimeNotification(execUser.email, execUser.id, "New CRM Account Created", `Client "${newClient.companyName}" added in stage "${newClient.stage}".`);
+        });
+
+        saveData();
+        closeModal('modal-client');
+        renderAppContent();
+        alert(`✅ Client account "${newClient.companyName}" created & synced to cloud!`);
+      } catch (err) {
+        console.error("Error creating client:", err);
+        alert("Error creating client: " + err.message);
+      }
     }
 
     async function handleCreateProject(e) {
       e.preventDefault();
-      const fileInput = document.getElementById('p-files');
-      const attachedFiles = [];
+      try {
+        const fileInput = document.getElementById('p-files');
+        const attachedFiles = [];
 
-      if (fileInput && fileInput.files.length > 0) {
-        for (let i = 0; i < fileInput.files.length; i++) {
-          const file = fileInput.files[i];
-          const dataUrl = await readFileAsDataURL(file);
-          attachedFiles.push({
-            id: `f${Date.now()}_${i}`,
-            name: file.name,
-            size: formatBytes(file.size),
-            type: file.type || 'document',
-            dataUrl: dataUrl,
-            uploadedAt: new Date().toLocaleDateString()
-          });
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+          for (let i = 0; i < fileInput.files.length; i++) {
+            const file = fileInput.files[i];
+            const dataUrl = await readFileAsDataURL(file);
+            attachedFiles.push({
+              id: `f${Date.now()}_${i}`,
+              name: file.name,
+              size: formatBytes(file.size),
+              type: file.type || 'document',
+              dataUrl: dataUrl,
+              uploadedAt: new Date().toLocaleDateString()
+            });
+          }
         }
+
+        const clientElem = document.getElementById('p-client');
+        const clientObj = clients.find(c => c.id === (clientElem ? clientElem.value : ''));
+        const managerName = document.getElementById('p-manager')?.value || (currentUser ? currentUser.name : 'Managing Director');
+        const managerUser = users.find(u => u.name && u.name.toLowerCase() === managerName.toLowerCase());
+
+        const assigneeSelect = document.getElementById('p-assignees');
+        const assignedUserIds = assigneeSelect ? Array.from(assigneeSelect.selectedOptions).map(opt => opt.value) : [];
+        const assignedUsers = users.filter(u => assignedUserIds.includes(u.id));
+
+        const projName = document.getElementById('p-name')?.value || 'New Project';
+        const budgetSAR = parseFloat(document.getElementById('p-budget')?.value || 0) || 0;
+        const progressPercent = parseInt(document.getElementById('p-progress')?.value || 0) || 0;
+
+        const newProj = {
+          id: `p${Date.now()}`,
+          name: projName,
+          clientName: clientObj ? clientObj.companyName : (clients[0] ? clients[0].companyName : 'Enterprise Account'),
+          managerName: managerName,
+          status: 'ACTIVE',
+          budgetSAR: budgetSAR,
+          progressPercent: progressPercent,
+          assignedUserIds: assignedUserIds,
+          files: attachedFiles
+        };
+
+        projects.push(newProj);
+
+        // TRIGGER REAL-TIME NOTIFICATIONS TO MANAGER & ALL ASSIGNED EMPLOYEES
+        if (managerUser) {
+          createRealtimeNotification(managerUser.email, managerUser.id, "New Mega Project Assigned", `You have been assigned as Project Manager for "${newProj.name}".`);
+        }
+        assignedUsers.forEach(empUser => {
+          createRealtimeNotification(empUser.email, empUser.id, "New Project Assigned to You", `You have been assigned to project "${newProj.name}".`);
+        });
+
+        saveData();
+        closeModal('modal-project');
+        renderAppContent();
+        alert(`✅ Project "${newProj.name}" created & synced to cloud!`);
+      } catch (err) {
+        console.error("Error creating project:", err);
+        alert("Error launching project: " + err.message);
       }
-
-      const clientObj = clients.find(c => c.id === document.getElementById('p-client').value);
-      const managerName = document.getElementById('p-manager').value;
-      const managerUser = users.find(u => u.name.toLowerCase() === managerName.toLowerCase());
-
-      const assigneeSelect = document.getElementById('p-assignees');
-      const assignedUserIds = assigneeSelect ? Array.from(assigneeSelect.selectedOptions).map(opt => opt.value) : [];
-      const assignedUsers = users.filter(u => assignedUserIds.includes(u.id));
-
-      const newProj = {
-        id: `p${Date.now()}`,
-        name: document.getElementById('p-name').value,
-        clientName: clientObj ? clientObj.companyName : 'Enterprise Account',
-        managerName: managerName,
-        status: 'ACTIVE',
-        budgetSAR: parseFloat(document.getElementById('p-budget').value) || 0,
-        progressPercent: parseInt(document.getElementById('p-progress').value) || 0,
-        assignedUserIds: assignedUserIds,
-        files: attachedFiles
-      };
-
-      projects.push(newProj);
-
-      // TRIGGER REAL-TIME NOTIFICATIONS TO MANAGER & ALL ASSIGNED EMPLOYEES
-      if (managerUser) {
-        createRealtimeNotification(managerUser.email, managerUser.id, "New Mega Project Assigned", `You have been assigned as Project Manager for "${newProj.name}".`);
-      }
-      assignedUsers.forEach(empUser => {
-        createRealtimeNotification(empUser.email, empUser.id, "New Project Assigned to You", `You have been assigned to project "${newProj.name}" for client ${newProj.clientName}.`);
-      });
-
-      saveData();
-      closeModal('modal-project');
-      renderAppContent();
     }
 
     function openProjectDetailsModal(projectId) {
