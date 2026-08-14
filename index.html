@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Mind Masters KSA - Enterprise Operations & CRM Workspace</title>
   
-  <!-- PWA Manifest -->
+  <!-- Mobile PWA Setup -->
   <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/logo.jpg">
   <meta name="theme-color" content="#030712">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -805,17 +809,17 @@
       };
 
       return (
-        <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-6 py-3 flex items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-3">
-            <img src="/logo.jpg" alt="Mind Masters KSA" className="w-10 h-10 rounded-xl border border-slate-700/60 object-cover shadow-lg shadow-indigo-500/20 shrink-0" />
+        <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 shadow-lg">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/logo.jpg" alt="Mind Masters KSA" className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border border-slate-700/60 object-cover shadow-lg shadow-indigo-500/20 shrink-0" />
             <div>
-              <h1 className="font-bold text-slate-100 tracking-tight text-base font-outfit uppercase">{t('brand')}</h1>
-              <p className="text-xs text-slate-400">{t('subtitle')}</p>
+              <h1 className="font-bold text-slate-100 tracking-tight text-xs sm:text-base font-outfit uppercase">{t('brand')}</h1>
+              <p className="text-[10px] sm:text-xs text-slate-400 hidden sm:block">{t('subtitle')}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className={`px-3 py-1 rounded-xl text-xs font-bold border shadow-sm flex items-center gap-1.5 ${getRoleBadgeStyle()}`}>
+          <div className="flex items-center gap-1.5 sm:gap-3">
+            <div className={`px-2 sm:px-3 py-1 rounded-xl text-[10px] sm:text-xs font-bold border shadow-sm flex items-center gap-1 ${getRoleBadgeStyle()}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               <span>{currentUser?.role?.replace('_', ' ')}</span>
             </div>
@@ -823,12 +827,12 @@
             <button
               type="button"
               onClick={toggleLanguage}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-indigo-500/50 text-indigo-300 text-xs font-bold rounded-xl shadow transition active:scale-95"
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 border border-indigo-500/50 text-indigo-300 text-[11px] sm:text-xs font-bold rounded-xl shadow transition active:scale-95"
             >
-              <span>{language === 'ar' ? '🇬🇧 English' : '🇸🇦 العربية'}</span>
+              <span>{language === 'ar' ? '🇬🇧 EN' : '🇸🇦 ع'}</span>
             </button>
 
-            <div className="text-right hidden sm:block">
+            <div className="text-right hidden md:block">
               <span className="font-semibold text-xs text-slate-200 block">{currentUser?.name}</span>
               <span className="text-[10px] text-slate-400 block">{currentUser?.title}</span>
             </div>
@@ -836,7 +840,7 @@
             <button
               type="button"
               onClick={logout}
-              className="px-3 py-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-300 text-xs font-bold rounded-xl transition"
+              className="px-2.5 py-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-300 text-[11px] sm:text-xs font-bold rounded-xl transition"
             >
               {t('logout')}
             </button>
@@ -845,7 +849,7 @@
       );
     };
 
-    // --- SIDEBAR ---
+    // --- SIDEBAR (Desktop Side Navigation & Mobile Phone Navigation Dock) ---
     const Sidebar = ({ activeTab, setActiveTab }) => {
       const { t, currentUser } = useAuthRole();
       const role = currentUser?.role || 'EMPLOYEE';
@@ -886,32 +890,55 @@
         }
       };
 
-      return (
-        <aside className="w-full lg:w-64 bg-slate-900/60 border-r border-slate-800 p-4 flex flex-col justify-between shrink-0 space-y-6">
-          <div className="space-y-4">
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">{t('navTitle')}</p>
-            <nav className="space-y-1.5">
-              {getNavigationItems().map(item => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center justify-start text-left rtl:text-right gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
-                    activeTab === item.id ? 'bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                  }`}
-                >
-                  <span className="text-sm shrink-0">{item.icon}</span>
-                  <span className="truncate">{item.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
+      const navItems = getNavigationItems();
 
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-1">
-            <span className="font-bold text-slate-200 block font-outfit uppercase">{role} CLEARANCE</span>
-            <p className="text-[11px] text-slate-400 truncate">{currentUser?.email}</p>
+      return (
+        <>
+          {/* DESKTOP SIDEBAR */}
+          <aside className="hidden lg:flex w-64 bg-slate-900/60 border-r border-slate-800 p-4 flex-col justify-between shrink-0 space-y-6">
+            <div className="space-y-4">
+              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">{t('navTitle')}</p>
+              <nav className="space-y-1.5">
+                {navItems.map(item => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setActiveTab(item.id)}
+                    className={`w-full flex items-center justify-start text-left rtl:text-right gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                      activeTab === item.id ? 'bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <span className="text-sm shrink-0">{item.icon}</span>
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-1">
+              <span className="font-bold text-slate-200 block font-outfit uppercase">{role} CLEARANCE</span>
+              <p className="text-[11px] text-slate-400 truncate">{currentUser?.email}</p>
+            </div>
+          </aside>
+
+          {/* MOBILE SMARTPHONE BOTTOM APP DOCK */}
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-2xl border-t border-slate-800/80 px-2 py-2 flex items-center justify-around shadow-2xl">
+            {navItems.map(item => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={`flex flex-col items-center justify-center p-1.5 rounded-xl text-center transition-all min-w-[50px] ${
+                  activeTab === item.id ? 'text-indigo-400 font-bold scale-105' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <span className="text-lg">{item.icon}</span>
+                <span className="text-[9px] mt-0.5 truncate max-w-[64px] font-semibold">{item.label}</span>
+                {activeTab === item.id && <span className="w-1 h-1 rounded-full bg-indigo-500 mt-0.5"></span>}
+              </button>
+            ))}
           </div>
-        </aside>
+        </>
       );
     };
 
@@ -2512,7 +2539,7 @@
           <Header />
           <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-            <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+            <main className="flex-1 p-3.5 sm:p-6 pb-24 lg:pb-6 overflow-y-auto max-w-7xl mx-auto w-full">
               {!isTabAllowed() ? (
                 <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-3">
                   <h3 className="font-bold text-slate-100 text-base font-outfit">{t('dashboard')}</h3>
