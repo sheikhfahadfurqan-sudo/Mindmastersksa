@@ -51,7 +51,23 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    body { background-color: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif; user-select: none; }
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+    }
+    body {
+      background-color: #030712;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    header {
+      padding-top: max(1.75rem, calc(var(--sat) + 0.75rem)) !important;
+    }
+    .mobile-dock {
+      padding-bottom: max(0.75rem, calc(var(--sab) + 0.5rem)) !important;
+    }
     .font-outfit { font-family: 'Outfit', sans-serif; }
     .glass-card { background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
     ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -95,11 +111,11 @@
         employee: 'Employee (Level 3)',
         navTitle: 'Navigation',
         execOverview: 'Executive Overview',
-        userRoles: '👑 User Roles & Access',
+        userRoles: 'User Roles & Access',
         accountsApprovals: 'Accounts & Approvals',
         accountsExpenses: 'Accounts & Expenses',
         dashboard: 'Workspace Overview',
-        user_management: '👑 User Roles & Access',
+        user_management: 'User Roles & Access',
         expenses: 'Accounts & Expenses',
         crm: 'CRM & Clients',
         projects: 'Projects & Tasks',
@@ -149,7 +165,7 @@
 
         // CRM Keys
         crmTitle: '💼 Enterprise CRM & Contract Pipeline',
-        crmSub: 'Government & Enterprise Mega Contracts (Saudi Aramco, NEOM, Diriyah Gate)',
+        crmSub: 'Enterprise Contract & Strategic Client Pipeline',
         createDealBtn: '+ Create New Deal / Contract',
         totalContractPipeline: 'Total Contract Pipeline',
         winRate: 'Win Rate',
@@ -290,11 +306,11 @@
         employee: 'موظف (المستوى 3)',
         navTitle: 'القائمة الرئيسية',
         execOverview: 'نظرة عامة للإدارة التنفيذية',
-        userRoles: '👑 صلاحيات المستخدمين والتحكم',
+        userRoles: 'صلاحيات المستخدمين والتحكم',
         accountsApprovals: 'الحسابات والموافقات',
         accountsExpenses: 'الحسابات والمصروفات',
         dashboard: 'اللوحة الرئيسية',
-        user_management: '👑 صلاحيات المستخدمين والتحكم',
+        user_management: 'صلاحيات المستخدمين والتحكم',
         expenses: 'الحسابات والمصروفات',
         crm: 'إدارة العملاء والعقود',
         projects: 'المشاريع والمهام',
@@ -1019,34 +1035,6 @@
               </div>
             </div>
           )}
-
-          {/* MOBILE BOTTOM SMART DOCK (3 Clean 1-Word Touch Targets + More Toggle) */}
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-2xl border-t border-slate-800 px-3 py-2 flex items-center justify-between shadow-2xl">
-            {bottomBarItems.map(item => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => handleTabClick(item.id)}
-                className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition-all flex-1 text-center ${
-                  activeTab === item.id ? 'text-indigo-400 font-bold scale-105' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <span className="text-xl">{item.icon}</span>
-                <span className="text-[10px] mt-0.5 font-semibold truncate max-w-[70px]">{item.label}</span>
-              </button>
-            ))}
-            
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition-all flex-1 text-center ${
-                mobileMenuOpen ? 'text-indigo-400 font-bold scale-105' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <span className="text-xl">☰</span>
-              <span className="text-[10px] mt-0.5 font-semibold">More</span>
-            </button>
-          </div>
         </>
       );
     };
@@ -1255,9 +1243,9 @@
 
       return (
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-bold text-slate-100 font-outfit">{t('user_management')}</h2>
+              <h2 className="text-xl font-bold text-slate-100 font-outfit">👑 {t('user_management')}</h2>
               <p className="text-xs text-slate-400">{t('userMgmtSub')}</p>
             </div>
             <button
@@ -1276,34 +1264,92 @@
             </div>
           )}
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center text-xs">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl space-y-3 p-4">
+            <div className="flex justify-between items-center text-xs pb-3 border-b border-slate-800">
               <span className="font-bold text-slate-200">{t('registeredDir')} ({users.length} {t('activeAccounts')})</span>
-              <span className="text-slate-500 font-mono">Domain: @mindmastersksa.com</span>
+              <span className="text-slate-500 font-mono text-[10px]">Domain: @mindmastersksa.com</span>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* MOBILE CARD LIST VIEW (FOR SMARTPHONES - ZERO SQUISHING / ZERO HORIZONTAL OVERFLOW) */}
+            <div className="block lg:hidden space-y-3">
+              {users.map(u => (
+                <div key={u.id} className="p-4 bg-slate-950 rounded-xl border border-slate-800/80 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-0.5">
+                      <h4 className="font-bold text-slate-100 text-sm font-outfit">{u.name}</h4>
+                      <p className="text-xs text-indigo-400 font-mono">{u.email}</p>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border whitespace-nowrap shrink-0 ${
+                      u.role === 'EXECUTIVE' ? 'bg-amber-950 text-amber-300 border-amber-800' :
+                      u.role === 'ACCOUNTS' ? 'bg-indigo-950 text-indigo-300 border-indigo-800' :
+                      u.role === 'PROJECT_MANAGER' ? 'bg-violet-950 text-violet-300 border-violet-800' :
+                      'bg-slate-950 text-slate-300 border-slate-800'
+                    }`}>
+                      {u.role === 'EXECUTIVE' ? t('exec') : u.role === 'ACCOUNTS' ? t('accounts') : u.role === 'PROJECT_MANAGER' ? t('pm') : t('employee')}
+                    </span>
+                  </div>
+
+                  <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/60 flex justify-between items-center">
+                    <span>{t(u.title) || u.title}</span>
+                    <span className="text-slate-500">{t(u.department) || u.department}</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/60">
+                    <select
+                      value={selectedRoles[u.email] || u.role}
+                      onChange={(e) => handleRoleSelect(u.email, e.target.value)}
+                      className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 outline-none text-xs font-semibold flex-1 min-w-[130px]"
+                    >
+                      <option value="EMPLOYEE">{t('employee')}</option>
+                      <option value="ACCOUNTS">{t('accounts')}</option>
+                      <option value="PROJECT_MANAGER">{t('pm')}</option>
+                      <option value="EXECUTIVE">{t('exec')}</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={() => saveRoleUpdate(u.email)}
+                      className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow active:scale-95 shrink-0"
+                    >
+                      {t('updateRoleBtn')}
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => revokeAccess(u.email)}
+                      className="px-3 py-2 bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-300 font-bold rounded-xl text-xs transition active:scale-95 shrink-0"
+                      title="Revoke User Access"
+                    >
+                      {t('revokeBtn')}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* DESKTOP TABLE VIEW (HIDDEN ON MOBILE SMARTPHONES) */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-left rtl:text-right text-xs">
                 <thead className="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider text-[10px]">
                   <tr>
-                    <th className="p-3.5">{t('userNameCol')}</th>
-                    <th className="p-3.5">{t('emailCol')}</th>
-                    <th className="p-3.5">{t('titleDeptCol')}</th>
-                    <th className="p-3.5">{t('activeRoleCol')}</th>
-                    <th className="p-3.5 text-right rtl:text-left">{t('actionsCol')}</th>
+                    <th className="p-3.5 whitespace-nowrap">{t('userNameCol')}</th>
+                    <th className="p-3.5 whitespace-nowrap">{t('emailCol')}</th>
+                    <th className="p-3.5 whitespace-nowrap">{t('titleDeptCol')}</th>
+                    <th className="p-3.5 whitespace-nowrap">{t('activeRoleCol')}</th>
+                    <th className="p-3.5 text-right rtl:text-left whitespace-nowrap">{t('actionsCol')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800 text-slate-300">
                   {users.map(u => (
                     <tr key={u.id} className="hover:bg-slate-800/40 transition">
-                      <td className="p-3.5 font-bold text-slate-100">{u.name}</td>
-                      <td className="p-3.5 font-mono text-slate-400">{u.email}</td>
-                      <td className="p-3.5">
+                      <td className="p-3.5 font-bold text-slate-100 whitespace-nowrap">{u.name}</td>
+                      <td className="p-3.5 font-mono text-slate-400 whitespace-nowrap">{u.email}</td>
+                      <td className="p-3.5 whitespace-nowrap">
                         <span className="block text-slate-200">{t(u.title) || u.title}</span>
                         <span className="block text-[10px] text-slate-500">{t(u.department) || u.department}</span>
                       </td>
-                      <td className="p-3.5">
-                        <span className={`px-2.5 py-1 rounded text-[10px] font-extrabold border ${
+                      <td className="p-3.5 whitespace-nowrap">
+                        <span className={`px-2.5 py-1 rounded text-[10px] font-extrabold border inline-block ${
                           u.role === 'EXECUTIVE' ? 'bg-amber-950 text-amber-300 border-amber-800' :
                           u.role === 'ACCOUNTS' ? 'bg-indigo-950 text-indigo-300 border-indigo-800' :
                           u.role === 'PROJECT_MANAGER' ? 'bg-violet-950 text-violet-300 border-violet-800' :
@@ -1312,7 +1358,7 @@
                           {u.role === 'EXECUTIVE' ? t('exec') : u.role === 'ACCOUNTS' ? t('accounts') : u.role === 'PROJECT_MANAGER' ? t('pm') : t('employee')}
                         </span>
                       </td>
-                      <td className="p-3.5 text-right rtl:text-left">
+                      <td className="p-3.5 text-right rtl:text-left whitespace-nowrap">
                         <div className="flex items-center justify-end rtl:justify-start gap-2">
                           <select
                             value={selectedRoles[u.email] || u.role}
@@ -1326,7 +1372,7 @@
                           </select>
                           <button
                             type="button"
-                            onClick={() => saveRoleUpdate(userEmail)}
+                            onClick={() => saveRoleUpdate(u.email)}
                             className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-[10px] transition shadow active:scale-95"
                           >
                             {t('updateRoleBtn')}
@@ -2121,7 +2167,7 @@
           {role === 'ACCOUNTS' && (
             <div className="space-y-6">
               <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-800 pb-3">
                   <h3 className="font-bold text-amber-300 text-sm font-outfit">{t('accountsQueueTitle')} ({pendingAccountsQueue.length} {t('pendingReview')})</h3>
                   <span className="text-[10px] text-slate-400">{t('step1Audit')}</span>
                 </div>
@@ -2171,7 +2217,7 @@
           {role === 'EXECUTIVE' && (
             <div className="space-y-6">
               <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-800 pb-3">
                   <h3 className="font-bold text-indigo-300 text-sm font-outfit">{t('execQueueTitle')} ({pendingExecQueue.length} {t('pendingReview')})</h3>
                   <span className="text-[10px] text-slate-400">{t('step2Disburse')}</span>
                 </div>
@@ -2290,59 +2336,59 @@
 
       return (
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-xl font-bold text-slate-100 font-outfit">{t('hr')}</h2>
               <p className="text-xs text-slate-400">{t('hrSub')}</p>
             </div>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setShowLeaveModal(true)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <button type="button" onClick={() => setShowLeaveModal(true)} className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow w-full sm:w-auto text-center">
                 {t('requestLeaveBtn')}
               </button>
-              <button type="button" onClick={() => setShowPayslip(true)} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow">
+              <button type="button" onClick={() => setShowPayslip(true)} className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow w-full sm:w-auto text-center">
                 {t('viewPayslipBtn')}
               </button>
             </div>
           </div>
 
           {/* Salary Breakdown Card */}
-          <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+          <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
             <h3 className="font-bold text-slate-200 text-sm font-outfit">{currentUser?.name} • {t(currentUser?.title) || currentUser?.title}</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
                 <span className="text-slate-400 block mb-1">{t('basicSalary')}</span>
-                <span className="font-bold text-slate-100 font-outfit">SAR {formatSAR(basic)}</span>
+                <span className="font-bold text-slate-100 font-outfit text-sm">SAR {formatSAR(basic)}</span>
               </div>
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
                 <span className="text-slate-400 block mb-1">{t('housing')}</span>
-                <span className="font-bold text-indigo-300 font-outfit">SAR {formatSAR(housing)}</span>
+                <span className="font-bold text-indigo-300 font-outfit text-sm">SAR {formatSAR(housing)}</span>
               </div>
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
                 <span className="text-slate-400 block mb-1">{t('transport')}</span>
-                <span className="font-bold text-indigo-300 font-outfit">SAR {formatSAR(transport)}</span>
+                <span className="font-bold text-indigo-300 font-outfit text-sm">SAR {formatSAR(transport)}</span>
               </div>
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
                 <span className="text-slate-400 block mb-1">{t('gosi')}</span>
-                <span className="font-bold text-amber-300 font-outfit">SAR {formatSAR(gosi)}</span>
+                <span className="font-bold text-amber-300 font-outfit text-sm">SAR {formatSAR(gosi)}</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-indigo-950/60 border border-indigo-800/80 flex items-center justify-between">
+            <div className="p-4 rounded-xl bg-indigo-950/60 border border-indigo-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <span className="font-bold text-xs text-indigo-200">{t('netSalary')}</span>
-              <span className="text-xl font-extrabold text-emerald-400 font-outfit">
+              <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-outfit">
                 {basic > 0 ? `SAR ${formatSAR(net)} / mo` : t('unsetInProfile')}
               </span>
             </div>
           </div>
 
           {/* My Vacation & Leave Requests Card */}
-          <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 text-xs">
+          <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 text-xs">
             <h3 className="font-bold text-slate-200 text-sm font-outfit">{t('myLeaves')}</h3>
             {myLeaves.length === 0 ? (
               <p className="text-slate-400">{t('noLeavesInDb')}</p>
             ) : (
               myLeaves.map(l => (
-                <div key={l.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                <div key={l.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div>
                     <span className="font-bold text-slate-200 block">{l.leaveType} Leave ({l.startDate} to {l.endDate})</span>
                     <span className="text-slate-400 italic">"{l.reason}"</span>
@@ -2649,7 +2695,7 @@
           <Header mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
           <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
-            <main className="flex-1 p-3.5 sm:p-6 pb-24 lg:pb-6 overflow-y-auto max-w-7xl mx-auto w-full">
+            <main className="flex-1 p-3.5 sm:p-6 pb-6 overflow-y-auto max-w-7xl mx-auto w-full">
               {!isTabAllowed() ? (
                 <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-3">
                   <h3 className="font-bold text-slate-100 text-base font-outfit">{t('dashboard')}</h3>
