@@ -1,17 +1,20 @@
 {
+  "id": "/",
+  "name": "Mind Masters",
   "short_name": "Mind Masters",
-  "name": "Mind Masters KSA - Enterprise Operations & CRM Workspace",
-  "icons": [
-    {
-      "src": "/logo.jpg",
-      "type": "image/jpeg",
-      "sizes": "192x192 512x512"
-    }
-  ],
+  "description": "Mind Masters KSA — expenses, approvals and projects / المصروفات والموافقات والمشاريع",
   "start_url": "/",
-  "background_color": "#030712",
-  "theme_color": "#030712",
+  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "description": "Mind Masters KSA Enterprise Operations, CRM & Payroll Workspace"
+  "orientation": "portrait",
+  "background_color": "#0b0b0b",
+  "theme_color": "#0e0e0e",
+  "dir": "auto",
+  "lang": "en",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }
