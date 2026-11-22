@@ -8,11 +8,11 @@
 --   Safe to re-run later only BEFORE real data exists.
 --
 -- Approval routing (enforced inside the database, not just the app):
---   • Project expense  → Project Manager of that project → Executive (Naem)
---   • General expense  → General approver (Suhail for now) → Executive (Naem)
+--   • Project expense  → Project Manager of that project → Executive (Naim)
+--   • General expense  → General approver (Suhail for now) → Executive (Naim)
 --   • If the submitter IS the first approver (or the project has no manager),
 --     the claim goes straight to the Executive.
---   • Executives (naem@ / info@) may approve or reject at any stage.
+--   • Executives (naim@ / info@) may approve or reject at any stage.
 -- =============================================================================
 
 create extension if not exists pgcrypto;
@@ -144,7 +144,7 @@ begin
   insert into profiles (id, email, full_name, role)
   values (new.id, v_email,
           coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', split_part(v_email, '@', 1)),
-          case when v_email in ('naem@mindmastersksa.com','info@mindmastersksa.com') then 'EXECUTIVE' else 'EMPLOYEE' end)
+          case when v_email in ('naim@mindmastersksa.com','info@mindmastersksa.com') then 'EXECUTIVE' else 'EMPLOYEE' end)
   on conflict (id) do nothing;
   return new;
 end $$;
@@ -156,7 +156,7 @@ create trigger on_auth_user_created after insert on auth.users
 insert into public.profiles (id, email, full_name, role)
 select u.id, lower(u.email),
        coalesce(u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name', split_part(lower(u.email), '@', 1)),
-       case when lower(u.email) in ('naem@mindmastersksa.com','info@mindmastersksa.com') then 'EXECUTIVE' else 'EMPLOYEE' end
+       case when lower(u.email) in ('naim@mindmastersksa.com','info@mindmastersksa.com') then 'EXECUTIVE' else 'EMPLOYEE' end
 from auth.users u
 where lower(u.email) like '%@mindmastersksa.com'
 on conflict (id) do nothing;
@@ -165,7 +165,7 @@ on conflict (id) do nothing;
 create or replace function public.protect_executives() returns trigger
 language plpgsql as $$
 begin
-  if lower(new.email) in ('naem@mindmastersksa.com','info@mindmastersksa.com') then
+  if lower(new.email) in ('naim@mindmastersksa.com','info@mindmastersksa.com') then
     new.role := 'EXECUTIVE';
     new.active := true;
   end if;
@@ -364,4 +364,4 @@ create policy receipts_read on storage.objects for select to authenticated
 create policy receipts_delete on storage.objects for delete to authenticated
   using (bucket_id = 'receipts' and (storage.foldername(name))[1] = auth.uid()::text);
 
--- Done. Next: Naem and info@ just sign in with Microsoft — they become Executives automatically.
+-- Done. Next: Naim and info@ just sign in with Microsoft — they become Executives automatically.
