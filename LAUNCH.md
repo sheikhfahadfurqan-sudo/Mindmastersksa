@@ -33,7 +33,7 @@ Test script:
 1. **When testing is done: Billing → upgrade the organization to Pro ($25/month).** Free projects pause after a week without use, and Pro adds daily backups.
 2. **SQL Editor → New query →** paste all of `db/launch.sql` → **Run**.
    *Already ran it before 22 Nov 15:30 with the old naem@ address?* Also run `db/fix-naim-email.sql` the same way (no data is lost).
-   ⚠ This deletes the old test tables and dummy data. Run it once, before real use.
+   ⚠ First-time setup only: it clears the old test tables. Once any expense or project exists it refuses to run, so it can never wipe real data.
 3. **Authentication → URL Configuration**
    - Site URL: `https://mindmastersksa.onrender.com`
    - Redirect URLs: add `https://mindmastersksa.onrender.com/**`

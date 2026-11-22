@@ -1,11 +1,11 @@
 -- =============================================================================
 -- MIND MASTERS KSA — LAUNCH DATABASE SCRIPT
--- Run ONCE in Supabase → SQL Editor → New query → paste all → Run.
+-- FIRST-TIME SETUP ONLY. Run ONCE in Supabase → SQL Editor → New query → paste all → Run.
 --
 -- ⚠ This DELETES the old test tables (profiles, expenses, payroll, projects,
 --   tasks, clients, documents, leave_requests, notifications) and all their
 --   dummy data, then creates the clean production structure.
---   Safe to re-run later only BEFORE real data exists.
+--   It refuses to run if any expenses or projects exist (safety lock below).
 --
 -- Approval routing (enforced inside the database, not just the app):
 --   • Project expense  → Project Manager of that project → Executive (Naim)
@@ -16,6 +16,24 @@
 -- =============================================================================
 
 create extension if not exists pgcrypto;
+
+-- ---------------------------------------------------------------------------
+-- SAFETY LOCK: refuse to run once the app holds real expenses or projects.
+-- This script is for the first setup only — it must never wipe live data.
+-- ---------------------------------------------------------------------------
+do $$
+declare v_has boolean := false; v_more boolean;
+begin
+  if to_regclass('public.expenses') is not null then
+    execute 'select exists (select 1 from public.expenses)' into v_more; v_has := v_has or v_more;
+  end if;
+  if to_regclass('public.projects') is not null then
+    execute 'select exists (select 1 from public.projects)' into v_more; v_has := v_has or v_more;
+  end if;
+  if v_has then
+    raise exception 'STOPPED — the app already has real expenses or projects. This first-time setup script would delete them, so nothing was changed.';
+  end if;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- 0. Remove old test structure + dummy data
