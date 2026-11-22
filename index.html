@@ -732,7 +732,7 @@ async function signIn() {
   const b = $('#btn-signin'); b.disabled = true;
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'azure',
-    options: { scopes: 'openid email profile', redirectTo: location.origin + '/' }
+    options: { scopes: 'openid email profile', redirectTo: location.origin + '/', queryParams: { prompt: 'select_account' } }
   });
   if (error) { b.disabled = false; showLogin(friendlyAuthError(error.message)); }
 }
