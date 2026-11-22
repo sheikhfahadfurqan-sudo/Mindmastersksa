@@ -1,7 +1,7 @@
 // Mind Masters — service worker (makes the app installable and opens fast)
 // Pages are always fetched fresh from the network; the saved copy is only used when offline.
-const CACHE = 'mm-shell-v3';
-const SHELL = ['/', '/manifest.json', '/logo.jpg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
+const CACHE = 'mm-shell-v4';
+const SHELL = ['/', '/manifest.json', '/logo.png', '/logo-full-white.png', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).catch(() => {}).then(() => self.skipWaiting()));

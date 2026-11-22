@@ -44,6 +44,8 @@ h2,h3,h4{margin:0}
 #login,#disabled{background:#0b0b0b;color:#eee}
 .login-card{width:100%;max-width:380px;text-align:center}
 .login-logo{width:92px;height:92px;border-radius:26px;margin-bottom:18px;box-shadow:0 0 0 1px #222}
+.login-full{display:block;width:250px;max-width:75%;height:auto;margin:0 auto}
+.login-sub{margin-top:18px!important;letter-spacing:.04em}
 .login-card h1{font-size:26px;margin:0;letter-spacing:.02em}
 .login-card p{margin:6px 0 0}
 .login-card .muted{color:#9a9a9a}
@@ -289,9 +291,8 @@ html[dir=rtl] .m-head{padding:14px 18px 14px 14px}
 
 <div id="login" class="screen center hidden">
   <div class="login-card">
-    <img src="/logo.jpg" class="login-logo" alt="Mind Masters">
-    <h1 data-t="appName">Mind Masters</h1>
-    <p class="muted" data-t="tagline"></p>
+    <img src="/logo-full-white.png" class="login-full" alt="Mind Masters — Beyond Construction">
+    <p class="muted login-sub" data-t="tagline"></p>
     <button id="btn-signin" class="btn btn-lg w100" onclick="signIn()">
       <svg width="18" height="18" viewBox="0 0 23 23" aria-hidden="true"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
       <span data-t="signInMs">Sign in with Microsoft</span>
@@ -307,7 +308,7 @@ html[dir=rtl] .m-head{padding:14px 18px 14px 14px}
 
 <div id="disabled" class="screen center hidden">
   <div class="login-card">
-    <img src="/logo.jpg" class="login-logo" alt="">
+    <img src="/logo.png" class="login-logo" alt="">
     <h1 style="font-size:22px" data-t="disabledTitle"></h1>
     <p class="muted" data-t="disabledBody"></p>
     <div class="login-foot"><button class="btn btn-ghost" onclick="signOut()" data-t="signOut"></button></div>
@@ -317,7 +318,7 @@ html[dir=rtl] .m-head{padding:14px 18px 14px 14px}
 <div id="app" class="hidden">
   <div class="shell">
     <aside class="side">
-      <div class="brand"><img src="/logo.jpg" alt=""><div><b data-t="appName"></b><small data-t="tagline"></small></div></div>
+      <div class="brand"><img src="/logo.png" alt=""><div><b data-t="appName"></b><small data-t="tagline"></small></div></div>
       <nav id="side-nav"></nav>
       <div class="side-foot" id="side-foot"></div>
     </aside>
@@ -845,7 +846,7 @@ function render() {
 function renderTopbar() {
   const cur = navItems().find(i => i.id === S.view);
   $('#topbar').innerHTML = `
-    <div class="tb-brand"><img src="/logo.jpg" alt=""><span>${esc(cur ? cur.label : '')}</span></div>
+    <div class="tb-brand"><img src="/logo.png" alt=""><span>${esc(cur ? cur.label : '')}</span></div>
     <div class="tb-actions">
       ${isExec() ? `<div class="seg seg-sm hide-sm"><button class="${S.execMode ? 'on' : ''}" onclick="setExecMode(true)">${esc(t('execView'))}</button><button class="${!S.execMode ? 'on' : ''}" onclick="setExecMode(false)">${esc(t('empView'))}</button></div>` : ''}
       <button class="btn btn-primary btn-sm hide-sm" onclick="mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button>
