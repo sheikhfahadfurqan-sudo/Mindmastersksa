@@ -363,6 +363,32 @@ html[lang=ar] .fsec{text-transform:none;letter-spacing:0}
 .muted .ic,.small .ic{width:14px;height:14px;vertical-align:-2px}
 .doc h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 label.btn{cursor:pointer}
+/* phone layout fixes (2026-11-23) */
+.grid2>*{min-width:0}
+.ph>*{min-width:0;max-width:100%}
+.per-head>div{min-width:0}
+.per-head h2,.per-head .muted{overflow-wrap:anywhere}
+.cur{font-size:.75em;font-weight:600;opacity:.7}
+.stat b,.mini b{white-space:normal;text-overflow:clip;line-height:1.25}
+.menu{max-width:calc(100vw - 28px)}
+html[dir=rtl] .row-title,html[dir=rtl] .row-sub{unicode-bidi:plaintext;text-align:right}
+@media(max-width:600px){
+ .tbl-wrap{margin:0;padding:0;overflow:visible}
+ .tbl{min-width:0;display:block}
+ .tbl thead{display:none}
+ .tbl tbody{display:block}
+ .tbl tr{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;padding:14px 0;border-bottom:1px solid var(--line)}
+ .tbl tbody tr:first-child{padding-top:4px}
+ .tbl tr:last-child{border-bottom:0;padding-bottom:0}
+ .tbl td{display:block;padding:0;border:0;min-width:0}
+ .tbl td.pn{grid-column:1/-1}
+ .tbl td[data-l]::before{content:attr(data-l);display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:2px}
+ .tbl .r{text-align:start}
+ .tbl tbody tr:hover td{background:none}
+ .flow>div>b{min-width:0;flex-basis:100%}
+ .stat b{font-size:16px}
+ .mini b{font-size:14px}
+}
 </style>
 </head>
 <body>
@@ -761,7 +787,7 @@ ar: {
   hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611231700';
+const APP_VERSION = '202611232030';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -821,7 +847,7 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="current
 
 function numFmt() { return new Intl.NumberFormat(S.lang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function moneyTxt(n) { return numFmt().format(+n || 0) + ' ' + t('sar'); }
-function money(n) { return '<bdi class="num">' + esc(moneyTxt(n)) + '</bdi>'; }
+function money(n) { return '<bdi class="num">' + esc(numFmt().format(+n || 0)) + ' <span class="cur">' + esc(t('sar')) + '</span></bdi>'; }
 function locale() { return S.lang === 'ar' ? 'ar-SA-u-nu-latn-ca-gregory' : 'en-GB'; }
 function toDate(d) { return typeof d === 'string' && d.length === 10 ? new Date(d + 'T00:00:00') : new Date(d); }
 function fdate(d) { if (!d) return ''; return new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'short', year: 'numeric' }).format(toDate(d)); }
@@ -1219,7 +1245,7 @@ function render() {
   $('#view').innerHTML = views[S.view]();
   if (S.view === 'project') setTimeout(fillThumbs, 0);
   if (S.view === 'person') setTimeout(fillDocThumbs, 0);
-  $('#fab').classList.toggle('hidden', S.view === 'team');
+  $('#fab').classList.toggle('hidden', !['expenses', 'projects'].includes(S.view));
 }
 function renderTopbar() {
   const cur = navItems().find(i => i.id === (S.view === 'project' ? 'projects' : S.view === 'person' ? (execView() ? 'team' : 'people') : S.view));
@@ -1348,13 +1374,13 @@ function vDashboard() {
       <th class="r">${esc(t('stat_pending'))}</th><th class="r">${esc(t('kpi_remaining'))}</th><th>${esc(t('col_used'))}</th><th>${esc(t('col_progress'))}</th></tr></thead><tbody>
       ${rows.map(r => { const over = r.budget && r.appr > r.budget; return `<tr onclick="mProjectDetail('${r.p.id}')">
         <td class="pn"><b>${esc((r.p.code ? r.p.code + ' · ' : '') + pname(r.p))}</b><small>${esc(r.p.manager_id ? uname(r.p.manager_id) : t('noManagerShort'))}${r.p.end_date ? ' · ' + esc(fdate(r.p.end_date)) : ''}</small></td>
-        <td>${pchip(r.p.status)}</td>
-        <td class="r">${r.budget ? money(r.budget) : `<span class="muted">${esc(t('notSet'))}</span>`}</td>
-        <td class="r">${money(r.appr)}</td>
-        <td class="r">${r.pend ? money(r.pend) : '<span class="muted">—</span>'}</td>
-        <td class="r ${over ? 'neg' : ''}">${r.budget ? money(r.left) : '—'}</td>
-        <td style="white-space:nowrap">${r.budget ? `<span class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, r.pct).toFixed(1)}%"></i></span><span class="small ${over ? 'neg' : 'muted'}">${Math.round(r.pct)}%</span>` : ''}</td>
-        <td style="white-space:nowrap">${(tp => tp.n ? `<span class="bar"><i style="width:${tp.pct}%;background:var(--ok)"></i></span><span class="small muted">${tp.pct}%</span>` : '<span class="muted">—</span>')(taskProgress(r.p.id))}</td>
+        <td data-l="${esc(t('status'))}">${pchip(r.p.status)}</td>
+        <td class="r" data-l="${esc(t('col_budget'))}">${r.budget ? money(r.budget) : `<span class="muted">${esc(t('notSet'))}</span>`}</td>
+        <td class="r" data-l="${esc(t('kpi_spent'))}">${money(r.appr)}</td>
+        <td class="r" data-l="${esc(t('stat_pending'))}">${r.pend ? money(r.pend) : '<span class="muted">—</span>'}</td>
+        <td class="r ${over ? 'neg' : ''}" data-l="${esc(t('kpi_remaining'))}">${r.budget ? money(r.left) : '—'}</td>
+        <td style="white-space:nowrap" data-l="${esc(t('col_used'))}">${r.budget ? `<span class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, r.pct).toFixed(1)}%"></i></span><span class="small ${over ? 'neg' : 'muted'}">${Math.round(r.pct)}%</span>` : ''}</td>
+        <td style="white-space:nowrap" data-l="${esc(t('col_progress'))}">${(tp => tp.n ? `<span class="bar"><i style="width:${tp.pct}%;background:var(--ok)"></i></span><span class="small muted">${tp.pct}%</span>` : '<span class="muted">—</span>')(taskProgress(r.p.id))}</td>
       </tr>`; }).join('')}</tbody></table></div>` : empty(t('projectsEmptyExec'));
 
   const projItems = S.projects.map(p => ({ label: (p.code ? p.code + ' · ' : '') + pname(p), value: sum(appr.filter(e => e.project_id === p.id)),
