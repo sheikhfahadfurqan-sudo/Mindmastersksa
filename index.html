@@ -1135,7 +1135,7 @@ async function loadAll() {
   S.profiles = profiles; S.projects = projects; S.expenses = expenses;
   S.settings = Object.fromEntries(settings.map(x => [x.key, x.value]));
   S.invites = [];
-  if (S.me.role === 'EXECUTIVE') {
+  if (S.me.role === 'EXECUTIVE' || amHR()) {
     try {
       const { data, error } = await sb.from('invited_users').select('email,full_name,created_at').order('created_at', { ascending: false });
       if (!error) S.invites = data || [];
@@ -1535,6 +1535,7 @@ function teamRows() {
 function vPeople() {
   const exp = expiringDocs(livePeople().map(u => u.id), true);
   return `${exp.length ? expiringCard(exp, true) : ''}
+    ${amHR() && !execView() ? invitesCard() : ''}
     <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${livePeople().length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
@@ -1598,7 +1599,7 @@ function invitesCard() {
       <button class="btn btn-primary" style="margin-top:12px" onclick="addInvite(this)">${ic('plus')}${esc(t('addPerson'))}</button>
       ${waiting.length ? `<div style="margin-top:14px">${waiting.map(i => `<div class="invite-row"><span class="avatar">${esc((i.full_name || '?').trim().charAt(0).toUpperCase())}</span>
         <div class="who"><b>${esc(i.full_name)}</b><small><bdi>${esc(i.email)}</bdi> · ${esc(t('invitedWaiting'))}</small></div>
-        <button class="btn btn-ghost btn-sm danger" onclick="removeInvite('${esc(i.email)}', this)">${esc(t('removeInvite'))}</button></div>`).join('')}</div>` : ''}
+        ${execView() ? `<button class="btn btn-ghost btn-sm danger" onclick="removeInvite('${esc(i.email)}', this)">${esc(t('removeInvite'))}</button>` : ''}</div>`).join('')}</div>` : ''}
     </div>`;
 }
 async function addInvite(btn) {

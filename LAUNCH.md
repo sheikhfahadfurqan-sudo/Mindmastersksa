@@ -62,6 +62,13 @@ People without an @mindmastersksa.com account sign in with a **6-digit code sent
 - After their first sign-in they appear under **People** with a *Personal email* badge. To stop their access later, click their name and untick **Can sign in and submit expenses**.
 - Test it first with your own Gmail address.
 
+## ★ Removing a person (added 23 Nov)
+Naim or info@ → **Team → click the person → Remove**. They lose access immediately and disappear from the Team list.
+- Someone with a **personal email** who never submitted anything: the account is deleted completely.
+- Anyone with expenses, site updates or project files, and every **@mindmastersksa.com** account: access is switched off and they're hidden, but their records stay. (A deleted company account could just sign in again with Microsoft.)
+- To bring someone back: **Team → Show removed people → click the person → Restore access**.
+- Database part: `db/update-2026-11-23h-remove-person.sql`. ✅ Already applied 23 Nov.
+
 ---
 
 ## 0. Test for free first
