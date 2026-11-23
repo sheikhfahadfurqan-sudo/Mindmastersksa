@@ -689,7 +689,7 @@ ar: {
   hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611231353';
+const APP_VERSION = '202611231405';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -1405,7 +1405,7 @@ function teamRows() {
 function vPeople() {
   const exp = expiringDocs(S.profiles.map(u => u.id), true);
   return `${exp.length ? expiringCard(exp, true) : ''}
-    <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${S.profiles.length}</span></h3></div>
+    <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${S.profiles.length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
     <div id="team-list" class="list">${teamRows()}</div>`;
@@ -1449,7 +1449,7 @@ function vTeam() {
       ${(m => m.length ? `<p class="muted small" style="margin:8px 0 0"><bdi>${esc(m.join(', '))}</bdi> — ${esc(t('notSignedYet'))}</p>` : '')(hrList().filter(e => !S.profiles.some(p => p.email.toLowerCase() === e)))}
       <button class="btn btn-primary" style="margin-top:12px" onclick="saveHr(this)">${esc(t('save'))}</button>
     </div>
-    <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${S.profiles.length}</span></h3></div>
+    <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${S.profiles.length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
     <div id="team-list" class="list">${teamRows()}</div>`;
@@ -2740,6 +2740,46 @@ function exportCsv(list, label) {
   a.download = `mind-masters-${label}-${todayISO()}.csv`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+function downloadCsv(H, rows, label) {
+  const cell = c => {
+    c = String(c == null ? '' : c);
+    if (/^\+[\d\s()-]+$/.test(c)) c = '\u200e' + c; // phone numbers: keep as text, no visible mark
+    else if (/^[=+\-@\t\r]/.test(c)) c = "'" + c;
+    return /[",\n\r]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c;
+  };
+  const csv = '\ufeff' + [H, ...rows].map(r => r.map(cell).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `mind-masters-${label}-${todayISO()}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function exportEmployeesCsv() {
+  if (!isPeopleAdmin()) return;
+  const H = ['Full name', 'Name (Arabic)', 'Email', 'Mobile', 'Role', 'Job title', 'Department', 'Active', 'Nationality', 'Joining date',
+    'Emergency contact', 'Emergency phone', 'Iqama / Visa no.', 'Iqama / Visa expiry', 'Passport no.', 'Passport expiry',
+    'Driving licence no.', 'Licence expiry', 'Insurance company', 'Insurance policy no.', 'Insurance class', 'Insurance expiry',
+    'Contract type', 'Contract start', 'Contract end', 'Basic salary (SAR)', 'Housing allowance (SAR)', 'Transport allowance (SAR)',
+    'Other allowances (SAR)', 'Total monthly (SAR)', 'Project manager of', 'Member of projects', 'Accounts team', 'HR'];
+  const n = x => x == null || x === '' ? '' : (+x).toFixed(2);
+  const acc = accountsList(), hrl = hrList();
+  const rows = S.profiles.slice().sort((a, b) => (a.full_name || a.email).localeCompare(b.full_name || b.email)).map(u => {
+    const d = S.docs[u.id] || {}, h = S.hr[u.id] || {};
+    const tot = ['basic_salary', 'housing_allowance', 'transport_allowance', 'other_allowance'].reduce((a, k) => a + (+h[k] || 0), 0);
+    const hasSal = ['basic_salary', 'housing_allowance', 'transport_allowance', 'other_allowance'].some(k => h[k] != null);
+    return [u.full_name || '', u.full_name_ar || '', u.email, u.phone || '', u.role === 'EXECUTIVE' ? 'Executive' : 'Employee', u.title || '', u.department || '',
+      u.active ? 'Yes' : 'No', u.nationality || '', u.join_date || '', u.emergency_contact || '', u.emergency_phone || '',
+      d.iqama_no || '', d.iqama_expiry || '', d.passport_no || '', d.passport_expiry || '', d.license_no || '', d.license_expiry || '',
+      d.insurer || '', d.insurance_policy_no || '', d.insurance_class || '', d.insurance_expiry || '',
+      h.contract_type || '', h.contract_start || '', h.contract_end || '', n(h.basic_salary), n(h.housing_allowance), n(h.transport_allowance),
+      n(h.other_allowance), hasSal ? tot.toFixed(2) : '',
+      S.projects.filter(p => p.manager_id === u.id).map(p => p.name).join('; '),
+      S.projects.filter(p => (p.members || []).some(m => m.user_id === u.id)).map(p => p.name).join('; '),
+      acc.includes(u.email.toLowerCase()) ? 'Yes' : '', hrl.includes(u.email.toLowerCase()) ? 'Yes' : ''];
+  });
+  downloadCsv(H, rows, 'employees');
 }
 
 // ─── INSTALL TO PHONE (PWA) ───────────────────────────────────────
