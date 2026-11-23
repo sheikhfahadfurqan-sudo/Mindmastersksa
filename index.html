@@ -451,6 +451,11 @@ en: {
   invitedWaiting:'Added — not signed in yet', removeInvite:'Remove', inviteRemoved:'Removed',
   removeInviteConfirm:'Remove {name}? They will not be able to sign in.', alreadyAdded:'This email is already added or already has an account.',
   nameEmailRequired:'Enter a name and a valid email.', needsEmailSql:'Run db/update-2026-11-23g-email-code.sql in Supabase first.', externalBadge:'Personal email',
+  removePerson:'Remove', removePersonTitle:'Remove {name}?', restorePerson:'Restore access',
+  removePersonBody:'{name} will lose access to the app straight away and disappear from the Team list. Their expenses and approvals stay in the records.',
+  removedDeleted:'{name} has been removed and their account deleted.', removedArchived:'{name} has been removed. Their past records are kept.',
+  restoredPerson:'{name} can sign in again.', removedChip:'Removed', showRemoved:'Show removed people ({n})', hideRemoved:'Back to current people',
+  e_removeSelf:'You cannot remove yourself.', e_removeExec:'Executive accounts cannot be removed.', needsRemoveSql:'Run db/update-2026-11-23h-remove-person.sql in Supabase first.',
   signInFailed:'Sign-in failed', profileMissing:'Your profile could not be loaded. Please sign out and sign in again.',
   disabledTitle:'Your access is paused', disabledBody:'Please contact management to restore access.',
   signOut:'Sign out', loading:'Loading…', refresh:'Refresh', refreshed:'Up to date',
@@ -609,6 +614,11 @@ ar: {
   invitedWaiting:'تمت الإضافة — لم يسجّل الدخول بعد', removeInvite:'إزالة', inviteRemoved:'تمت الإزالة',
   removeInviteConfirm:'هل تريد إزالة {name}؟ لن يتمكن من تسجيل الدخول.', alreadyAdded:'هذا البريد مضاف مسبقاً أو لديه حساب بالفعل.',
   nameEmailRequired:'أدخل الاسم وبريداً إلكترونياً صحيحاً.', needsEmailSql:'شغّل الملف db/update-2026-11-23g-email-code.sql في Supabase أولاً.', externalBadge:'بريد شخصي',
+  removePerson:'إزالة', removePersonTitle:'إزالة {name}؟', restorePerson:'استعادة الوصول',
+  removePersonBody:'سيفقد {name} الوصول إلى التطبيق فوراً ويختفي من قائمة الفريق. تبقى مصروفاته وموافقاته في السجلات.',
+  removedDeleted:'تمت إزالة {name} وحذف حسابه.', removedArchived:'تمت إزالة {name}. سجلاته السابقة محفوظة.',
+  restoredPerson:'يمكن لـ {name} تسجيل الدخول مرة أخرى.', removedChip:'تمت إزالته', showRemoved:'عرض الأشخاص الذين تمت إزالتهم ({n})', hideRemoved:'العودة إلى الموظفين الحاليين',
+  e_removeSelf:'لا يمكنك إزالة نفسك.', e_removeExec:'لا يمكن إزالة حسابات الإدارة التنفيذية.', needsRemoveSql:'شغّل الملف db/update-2026-11-23h-remove-person.sql في Supabase أولاً.',
   signInFailed:'تعذّر تسجيل الدخول', profileMissing:'تعذّر تحميل ملفك. يرجى تسجيل الخروج ثم الدخول مرة أخرى.',
   disabledTitle:'تم إيقاف وصولك مؤقتاً', disabledBody:'يرجى التواصل مع الإدارة لاستعادة الوصول.',
   signOut:'تسجيل الخروج', loading:'جارٍ التحميل…', refresh:'تحديث', refreshed:'تم التحديث',
@@ -834,6 +844,7 @@ const isPeopleAdmin = () => execView() || amHR();
 const amGenApprover = () => !!S.me && accountsList().includes(S.me.email.toLowerCase());
 const P = id => S.pmap[id];
 const U = id => S.umap[id];
+const livePeople = () => S.profiles.filter(u => !u.removed_at);
 function uname(id) { const u = U(id); if (!u) return '—'; return (S.lang === 'ar' && u.full_name_ar) || u.full_name || u.email; }
 function unameByEmail(email) { const u = S.profiles.find(p => p.email.toLowerCase() === String(email || '').toLowerCase()); return u ? uname(u.id) : email; }
 function pname(p) { if (!p) return '—'; return (S.lang === 'ar' && p.name_ar) || p.name; }
@@ -1109,7 +1120,7 @@ async function fetchAllRows(build) {
 }
 async function loadAll() {
   const [profiles, projects, expenses, settings, tasks, fin, invoices, docs, hr] = await Promise.all([
-    fetchAllRows(() => sb.from('profiles').select('id,email,full_name,full_name_ar,phone,role,title,department,active,created_at,photo_path,nationality,join_date,emergency_contact,emergency_phone').order('full_name')),
+    fetchAllRows(() => sb.from('profiles').select('id,email,full_name,full_name_ar,phone,role,title,department,active,created_at,photo_path,nationality,join_date,emergency_contact,emergency_phone,removed_at').order('full_name')),
     fetchAllRows(() => sb.from('projects').select('*,members:project_members(user_id)').order('created_at', { ascending: false })),
     fetchAllRows(() => sb.from('expenses').select('*').order('created_at', { ascending: false })),
     fetchAllRows(() => sb.from('app_settings').select('key,value')),
@@ -1285,7 +1296,7 @@ function vHome() {
     </div>
     ${(() => { const d = S.docs[S.me.id] || {}; const miss = [!S.me.photo_path && t('profilePhoto'), !d.iqama_no && t('doc_IQAMA'), !d.passport_no && t('doc_PASSPORT')].filter(Boolean);
       return `<button class="callout soft" onclick="openPerson('${S.me.id}','${miss.length && miss[0] !== t('profilePhoto') ? 'docs' : 'profile'}')"><span class="avatar sm">${avatarInner(S.me)}</span><span>${esc(miss.length ? t('completeProfile', { items: miss.join(S.lang === 'ar' ? '، ' : ', ') }) : t('myProfileDocs'))}</span><b>${esc(miss.length ? t('addNow') : t('open'))}</b></button>`; })()}
-    ${amHR() ? (x => `<button class="callout" onclick="go('people')">${ic('users')}<span>${esc(x.length ? t('hrExpiring', { n: x.length }) : t('hrOpen'))}</span><b>${esc(t('nav_people'))}</b></button>`)(expiringDocs(S.profiles.map(u => u.id), true)) : ''}
+    ${amHR() ? (x => `<button class="callout" onclick="go('people')">${ic('users')}<span>${esc(x.length ? t('hrExpiring', { n: x.length }) : t('hrOpen'))}</span><b>${esc(t('nav_people'))}</b></button>`)(expiringDocs(livePeople().map(u => u.id), true)) : ''}
     ${(x => x.length ? `<div class="alert warn" onclick="openPerson('${S.me.id}','docs')">${ic('file')}<span>${x.map(d => esc(t('doc_' + d.kind)) + ': ' + esc(d.days < 0 ? t('expired') : t('expiresInDays', { n: d.days }))).join(' · ')}</span><b>${esc(t('review'))}</b></div>` : '')(expiringDocs([S.me.id], false))}
     <button class="btn btn-primary btn-lg w100" onclick="mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button>
     ${myTasks.length ? `<div class="sec-head" style="margin-top:24px"><h3>${esc(t('myTasks'))} <span class="count">${myTasks.length}</span></h3></div>
@@ -1375,7 +1386,7 @@ function vDashboard() {
       ${stat(t('kpi_project'), money(sum(appr.filter(e => e.expense_type === 'PROJECT'))), t('approvedOnly'))}
       ${stat(t('kpi_general'), money(sum(gen)), t('approvedOnly'))}
     </div>
-    ${(x => x.length ? expiringCard(x, true) : '')(expiringDocs(S.profiles.map(u => u.id), true))}
+    ${(x => x.length ? expiringCard(x, true) : '')(expiringDocs(livePeople().map(u => u.id), true))}
     <div class="card">
       <div class="sec-head" style="margin:0 0 12px"><h3 style="margin:0">${esc(t('projectsBudgets'))} <span class="count">${rows.length}</span></h3><span class="muted small">${esc(t('allTimeShort'))}</span></div>
       <div class="mini" style="margin-bottom:14px">
@@ -1504,7 +1515,7 @@ function vProjects() {
 function teamRows() {
   const acc = accountsList();
   const q = (S.teamQ || '').toLowerCase();
-  return S.profiles.filter(u => !q || [u.full_name, u.full_name_ar, u.email, u.title, u.department].some(x => x && x.toLowerCase().includes(q)))
+  return S.profiles.filter(u => S.showRemoved ? !!u.removed_at : !u.removed_at).filter(u => !q || [u.full_name, u.full_name_ar, u.email, u.title, u.department].some(x => x && x.toLowerCase().includes(q)))
     .sort((a, b) => (a.role === 'EXECUTIVE' ? 0 : 1) - (b.role === 'EXECUTIVE' ? 0 : 1) || uname(a.id).localeCompare(uname(b.id)))
     .map(u => {
       const badges = [];
@@ -1522,12 +1533,12 @@ function teamRows() {
     }).join('') || empty(t('emptyFilter'));
 }
 function vPeople() {
-  const exp = expiringDocs(S.profiles.map(u => u.id), true);
+  const exp = expiringDocs(livePeople().map(u => u.id), true);
   return `${exp.length ? expiringCard(exp, true) : ''}
-    <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${S.profiles.length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
+    <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${livePeople().length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
-    <div id="team-list" class="list">${teamRows()}</div>`;
+    <div id="team-list" class="list">${teamRows()}</div>${removedToggle()}`;
 }
 async function saveHr(btn) {
   const list = [...new Set($('#hr-emails').value.toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean))];
@@ -1569,10 +1580,10 @@ function vTeam() {
       <button class="btn btn-primary" style="margin-top:12px" onclick="saveHr(this)">${esc(t('save'))}</button>
     </div>
     ${invitesCard()}
-    <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${S.profiles.length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
+    <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${livePeople().length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
-    <div id="team-list" class="list">${teamRows()}</div>`;
+    <div id="team-list" class="list">${teamRows()}</div>${removedToggle()}`;
 }
 function invitesCard() {
   const signed = new Set(S.profiles.map(p => p.email.toLowerCase()));
@@ -2566,6 +2577,37 @@ async function fillDocThumbs() {
   document.querySelectorAll('img[data-epath]').forEach(i => { const u = urls[i.dataset.epath]; if (u && i.getAttribute('src') !== u) i.src = u; });
 }
 
+function removedToggle() {
+  if (!execView()) return '';
+  const n = S.profiles.filter(u => u.removed_at).length;
+  if (!n && !S.showRemoved) return '';
+  return `<p style="margin:12px 2px 0"><button class="link" onclick="S.showRemoved=!S.showRemoved;render()">${esc(S.showRemoved ? t('hideRemoved') : t('showRemoved', { n }))}</button></p>`;
+}
+async function removePersonFlow(id) {
+  const u = U(id); if (!u) return;
+  const name = uname(id);
+  const ok = await promptDialog({ title: t('removePersonTitle', { name }), message: t('removePersonBody', { name }), ok: t('removePerson'), danger: true });
+  if (!ok) return;
+  const { data, error } = await sb.rpc('admin_remove_person', { p_id: id });
+  if (error) {
+    const m = error.message || '';
+    return toast(/yourself/i.test(m) ? t('e_removeSelf') : /Executive accounts/i.test(m) ? t('e_removeExec') : /admin_remove_person|schema cache|function/i.test(m) ? t('needsRemoveSql') : errMsg(error), 'bad');
+  }
+  if (data && data.result === 'DELETED') {
+    if (data.avatar) sb.storage.from('avatars').remove([data.avatar]).catch(() => {});
+    if (data.doc_files && data.doc_files.length) sb.storage.from('employee-docs').remove(data.doc_files).catch(() => {});
+    toast(t('removedDeleted', { name }), 'ok');
+  } else toast(t('removedArchived', { name }), 'ok');
+  S.personId = null; S.view = 'team';
+  await reload(); render(); window.scrollTo(0, 0);
+}
+async function restorePersonFlow(id) {
+  const name = uname(id);
+  const { error } = await sb.rpc('admin_restore_person', { p_id: id });
+  if (error) return toast(errMsg(error), 'bad');
+  toast(t('restoredPerson', { name }), 'ok');
+  await reload();
+}
 function vPerson() {
   const u = U(S.personId);
   if (!u || !canSeePerson(u.id)) { S.view = 'home'; return execView() ? vDashboard() : vHome(); }
@@ -2581,11 +2623,14 @@ function vPerson() {
       <div class="per-head">
         <span class="avatar xl">${avatarInner(u)}</span>
         <div><h2>${esc(uname(u.id))}</h2><div class="muted small"><bdi>${esc(u.email)}</bdi>${sub ? ' · ' + esc(sub) : ''}</div>
-          <div class="ph-chips" style="margin-top:6px">${u.role === 'EXECUTIVE' ? `<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>` : ''}${!u.active ? `<span class="chip st-REJECTED">${esc(t('inactive'))}</span>` : ''}</div></div>
+          <div class="ph-chips" style="margin-top:6px">${u.role === 'EXECUTIVE' ? `<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>` : ''}${u.removed_at ? `<span class="chip st-REJECTED">${esc(t('removedChip'))}</span>` : !u.active ? `<span class="chip st-REJECTED">${esc(t('inactive'))}</span>` : ''}</div></div>
       </div>
       <div class="ph-actions">
         <label class="btn btn-ghost btn-sm">${ic('camera')}${esc(t('changePhoto'))}<input type="file" accept="image/*" hidden onchange="changePhoto('${u.id}',this)"></label>
         <button class="btn btn-primary btn-sm" onclick="mEditPerson('${u.id}')">${esc(t('edit'))}</button>
+        ${ex && !self && !EXEC_EMAILS.includes(u.email.toLowerCase()) ? (u.removed_at
+          ? `<button class="btn btn-ghost btn-sm" onclick="restorePersonFlow('${u.id}')">${esc(t('restorePerson'))}</button>`
+          : `<button class="btn btn-bad-ghost btn-sm" onclick="removePersonFlow('${u.id}')">${esc(t('removePerson'))}</button>`) : ''}
       </div>
     </div>
     <div class="pills ptabs">${tabs.map(([k, l]) => `<button class="pill ${S.pertab === k ? 'on' : ''}" onclick="S.pertab='${k}';render()">${esc(l)}</button>`).join('')}</div>
