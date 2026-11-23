@@ -334,6 +334,12 @@ html[lang=ar] .fsec{text-transform:none;letter-spacing:0}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .fic{overflow:hidden}.fic img{width:100%;height:100%;object-fit:cover}
 .mytask{cursor:pointer}
+.avatar{overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar.xl{width:72px;height:72px;font-size:24px}
+.per-head{display:flex;align-items:center;gap:16px;min-width:0}.per-head h2{font-size:22px;margin:0 0 2px}
+.muted .ic,.small .ic{width:14px;height:14px;vertical-align:-2px}
+.doc h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+label.btn{cursor:pointer}
 </style>
 </head>
 <body>
@@ -509,7 +515,21 @@ en: {
   paidHint:'leave empty if not paid yet', markPaid:'Mark paid', inv_PAID:'Paid', inv_UNPAID:'Unpaid', inv_OVERDUE:'Overdue',
   noInvoices:'No invoices yet.', invoiceSaved:'Invoice saved', invoiceDeleted:'Invoice deleted', deleteInvoiceConfirm:'Delete this invoice?',
   financeHint:'Only executives and this project’s manager can see this tab.', invoicedPct:'{pct}% of the contract invoiced',
-  kpi_contract:'Contract value', col_progress:'Progress', e_task:'You cannot change this task.'
+  kpi_contract:'Contract value', col_progress:'Progress', e_task:'You cannot change this task.',
+  tab_profile:'Profile', tab_docs:'Documents', tab_contract:'Contract & salary', changePhoto:'Change photo', photoSaved:'Photo updated',
+  photoUnsupported:'This photo format is not supported. Try a JPG or PNG.', personalDetails:'Personal details', workDetails:'Work details',
+  nationality:'Nationality', joinDate:'Joining date', emergencyContact:'Emergency contact', emergencyPhone:'Emergency phone',
+  nameRequired:'Name is required.', doc_IQAMA:'Iqama', doc_PASSPORT:'Passport', doc_LICENSE:'Driving licence', doc_INSURANCE:'Medical insurance',
+  doc_OTHER:'Other documents', doc_CONTRACT:'Contract', iqamaNo:'Iqama number', passportNo:'Passport number', licenseNo:'Licence number',
+  insurer:'Insurance company', policyNo:'Policy / member no.', insClass:'Class', expiryDate:'Expiry date', expired:'Expired',
+  expiresInDays:'Expires in {n} days', valid:'Valid', copies:'Copies', uploadCopy:'Upload copy', noCopies:'No copies uploaded yet.',
+  copyHint:'Upload both sides if there are two (front and back).', otherDocsHint:'Certificates, visas, degree copies, etc.',
+  privacyNote:'Private: only this employee and executives can see these documents.',
+  privacyNoteSelf:'Private: only you and the executives (Naim, info@) can see your documents.',
+  contractPrivacy:'Executives only — the employee and other staff cannot see this tab.', contractType:'Contract type',
+  contractTypePh:'e.g. Fixed term, 2 years', contractStart:'Contract start', contractEnd:'Contract end', salary:'Salary',
+  basicSalary:'Basic salary', housingAllowance:'Housing allowance', transportAllowance:'Transport allowance', otherAllowance:'Other allowances',
+  totalMonthly:'Total monthly', perMonth:'month', contractCopies:'Contract copies'
 },
 ar: {
   appName:'مايند ماسترز', tagline:'المصروفات والمشاريع', langBtn:'English',
@@ -633,7 +653,21 @@ ar: {
   paidHint:'اتركه فارغاً إن لم تُسدد بعد', markPaid:'تحديد كمدفوعة', inv_PAID:'مدفوعة', inv_UNPAID:'غير مدفوعة', inv_OVERDUE:'متأخرة',
   noInvoices:'لا توجد فواتير بعد.', invoiceSaved:'تم حفظ الفاتورة', invoiceDeleted:'تم حذف الفاتورة', deleteInvoiceConfirm:'هل تريد حذف هذه الفاتورة؟',
   financeHint:'هذا التبويب يظهر فقط للإدارة التنفيذية ومدير هذا المشروع.', invoicedPct:'تمت فوترة {pct}٪ من العقد',
-  kpi_contract:'قيمة العقود', col_progress:'الإنجاز', e_task:'لا يمكنك تعديل هذه المهمة.'
+  kpi_contract:'قيمة العقود', col_progress:'الإنجاز', e_task:'لا يمكنك تعديل هذه المهمة.',
+  tab_profile:'الملف الشخصي', tab_docs:'الوثائق', tab_contract:'العقد والراتب', changePhoto:'تغيير الصورة', photoSaved:'تم تحديث الصورة',
+  photoUnsupported:'صيغة الصورة غير مدعومة. جرّب JPG أو PNG.', personalDetails:'البيانات الشخصية', workDetails:'بيانات العمل',
+  nationality:'الجنسية', joinDate:'تاريخ الالتحاق', emergencyContact:'جهة الاتصال للطوارئ', emergencyPhone:'هاتف الطوارئ',
+  nameRequired:'الاسم مطلوب.', doc_IQAMA:'الإقامة', doc_PASSPORT:'جواز السفر', doc_LICENSE:'رخصة القيادة', doc_INSURANCE:'التأمين الطبي',
+  doc_OTHER:'وثائق أخرى', doc_CONTRACT:'العقد', iqamaNo:'رقم الإقامة', passportNo:'رقم الجواز', licenseNo:'رقم الرخصة',
+  insurer:'شركة التأمين', policyNo:'رقم الوثيقة / العضوية', insClass:'الفئة', expiryDate:'تاريخ الانتهاء', expired:'منتهية',
+  expiresInDays:'تنتهي خلال {n} يوماً', valid:'سارية', copies:'النسخ', uploadCopy:'رفع نسخة', noCopies:'لم تُرفع أي نسخة بعد.',
+  copyHint:'ارفع الوجهين إن وُجدا (الأمامي والخلفي).', otherDocsHint:'الشهادات، التأشيرات، نسخ المؤهلات، إلخ.',
+  privacyNote:'خاص: لا يرى هذه الوثائق إلا الموظف نفسه والإدارة التنفيذية.',
+  privacyNoteSelf:'خاص: لا يرى وثائقك إلا أنت والإدارة التنفيذية (نعيم، info@).',
+  contractPrivacy:'للإدارة التنفيذية فقط — لا يرى الموظف ولا غيره هذا التبويب.', contractType:'نوع العقد',
+  contractTypePh:'مثال: محدد المدة، سنتان', contractStart:'بداية العقد', contractEnd:'نهاية العقد', salary:'الراتب',
+  basicSalary:'الراتب الأساسي', housingAllowance:'بدل السكن', transportAllowance:'بدل النقل', otherAllowance:'بدلات أخرى',
+  totalMonthly:'الإجمالي الشهري', perMonth:'شهرياً', contractCopies:'نسخ العقد'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
@@ -655,7 +689,7 @@ const S = {
   lang: store.get('mm_lang', (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en'),
   execMode: store.get('mm_view', 'exec') !== 'emp',
   me: null, view: 'home', profiles: [], projects: [], expenses: [], settings: {},
-  tasks: [], fin: {}, invoices: [], pid: null, ptab: 'overview', pdata: null, pfolder: 'all',
+  tasks: [], fin: {}, invoices: [], av: {}, avAt: 0, docs: {}, hr: {}, personId: null, pertab: 'profile', perData: null, pid: null, ptab: 'overview', pdata: null, pfolder: 'all',
   umap: {}, pmap: {}, booting: false, lastLoad: 0, dashPeriod: 'month', teamQ: '',
   f: { status: 'all', project: 'all', employee: 'all', period: 'all', q: '', mine: false }
 };
@@ -688,7 +722,8 @@ const IC = {
   phone:'<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/>',
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/>',
   camera:'<path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="3.5"/>',
-  file:'<path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/>'
+  file:'<path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ''}</svg>`;
 
@@ -939,21 +974,25 @@ async function fetchAllRows(build) {
   return out;
 }
 async function loadAll() {
-  const [profiles, projects, expenses, settings, tasks, fin, invoices] = await Promise.all([
-    fetchAllRows(() => sb.from('profiles').select('id,email,full_name,full_name_ar,phone,role,title,department,active,created_at').order('full_name')),
+  const [profiles, projects, expenses, settings, tasks, fin, invoices, docs, hr] = await Promise.all([
+    fetchAllRows(() => sb.from('profiles').select('id,email,full_name,full_name_ar,phone,role,title,department,active,created_at,photo_path,nationality,join_date,emergency_contact,emergency_phone').order('full_name')),
     fetchAllRows(() => sb.from('projects').select('*,members:project_members(user_id)').order('created_at', { ascending: false })),
     fetchAllRows(() => sb.from('expenses').select('*').order('created_at', { ascending: false })),
     fetchAllRows(() => sb.from('app_settings').select('key,value')),
     fetchAllRows(() => sb.from('project_tasks').select('*').order('created_at')),
     fetchAllRows(() => sb.from('project_finance').select('*')),
-    fetchAllRows(() => sb.from('project_invoices').select('*').order('issue_date', { ascending: false }))
+    fetchAllRows(() => sb.from('project_invoices').select('*').order('issue_date', { ascending: false })),
+    fetchAllRows(() => sb.from('employee_docs').select('*')),
+    fetchAllRows(() => sb.from('employee_hr').select('*'))
   ]);
+  S.docs = Object.fromEntries(docs.map(d => [d.user_id, d])); S.hr = Object.fromEntries(hr.map(d => [d.user_id, d]));
   S.tasks = tasks; S.invoices = invoices; S.fin = Object.fromEntries(fin.map(f => [f.project_id, f]));
   S.profiles = profiles; S.projects = projects; S.expenses = expenses;
   S.settings = Object.fromEntries(settings.map(x => [x.key, x.value]));
   S.umap = Object.fromEntries(profiles.map(u => [u.id, u]));
   S.pmap = Object.fromEntries(projects.map(p => [p.id, p]));
   if (S.umap[S.me.id]) S.me = S.umap[S.me.id];
+  await loadAvatars();
   S.lastLoad = Date.now();
 }
 async function reload(manual) {
@@ -963,6 +1002,7 @@ async function reload(manual) {
   try {
     await loadAll();
     if (S.view === 'project' && S.pid && S.pdata && !S.pdata.loading) await loadPData(S.pid, true);
+    if (S.view === 'person' && S.personId && S.perData && !S.perData.loading) await loadPerData(S.personId, true);
     if (!S.me.active) { showScreen('disabled'); return; }
     if (!$('#app').classList.contains('hidden')) render();
     if (manual) toast(t('refreshed'));
@@ -991,33 +1031,36 @@ function render() {
   if (!S.me) return;
   const items = navItems();
   if (S.view === 'project' && !P(S.pid)) S.view = 'projects';
-  if (S.view !== 'project' && !items.find(i => i.id === S.view)) S.view = 'home';
-  const navOn = id => S.view === id || (S.view === 'project' && id === 'projects');
+  if (S.view === 'person' && !(U(S.personId) && canSeePerson(S.personId))) S.view = 'home';
+  if (S.view !== 'project' && S.view !== 'person' && !items.find(i => i.id === S.view)) S.view = 'home';
+  const navOn = id => S.view === id || (S.view === 'project' && id === 'projects') || (S.view === 'person' && S.personId !== S.me.id && id === 'team');
   const nav = items.map(i => `<button class="nav-item ${navOn(i.id) ? 'on' : ''}" onclick="go('${i.id}')">${ic(i.icon)}<span>${esc(i.label)}</span>${i.badge ? `<em class="badge">${i.badge}</em>` : ''}</button>`).join('');
   $('#side-nav').innerHTML = nav;
   $('#tabbar').innerHTML = nav;
   renderTopbar();
-  $('#side-foot').innerHTML = `<span class="avatar">${esc(initials(S.me))}</span><div class="who"><b>${esc(uname(S.me.id))}</b><small>${esc(S.me.email)}</small></div><button class="icon-btn" onclick="signOut()" title="${esc(t('signOut'))}">${ic('logout')}</button>`;
+  $('#side-foot').innerHTML = `<span class="avatar">${avatarInner(S.me)}</span><div class="who"><b>${esc(uname(S.me.id))}</b><small>${esc(S.me.email)}</small></div><button class="icon-btn" onclick="signOut()" title="${esc(t('signOut'))}">${ic('logout')}</button>`;
   const pb = $('#preview-banner');
   if (isExec() && !S.execMode) {
     pb.innerHTML = `<span>${esc(t('previewBanner'))}</span><button onclick="setExecMode(true)">${esc(t('backToExec'))}</button>`;
     pb.classList.remove('hidden');
   } else pb.classList.add('hidden');
-  const views = { home: execView() ? vDashboard : vHome, expenses: vExpenses, approvals: vApprovals, projects: vProjects, team: vTeam, project: vProject };
+  const views = { home: execView() ? vDashboard : vHome, expenses: vExpenses, approvals: vApprovals, projects: vProjects, team: vTeam, project: vProject, person: vPerson };
   $('#view').innerHTML = views[S.view]();
   if (S.view === 'project') setTimeout(fillThumbs, 0);
+  if (S.view === 'person') setTimeout(fillDocThumbs, 0);
   $('#fab').classList.toggle('hidden', S.view === 'team');
 }
 function renderTopbar() {
-  const cur = navItems().find(i => i.id === (S.view === 'project' ? 'projects' : S.view));
+  const cur = navItems().find(i => i.id === (S.view === 'project' ? 'projects' : S.view === 'person' ? 'team' : S.view));
+  const label = S.view === 'person' && S.personId === S.me.id ? t('myProfile') : (cur ? cur.label : '');
   $('#topbar').innerHTML = `
-    <div class="tb-brand"><img src="/logo.png" alt=""><span>${esc(cur ? cur.label : '')}</span></div>
+    <div class="tb-brand"><img src="/logo.png" alt=""><span>${esc(label)}</span></div>
     <div class="tb-actions">
       ${isExec() ? `<div class="seg seg-sm hide-sm"><button class="${S.execMode ? 'on' : ''}" onclick="setExecMode(true)">${esc(t('execView'))}</button><button class="${!S.execMode ? 'on' : ''}" onclick="setExecMode(false)">${esc(t('empView'))}</button></div>` : ''}
       <button class="btn btn-primary btn-sm hide-sm" onclick="mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button>
       <button class="icon-btn" id="btn-refresh" title="${esc(t('refresh'))}" onclick="reload(true)">${ic('refresh')}</button>
       <button class="lang-btn" onclick="toggleLang()">${esc(t('langBtn'))}</button>
-      <button class="avatar" onclick="toggleMenu(event)" aria-label="${esc(t('myProfile'))}">${esc(initials(S.me))}</button>
+      <button class="avatar" onclick="toggleMenu(event)" aria-label="${esc(t('myProfile'))}">${avatarInner(S.me)}</button>
     </div>`;
 }
 function go(v) { closeMenu(); S.view = v; render(); window.scrollTo(0, 0); }
@@ -1305,7 +1348,8 @@ function teamRows() {
       if (S.projects.some(p => p.manager_id === u.id)) badges.push(`<span class="chip st-PENDING_MANAGER">${esc(t('pmBadge'))}</span>`);
       if (!u.active) badges.push(`<span class="chip st-REJECTED">${esc(t('inactive'))}</span>`);
       const sub = [u.title, u.department].filter(Boolean).join(' · ');
-      return `<button class="prow" onclick="mPerson('${u.id}')"><span class="avatar">${esc(initials(u))}</span>
+      if (execView()) for (const k of ['IQAMA', 'PASSPORT']) { const ed = docExpiry(S.docs[u.id], k); if (ed && daysUntil(ed) <= 60) badges.push(`<span class="chip ${daysUntil(ed) < 0 ? 'st-REJECTED' : 'st-PENDING_EXECUTIVE'}">${esc(t('doc_' + k))}: ${esc(daysUntil(ed) < 0 ? t('expired') : t('expiresInDays', { n: daysUntil(ed) }))}</span>`); }
+      return `<button class="prow" onclick="openPerson('${u.id}')"><span class="avatar">${avatarInner(u)}</span>
         <div class="who"><b>${esc(uname(u.id))}</b><small><bdi>${esc(u.email)}</bdi>${sub ? ' · ' + esc(sub) : ''}</small></div>
         <div class="badges">${badges.join('')}</div></button>`;
     }).join('') || empty(t('emptyFilter'));
@@ -1956,7 +2000,7 @@ function updateCard(u, p, compact) {
   const canDel = u.author_id === S.me.id || canManageP(p);
   const au = U(u.author_id) || { email: '?' };
   return `<div class="upd ${compact ? 'compact' : 'card'}">
-    <div class="upd-h"><span class="avatar sm">${esc(initials(au))}</span><div class="who"><b>${esc(uname(u.author_id))}</b><small>${esc(fdatetime(u.created_at))}</small></div>
+    <div class="upd-h"><span class="avatar sm">${avatarInner(au)}</span><div class="who"><b>${esc(uname(u.author_id))}</b><small>${esc(fdatetime(u.created_at))}</small></div>
       ${canDel && !compact ? `<button class="icon-btn" onclick="deleteUpdate('${u.id}')" title="${esc(t('del'))}">${ic('x')}</button>` : ''}</div>
     <p dir="auto" class="prose">${esc(u.body)}</p>
     ${photos.length ? `<div class="thumbs">${photos.map(f => `<button class="thumb" onclick="openFile('${f.id}')"><img data-path="${esc(f.path)}" alt="${esc(f.name)}"></button>`).join('')}</div>` : ''}
@@ -2215,54 +2259,368 @@ async function markPaid(iid, btn) {
   toast(t('invoiceSaved'), 'ok'); await reload();
 }
 
-// ─── MODAL: PEOPLE ────────────────────────────────────────────────
-function mPerson(id) {
-  const u = U(id); if (!u) return;
-  const locked = EXEC_EMAILS.includes(u.email.toLowerCase());
+// ─── PEOPLE: PROFILES, PHOTOS, DOCUMENTS ─────────────────────────
+const DOC_KINDS = ['IQAMA', 'PASSPORT', 'LICENSE', 'INSURANCE'];
+const MAX_EDOC = 10 * 1024 * 1024;
+function avatarInner(u) {
+  const url = u && u.photo_path && S.av[u.photo_path];
+  return url ? `<img src="${esc(url)}" alt="">` : esc(initials(u || { email: '?' }));
+}
+async function loadAvatars() {
+  const fresh = Date.now() - (S.avAt || 0) < 50 * 60 * 1000;
+  if (!fresh) S.av = {};
+  const need = [...new Set(S.profiles.map(u => u.photo_path).filter(p => p && !S.av[p]))];
+  if (!need.length) return;
+  try {
+    const { data } = await sb.storage.from('avatars').createSignedUrls(need, 3600);
+    (data || []).forEach(d => { if (d && d.signedUrl) S.av[d.path] = d.signedUrl; });
+    if (!fresh) S.avAt = Date.now();
+  } catch (e) {}
+}
+const canSeePerson = id => id === S.me.id || execView();
+const daysUntil = d => Math.round((toDate(d) - toDate(todayISO())) / 86400000);
+function expChip(d) {
+  if (!d) return '';
+  const n = daysUntil(d);
+  if (n < 0) return `<span class="chip st-REJECTED">${esc(t('expired'))}</span>`;
+  if (n <= 60) return `<span class="chip st-PENDING_EXECUTIVE">${esc(t('expiresInDays', { n }))}</span>`;
+  return `<span class="chip st-APPROVED">${esc(t('valid'))}</span>`;
+}
+function docExpiry(doc, kind) { return doc ? doc[{ IQAMA: 'iqama_expiry', PASSPORT: 'passport_expiry', LICENSE: 'license_expiry', INSURANCE: 'insurance_expiry' }[kind]] : null; }
+
+function openPerson(id, tab) {
+  closeAllModals(); closeMenu();
+  if (!U(id) || !canSeePerson(id)) return;
+  if (S.personId !== id) S.perData = null;
+  S.personId = id; S.pertab = tab || 'profile'; S.view = 'person';
+  render(); window.scrollTo(0, 0);
+}
+const mPerson = id => openPerson(id);
+const mProfile = () => openPerson(S.me.id);
+async function loadPerData(uid, silent) {
+  if (!silent) S.perData = { uid, loading: true, files: [] };
+  try {
+    const files = await fetchAllRows(() => sb.from('employee_files').select('*').eq('user_id', uid).order('created_at', { ascending: false }));
+    if (S.personId !== uid) return;
+    const urls = (S.perData && S.perData.uid === uid && S.perData.urls) || {};
+    S.perData = { uid, loading: false, files, urls };
+  } catch (e) { if (S.personId === uid) S.perData = { uid, loading: false, files: [], urls: {}, error: errMsg(e) }; }
+  if (!silent && S.view === 'person' && S.personId === uid) render();
+}
+async function fillDocThumbs() {
+  const imgs = [...document.querySelectorAll('img[data-epath]')];
+  if (!imgs.length || !S.perData) return;
+  const urls = S.perData.urls || (S.perData.urls = {});
+  const need = [...new Set(imgs.map(i => i.dataset.epath).filter(p => !urls[p]))];
+  if (need.length) {
+    try { const { data } = await sb.storage.from('employee-docs').createSignedUrls(need, 900); (data || []).forEach(d => { if (d && d.signedUrl) urls[d.path] = d.signedUrl; }); } catch (e) {}
+  }
+  document.querySelectorAll('img[data-epath]').forEach(i => { const u = urls[i.dataset.epath]; if (u && i.getAttribute('src') !== u) i.src = u; });
+}
+
+function vPerson() {
+  const u = U(S.personId);
+  if (!u || !canSeePerson(u.id)) { S.view = 'home'; return execView() ? vDashboard() : vHome(); }
+  if (!S.perData || S.perData.uid !== u.id) loadPerData(u.id);
+  const self = u.id === S.me.id, ex = execView();
+  const tabs = [['profile', t('tab_profile')], ['docs', t('tab_docs')]];
+  if (ex) tabs.push(['contract', t('tab_contract')]);
+  if (!tabs.some(x => x[0] === S.pertab)) S.pertab = 'profile';
+  const body = { profile: perProfile, docs: perDocs, contract: perContract }[S.pertab](u);
+  const sub = [u.title, u.department].filter(Boolean).join(' · ');
+  return `${ex && !self ? `<button class="link back" onclick="go('team')">${S.lang === 'ar' ? '→' : '←'} ${esc(t('nav_team'))}</button>` : ''}
+    <div class="ph">
+      <div class="per-head">
+        <span class="avatar xl">${avatarInner(u)}</span>
+        <div><h2>${esc(uname(u.id))}</h2><div class="muted small"><bdi>${esc(u.email)}</bdi>${sub ? ' · ' + esc(sub) : ''}</div>
+          <div class="ph-chips" style="margin-top:6px">${u.role === 'EXECUTIVE' ? `<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>` : ''}${!u.active ? `<span class="chip st-REJECTED">${esc(t('inactive'))}</span>` : ''}</div></div>
+      </div>
+      <div class="ph-actions">
+        <label class="btn btn-ghost btn-sm">${ic('camera')}${esc(t('changePhoto'))}<input type="file" accept="image/*" hidden onchange="changePhoto('${u.id}',this)"></label>
+        <button class="btn btn-primary btn-sm" onclick="mEditPerson('${u.id}')">${esc(t('edit'))}</button>
+      </div>
+    </div>
+    <div class="pills ptabs">${tabs.map(([k, l]) => `<button class="pill ${S.pertab === k ? 'on' : ''}" onclick="S.pertab='${k}';render()">${esc(l)}</button>`).join('')}</div>
+    ${body}`;
+}
+function perProfile(u) {
+  const kv = (label, val) => `<dt>${esc(label)}</dt><dd>${val ? val : '<span class="muted">—</span>'}</dd>`;
+  return `<div class="grid2">
+    <div class="card"><h3>${esc(t('personalDetails'))}</h3><dl class="kv">
+      ${kv(t('fullName'), esc(u.full_name || ''))}
+      ${kv(t('fullNameAr'), u.full_name_ar ? `<span dir="rtl">${esc(u.full_name_ar)}</span>` : '')}
+      ${kv(t('email'), `<bdi>${esc(u.email)}</bdi>`)}
+      ${kv(t('phone'), u.phone ? `<bdi>${esc(u.phone)}</bdi>` : '')}
+      ${kv(t('nationality'), esc(u.nationality || ''))}
+    </dl></div>
+    <div class="card"><h3>${esc(t('workDetails'))}</h3><dl class="kv">
+      ${kv(t('jobTitle'), esc(u.title || ''))}
+      ${kv(t('department'), esc(u.department || ''))}
+      ${kv(t('joinDate'), u.join_date ? esc(fdate(u.join_date)) : '')}
+      ${kv(t('emergencyContact'), [u.emergency_contact ? esc(u.emergency_contact) : '', u.emergency_phone ? `<bdi>${esc(u.emergency_phone)}</bdi>` : ''].filter(Boolean).join(' · '))}
+    </dl></div>
+  </div>
+  <p class="muted small" style="margin:0 2px">${esc(u.id === S.me.id && !execView() ? t('privacyNoteSelf') : t('privacyNote'))}</p>`;
+}
+function efileRow(f, canDel) {
+  const img = isImgMime(f.mime);
+  return `<div class="row" onclick="openEFile('${f.id}')">
+    <div class="row-ic fic">${img ? `<img data-epath="${esc(f.path)}" alt="">` : ic('file')}</div>
+    <div class="row-main"><div class="row-title" dir="auto">${esc(f.name)}</div><div class="row-sub">${esc([fmtSize(f.size_bytes), fdate(f.created_at)].join(' · '))}</div></div>
+    <div class="row-end">${canDel ? `<button class="icon-btn" onclick="event.stopPropagation();deleteEFile('${f.id}')" title="${esc(t('del'))}">${ic('x')}</button>` : ''}</div></div>`;
+}
+function perDocs(u) {
+  const d = S.docs[u.id] || {}, pd = S.perData;
+  const files = pd && !pd.loading ? pd.files : [];
+  const kv = (label, val) => `<dt>${esc(label)}</dt><dd>${val ? val : '<span class="muted">—</span>'}</dd>`;
+  const fields = {
+    IQAMA: [[t('iqamaNo'), d.iqama_no], [t('expiryDate'), d.iqama_expiry && fdate(d.iqama_expiry)]],
+    PASSPORT: [[t('passportNo'), d.passport_no], [t('expiryDate'), d.passport_expiry && fdate(d.passport_expiry)]],
+    LICENSE: [[t('licenseNo'), d.license_no], [t('expiryDate'), d.license_expiry && fdate(d.license_expiry)]],
+    INSURANCE: [[t('insurer'), d.insurer], [t('policyNo'), d.insurance_policy_no], [t('insClass'), d.insurance_class], [t('expiryDate'), d.insurance_expiry && fdate(d.insurance_expiry)]]
+  };
+  const card = kind => {
+    const fl = files.filter(f => f.kind === kind);
+    return `<div class="card doc">
+      <div class="sec-head" style="margin:0 0 10px"><h3 style="margin:0">${esc(t('doc_' + kind))} ${expChip(docExpiry(d, kind))}</h3>
+        <button class="btn btn-ghost btn-sm" onclick="mDoc('${u.id}','${kind}')">${esc(t('edit'))}</button></div>
+      <dl class="kv">${fields[kind].map(([l, v]) => kv(l, v ? `<bdi>${esc(v)}</bdi>` : '')).join('')}</dl>
+      <div class="sec-head" style="margin:14px 0 8px"><h4>${esc(t('copies'))} <span class="count">${fl.length}</span></h4>
+        <button class="btn btn-ghost btn-sm" onclick="mEUpload('${u.id}','${kind}')">${ic('plus')}${esc(t('uploadCopy'))}</button></div>
+      ${pd && pd.loading ? '<div class="spinner sm"></div>' : fl.length ? `<div class="list">${fl.map(f => efileRow(f, true)).join('')}</div>` : `<p class="muted small" style="margin:0">${esc(t('noCopies'))}</p>`}
+    </div>`;
+  };
+  const other = files.filter(f => f.kind === 'OTHER');
+  return `<p class="muted small" style="margin:0 2px 12px">${ic('lock')} ${esc(u.id === S.me.id && !execView() ? t('privacyNoteSelf') : t('privacyNote'))}</p>
+    <div class="grid2"><div>${card('IQAMA')}${card('LICENSE')}</div><div>${card('PASSPORT')}${card('INSURANCE')}</div></div>
+    <div class="card"><div class="sec-head" style="margin:0 0 10px"><h3 style="margin:0">${esc(t('doc_OTHER'))} <span class="count">${other.length}</span></h3>
+      <button class="btn btn-ghost btn-sm" onclick="mEUpload('${u.id}','OTHER')">${ic('plus')}${esc(t('uploadCopy'))}</button></div>
+      ${other.length ? `<div class="list">${other.map(f => efileRow(f, true)).join('')}</div>` : `<p class="muted small" style="margin:0">${esc(t('otherDocsHint'))}</p>`}</div>
+    ${pd && pd.error ? `<div class="err">${esc(pd.error)}</div>` : ''}`;
+}
+function perContract(u) {
+  if (!execView()) return '';
+  const h = S.hr[u.id] || {}, pd = S.perData;
+  const files = pd && !pd.loading ? pd.files.filter(f => f.kind === 'CONTRACT') : [];
+  const n = x => +x || 0;
+  const total = n(h.basic_salary) + n(h.housing_allowance) + n(h.transport_allowance) + n(h.other_allowance);
+  const kv = (label, val) => `<dt>${esc(label)}</dt><dd>${val ? val : '<span class="muted">—</span>'}</dd>`;
+  return `<p class="muted small" style="margin:0 2px 12px">${ic('lock')} ${esc(t('contractPrivacy'))}</p>
+    <div class="grid2">
+      <div class="card"><div class="sec-head" style="margin:0 0 10px"><h3 style="margin:0">${esc(t('tab_contract'))} ${expChip(h.contract_end)}</h3>
+          <button class="btn btn-ghost btn-sm" onclick="mHr('${u.id}')">${esc(t('edit'))}</button></div>
+        <dl class="kv">
+          ${kv(t('contractType'), esc(h.contract_type || ''))}
+          ${kv(t('contractStart'), h.contract_start ? esc(fdate(h.contract_start)) : '')}
+          ${kv(t('contractEnd'), h.contract_end ? esc(fdate(h.contract_end)) : '')}
+        </dl>
+        ${h.notes ? `<p dir="auto" class="prose small" style="margin-top:12px">${esc(h.notes)}</p>` : ''}</div>
+      <div class="card"><h3>${esc(t('salary'))}</h3><dl class="kv">
+          ${kv(t('basicSalary'), h.basic_salary != null ? money(h.basic_salary) : '')}
+          ${kv(t('housingAllowance'), h.housing_allowance != null ? money(h.housing_allowance) : '')}
+          ${kv(t('transportAllowance'), h.transport_allowance != null ? money(h.transport_allowance) : '')}
+          ${kv(t('otherAllowance'), h.other_allowance != null ? money(h.other_allowance) : '')}
+          <dt><b>${esc(t('totalMonthly'))}</b></dt><dd><b>${money(total)}</b></dd>
+        </dl></div>
+    </div>
+    <div class="card"><div class="sec-head" style="margin:0 0 10px"><h3 style="margin:0">${esc(t('contractCopies'))} <span class="count">${files.length}</span></h3>
+      <button class="btn btn-ghost btn-sm" onclick="mEUpload('${u.id}','CONTRACT')">${ic('plus')}${esc(t('uploadCopy'))}</button></div>
+      ${files.length ? `<div class="list">${files.map(f => efileRow(f, true)).join('')}</div>` : `<p class="muted small" style="margin:0">${esc(t('noCopies'))}</p>`}</div>`;
+}
+
+// Edit person
+function mEditPerson(id) {
+  const u = U(id); if (!u || !canSeePerson(id)) return;
+  const ex = execView(), locked = EXEC_EMAILS.includes(u.email.toLowerCase());
+  const opt = ` <i>(${esc(t('optional'))})</i>`;
   const ov = openModal(`${mhead(t('editPerson'))}
     <div class="m-body">
-      <div><b>${esc(uname(u.id))}</b><div class="muted small"><bdi>${esc(u.email)}</bdi>${u.phone ? ' · <bdi>' + esc(u.phone) + '</bdi>' : ''}</div></div>
-      ${locked ? `<div class="note">${esc(t('execLocked'))}</div>` : ''}
-      <label class="field"><span>${esc(t('role'))}</span><select id="pp-role" ${locked ? 'disabled' : ''}>
-        ${['EMPLOYEE', 'EXECUTIVE'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}</select></label>
+      <div class="fsec">${esc(t('personalDetails'))}</div>
+      <label class="field"><span>${esc(t('fullName'))}</span><input id="ep-name" maxlength="80" value="${esc(u.full_name || '')}"></label>
+      <label class="field"><span>${esc(t('fullNameAr'))}${opt}</span><input id="ep-name-ar" dir="rtl" maxlength="80" value="${esc(u.full_name_ar || '')}"></label>
       <div class="two">
-        <label class="field"><span>${esc(t('jobTitle'))}</span><input id="pp-title" maxlength="80" value="${esc(u.title || '')}"></label>
-        <label class="field"><span>${esc(t('department'))}</span><input id="pp-dept" maxlength="80" value="${esc(u.department || '')}"></label>
+        <label class="field"><span>${esc(t('phone'))}${opt}</span><input id="ep-phone" type="tel" dir="ltr" maxlength="20" value="${esc(u.phone || '')}"></label>
+        <label class="field"><span>${esc(t('nationality'))}${opt}</span><input id="ep-nat" maxlength="60" value="${esc(u.nationality || '')}"></label>
       </div>
-      <label class="chk"><input type="checkbox" id="pp-active" ${u.active ? 'checked' : ''} ${locked || u.id === S.me.id ? 'disabled' : ''}>${esc(t('accessActive'))}</label>
+      <div class="two">
+        <label class="field"><span>${esc(t('emergencyContact'))}${opt}</span><input id="ep-ec" maxlength="80" value="${esc(u.emergency_contact || '')}"></label>
+        <label class="field"><span>${esc(t('emergencyPhone'))}${opt}</span><input id="ep-ep" type="tel" dir="ltr" maxlength="20" value="${esc(u.emergency_phone || '')}"></label>
+      </div>
+      ${ex ? `<div class="fsec">${esc(t('workDetails'))}</div>
+        ${locked ? `<div class="note">${esc(t('execLocked'))}</div>` : ''}
+        <div class="two">
+          <label class="field"><span>${esc(t('jobTitle'))}</span><input id="ep-title" maxlength="80" value="${esc(u.title || '')}"></label>
+          <label class="field"><span>${esc(t('department'))}</span><input id="ep-dept" maxlength="80" value="${esc(u.department || '')}"></label>
+        </div>
+        <div class="two">
+          <label class="field"><span>${esc(t('joinDate'))}</span><input id="ep-join" type="date" dir="ltr" value="${esc(u.join_date || '')}"></label>
+          <label class="field"><span>${esc(t('role'))}</span><select id="ep-role" ${locked ? 'disabled' : ''}>${['EMPLOYEE', 'EXECUTIVE'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}</select></label>
+        </div>
+        <label class="chk"><input type="checkbox" id="ep-active" ${u.active ? 'checked' : ''} ${locked || u.id === S.me.id ? 'disabled' : ''}>${esc(t('accessActive'))}</label>` : ''}
+      <div class="err hidden" id="ep-err"></div>
     </div>
-    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="pp-save">${esc(t('save'))}</button></div>`, 'sheet-sm');
-  ov.querySelector('#pp-save').onclick = async () => {
-    const b = ov.querySelector('#pp-save'); b.disabled = true;
-    const { error } = await sb.rpc('admin_update_profile', {
-      p_id: id, p_role: ov.querySelector('#pp-role').value,
-      p_title: ov.querySelector('#pp-title').value.trim() || null, p_department: ov.querySelector('#pp-dept').value.trim() || null,
-      p_active: ov.querySelector('#pp-active').checked
-    });
-    if (error) { b.disabled = false; return toast(errMsg(error), 'bad'); }
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="ep-save">${esc(t('save'))}</button></div>`);
+  const g = s => ov.querySelector(s);
+  g('#ep-save').onclick = async () => {
+    const name = g('#ep-name').value.trim(), err = g('#ep-err');
+    if (!name) { err.textContent = t('nameRequired'); err.classList.remove('hidden'); return; }
+    const v = s => g(s).value.trim() || null;
+    const base = { full_name: name, full_name_ar: v('#ep-name-ar'), phone: v('#ep-phone'), nationality: v('#ep-nat'), emergency_contact: v('#ep-ec'), emergency_phone: v('#ep-ep') };
+    const b = g('#ep-save'); b.disabled = true;
+    try {
+      if (ex) {
+        let r = await sb.rpc('admin_update_person', { p_id: id, p: { ...base, join_date: g('#ep-join').value || '' } });
+        if (r.error) throw r.error;
+        r = await sb.rpc('admin_update_profile', { p_id: id, p_role: g('#ep-role').value, p_title: v('#ep-title'), p_department: v('#ep-dept'), p_active: g('#ep-active').checked });
+        if (r.error) throw r.error;
+      } else {
+        const { error } = await sb.from('profiles').update(base).eq('id', id);
+        if (error) throw error;
+      }
+      closeModal(ov); toast(t('personSaved'), 'ok'); await reload();
+    } catch (e) { b.disabled = false; err.textContent = errMsg(e); err.classList.remove('hidden'); }
+  };
+}
+function shrinkPhoto(file) {
+  return new Promise(resolve => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      try {
+        const s = Math.min(img.naturalWidth, img.naturalHeight), size = Math.min(512, s);
+        const c = document.createElement('canvas'); c.width = c.height = size;
+        c.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, size, size);
+        c.toBlob(b => { URL.revokeObjectURL(url); resolve(b); }, 'image/jpeg', 0.85);
+      } catch (e) { URL.revokeObjectURL(url); resolve(null); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    img.src = url;
+  });
+}
+async function changePhoto(id, input) {
+  const f = input.files && input.files[0]; input.value = '';
+  if (!f) return;
+  const u = U(id); if (!u) return;
+  const blob = await shrinkPhoto(f);
+  if (!blob) return toast(t('photoUnsupported'), 'bad');
+  const path = `${id}/${uid()}.jpg`;
+  toast(t('uploading'));
+  const up = await sb.storage.from('avatars').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+  if (up.error) return toast(errMsg(up.error), 'bad');
+  const r = id === S.me.id && !execView()
+    ? await sb.from('profiles').update({ photo_path: path }).eq('id', id)
+    : await sb.rpc('admin_update_person', { p_id: id, p: { photo_path: path } });
+  if (r.error) { sb.storage.from('avatars').remove([path]).catch(() => {}); return toast(errMsg(r.error), 'bad'); }
+  if (u.photo_path) sb.storage.from('avatars').remove([u.photo_path]).catch(() => {});
+  toast(t('photoSaved'), 'ok'); await reload();
+}
+
+// Documents
+function mDoc(uid, kind) {
+  const d = S.docs[uid] || {};
+  const F = {
+    IQAMA: [['iqama_no', t('iqamaNo'), 'text'], ['iqama_expiry', t('expiryDate'), 'date']],
+    PASSPORT: [['passport_no', t('passportNo'), 'text'], ['passport_expiry', t('expiryDate'), 'date']],
+    LICENSE: [['license_no', t('licenseNo'), 'text'], ['license_expiry', t('expiryDate'), 'date']],
+    INSURANCE: [['insurer', t('insurer'), 'text'], ['insurance_policy_no', t('policyNo'), 'text'], ['insurance_class', t('insClass'), 'text'], ['insurance_expiry', t('expiryDate'), 'date']]
+  }[kind];
+  const ov = openModal(`${mhead(t('doc_' + kind))}
+    <div class="m-body">
+      ${F.map(([k, l, ty]) => `<label class="field"><span>${esc(l)}</span><input data-k="${k}" type="${ty}" dir="ltr" maxlength="60" value="${esc(d[k] || '')}"></label>`).join('')}
+      <div class="err hidden" id="dc-err"></div>
+    </div>
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="dc-save">${esc(t('save'))}</button></div>`, 'sheet-sm');
+  ov.querySelector('#dc-save').onclick = async () => {
+    const row = { user_id: uid, updated_at: new Date().toISOString() };
+    ov.querySelectorAll('[data-k]').forEach(i => { row[i.dataset.k] = i.value.trim() || null; });
+    const b = ov.querySelector('#dc-save'); b.disabled = true;
+    const { error } = await sb.from('employee_docs').upsert(row, { onConflict: 'user_id' });
+    if (error) { b.disabled = false; const e = ov.querySelector('#dc-err'); e.textContent = errMsg(error); e.classList.remove('hidden'); return; }
     closeModal(ov); toast(t('personSaved'), 'ok'); await reload();
   };
 }
-function mProfile() {
-  const u = S.me;
-  const ov = openModal(`${mhead(t('myProfile'))}
+function mEUpload(uid, kind) {
+  const st = { files: [] };
+  const ov = openModal(`${mhead(t('uploadCopy') + ' — ' + t('doc_' + kind))}
     <div class="m-body">
-      <label class="field"><span>${esc(t('email'))}</span><input value="${esc(u.email)}" dir="ltr" disabled></label>
-      <label class="field"><span>${esc(t('fullName'))}</span><input id="mp-name" maxlength="80" value="${esc(u.full_name || '')}"></label>
-      <label class="field"><span>${esc(t('fullNameAr'))} <i>(${esc(t('optional'))})</i></span><input id="mp-name-ar" dir="rtl" maxlength="80" value="${esc(u.full_name_ar || '')}"></label>
-      <label class="field"><span>${esc(t('phone'))} <i>(${esc(t('optional'))})</i></span><input id="mp-phone" type="tel" dir="ltr" maxlength="20" value="${esc(u.phone || '')}"></label>
-      ${u.title || u.department ? `<p class="muted small">${esc([u.title, u.department].filter(Boolean).join(' · '))}</p>` : ''}
+      <label class="drop" id="eu-drop">${ic('camera')}<b id="eu-names">${esc(t('takePhoto'))}</b><small class="muted">JPG · PNG · PDF · 10 MB</small><input id="eu-files" type="file" accept="image/*,application/pdf" multiple hidden></label>
+      <p class="muted small">${esc(t('copyHint'))}</p>
+      <div class="err hidden" id="eu-err"></div>
     </div>
-    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="mp-save">${esc(t('save'))}</button></div>`, 'sheet-sm');
-  ov.querySelector('#mp-save').onclick = async () => {
-    const name = ov.querySelector('#mp-name').value.trim();
-    if (!name) return;
-    const b = ov.querySelector('#mp-save'); b.disabled = true;
-    const { error } = await sb.from('profiles').update({
-      full_name: name, full_name_ar: ov.querySelector('#mp-name-ar').value.trim() || null, phone: ov.querySelector('#mp-phone').value.trim() || null
-    }).eq('id', u.id);
-    if (error) { b.disabled = false; return toast(errMsg(error), 'bad'); }
-    closeModal(ov); toast(t('profileSaved'), 'ok'); await reload();
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="eu-go">${esc(t('upload'))}</button></div>`, 'sheet-sm');
+  const g = s => ov.querySelector(s);
+  g('#eu-files').onchange = ev => {
+    st.files = [...(ev.target.files || [])];
+    g('#eu-names').textContent = st.files.length === 1 ? st.files[0].name : st.files.length ? t('filesChosen', { n: st.files.length }) : t('takePhoto');
+    g('#eu-drop').classList.toggle('has', !!st.files.length);
+  };
+  g('#eu-go').onclick = async () => {
+    const err = g('#eu-err'); err.classList.add('hidden');
+    if (!st.files.length) { err.textContent = t('filesRequired'); err.classList.remove('hidden'); return; }
+    const b = g('#eu-go'); b.disabled = true; let i = 0;
+    try {
+      for (const f of st.files) {
+        i++; b.textContent = t('uploadingN', { i, n: st.files.length });
+        const blob = await compressImage(f);
+        if (blob.size > MAX_EDOC) throw new Error(t('fileTooBig'));
+        const type = blob.type || f.type || 'application/octet-stream';
+        const path = `${uid}/${uid_()}.${extFor(type, f.name)}`;
+        const up = await sb.storage.from('employee-docs').upload(path, blob, { contentType: type, upsert: false });
+        if (up.error) throw up.error;
+        const r = await sb.from('employee_files').insert({ user_id: uid, kind, name: f.name, path, mime: type, size_bytes: blob.size });
+        if (r.error) { sb.storage.from('employee-docs').remove([path]).catch(() => {}); throw r.error; }
+      }
+      closeModal(ov); toast(t('filesUploaded', { n: st.files.length }), 'ok');
+      await loadPerData(uid, true); render();
+    } catch (e) { b.disabled = false; b.textContent = t('upload'); err.textContent = e && e.message === t('fileTooBig') ? e.message : errMsg(e); err.classList.remove('hidden'); }
+  };
+}
+const uid_ = () => uid();
+async function openEFile(fid) {
+  const f = S.perData && S.perData.files.find(x => x.id === fid); if (!f) return;
+  const w = window.open('', '_blank');
+  const { data, error } = await sb.storage.from('employee-docs').createSignedUrl(f.path, 600);
+  if (error || !data) { if (w) w.close(); return toast(errMsg(error || 'file'), 'bad'); }
+  if (w) w.location.href = data.signedUrl; else location.href = data.signedUrl;
+}
+async function deleteEFile(fid) {
+  const pd = S.perData; const f = pd && pd.files.find(x => x.id === fid); if (!f) return;
+  const ok = await promptDialog({ title: t('del'), message: t('deleteFileConfirm', { name: f.name }), ok: t('del'), danger: true });
+  if (!ok) return;
+  await sb.storage.from('employee-docs').remove([f.path]).catch(() => {});
+  const { error } = await sb.from('employee_files').delete().eq('id', fid);
+  if (error) return toast(errMsg(error), 'bad');
+  toast(t('fileDeleted')); await loadPerData(pd.uid, true); render();
+}
+function mHr(uid) {
+  if (!execView()) return;
+  const h = S.hr[uid] || {};
+  const num = (k, l) => `<label class="field"><span>${esc(l)}</span><input data-k="${k}" type="number" min="0" step="0.01" inputmode="decimal" dir="ltr" placeholder="0.00" value="${h[k] != null ? +h[k] : ''}"></label>`;
+  const ov = openModal(`${mhead(t('tab_contract'))}
+    <div class="m-body">
+      <label class="field"><span>${esc(t('contractType'))}</span><input data-k="contract_type" maxlength="60" placeholder="${esc(t('contractTypePh'))}" value="${esc(h.contract_type || '')}"></label>
+      <div class="two">
+        <label class="field"><span>${esc(t('contractStart'))}</span><input data-k="contract_start" type="date" dir="ltr" value="${esc(h.contract_start || '')}"></label>
+        <label class="field"><span>${esc(t('contractEnd'))}</span><input data-k="contract_end" type="date" dir="ltr" value="${esc(h.contract_end || '')}"></label>
+      </div>
+      <div class="fsec">${esc(t('salary'))} (${esc(t('sar'))} / ${esc(t('perMonth'))})</div>
+      <div class="two">${num('basic_salary', t('basicSalary'))}${num('housing_allowance', t('housingAllowance'))}</div>
+      <div class="two">${num('transport_allowance', t('transportAllowance'))}${num('other_allowance', t('otherAllowance'))}</div>
+      <label class="field"><span>${esc(t('notes'))} <i>(${esc(t('optional'))})</i></span><textarea data-k="notes" rows="2" maxlength="2000">${esc(h.notes || '')}</textarea></label>
+      <div class="err hidden" id="hr-err"></div>
+    </div>
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="hr-save">${esc(t('save'))}</button></div>`);
+  ov.querySelector('#hr-save').onclick = async () => {
+    const row = { user_id: uid, updated_at: new Date().toISOString() };
+    ov.querySelectorAll('[data-k]').forEach(i => {
+      const v = i.value.trim();
+      row[i.dataset.k] = i.type === 'number' ? (v === '' ? null : Math.max(0, parseFloat(v) || 0)) : (v || null);
+    });
+    const err = ov.querySelector('#hr-err');
+    if (row.contract_start && row.contract_end && row.contract_end < row.contract_start) { err.textContent = t('datesInvalid'); err.classList.remove('hidden'); return; }
+    const b = ov.querySelector('#hr-save'); b.disabled = true;
+    const { error } = await sb.from('employee_hr').upsert(row, { onConflict: 'user_id' });
+    if (error) { b.disabled = false; err.textContent = errMsg(error); err.classList.remove('hidden'); return; }
+    closeModal(ov); toast(t('personSaved'), 'ok'); await reload();
   };
 }
 
