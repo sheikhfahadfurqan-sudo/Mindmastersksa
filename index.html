@@ -308,6 +308,9 @@ html[dir=rtl] .m-head{padding:14px 18px 14px 14px}
 .fsec:first-child{border-top:0;padding-top:0;margin-top:0}
 html[lang=ar] .fsec{text-transform:none;letter-spacing:0}
 .pc-dates{font-size:12px;color:var(--muted)}
+.update-bar{position:fixed;z-index:150;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));background:var(--ink);color:#fff;border-radius:14px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:14px;width:min(440px,calc(100% - 24px))}.update-bar span{flex:1}
+.update-bar button{background:#fff;color:#111;border-radius:9px;padding:7px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+.callout.soft{background:var(--card);color:var(--ink);border:1px solid var(--line)}.callout .avatar{flex:none;font-weight:700}.callout.soft b{background:var(--ink);color:#fff}
 .back{display:inline-flex;margin-bottom:10px;text-decoration:none;font-size:13.5px}
 .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px}
 .ph h2{font-size:22px;letter-spacing:-.01em;margin:4px 0 2px}
@@ -533,6 +536,9 @@ en: {
   basicSalary:'Basic salary', housingAllowance:'Housing allowance', transportAllowance:'Transport allowance', otherAllowance:'Other allowances',
   totalMonthly:'Total monthly', perMonth:'month', contractCopies:'Contract copies',
   docsExpiring:'Documents expiring soon', next60:'expired or within 60 days', andMore:'…and {n} more',
+  updateReady:'A new version of the app is ready.', updateNow:'Update', profilePhoto:'photo',
+  completeProfile:'Complete your profile — add your {items}', myProfileDocs:'My profile & documents', addNow:'Add now', open:'Open',
+  hrExpiring:'HR: {n} employee documents expired or expiring soon', hrOpen:'HR: employee profiles, documents and contracts',
   nav_people:'Employees', hrBadge:'HR', hrTitle:'HR access', hrSaved:'HR access saved',
   hrBody:'HR can see and edit every employee’s profile, documents and contract & salary. HR can also change roles (Employee / Executive) and enable or disable accounts.',
   hrEmails:'HR team (emails, separated by commas)'
@@ -675,11 +681,15 @@ ar: {
   basicSalary:'الراتب الأساسي', housingAllowance:'بدل السكن', transportAllowance:'بدل النقل', otherAllowance:'بدلات أخرى',
   totalMonthly:'الإجمالي الشهري', perMonth:'شهرياً', contractCopies:'نسخ العقد',
   docsExpiring:'وثائق تنتهي قريباً', next60:'منتهية أو خلال 60 يوماً', andMore:'…و{n} أخرى',
+  updateReady:'يتوفر إصدار جديد من التطبيق.', updateNow:'تحديث', profilePhoto:'صورتك',
+  completeProfile:'أكمل ملفك — أضف {items}', myProfileDocs:'ملفي ووثائقي', addNow:'أضف الآن', open:'فتح',
+  hrExpiring:'الموارد البشرية: {n} من وثائق الموظفين منتهية أو تنتهي قريباً', hrOpen:'الموارد البشرية: ملفات الموظفين ووثائقهم وعقودهم',
   nav_people:'الموظفون', hrBadge:'الموارد البشرية', hrTitle:'صلاحية الموارد البشرية', hrSaved:'تم حفظ صلاحية الموارد البشرية',
   hrBody:'يمكن للموارد البشرية عرض وتعديل الملف الشخصي والوثائق والعقد والراتب لكل موظف، ويمكنها أيضاً تغيير الأدوار (موظف / تنفيذي) وتفعيل الحسابات أو إيقافها.',
   hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
+const APP_VERSION = '202611231353';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -1022,6 +1032,24 @@ async function reload(manual) {
   } catch (e) { toast(errMsg(e), 'bad'); }
   finally { const b = $('#btn-refresh'); if (b) b.classList.remove('spin'); }
 }
+// New version check: tell people when an update is ready instead of silently showing the old app
+let updateShown = false;
+async function checkForUpdate() {
+  if (updateShown || !navigator.onLine) return;
+  try {
+    const txt = await (await fetch('/index.html?v=' + Date.now(), { cache: 'no-store' })).text();
+    const m = txt.match(/const APP_VERSION = '([^']+)'/);
+    if (m && m[1] !== APP_VERSION) {
+      updateShown = true;
+      const el = document.createElement('div');
+      el.className = 'update-bar';
+      el.innerHTML = `<span>${esc(t('updateReady'))}</span><button onclick="location.reload()">${esc(t('updateNow'))}</button>`;
+      document.body.appendChild(el);
+    }
+  } catch (e) {}
+}
+setInterval(() => { if (document.visibilityState === 'visible') checkForUpdate(); }, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkForUpdate(); });
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && S.me && Date.now() - S.lastLoad > 30000 && !document.querySelector('#modal-root .ov')) reload();
 });
@@ -1137,6 +1165,9 @@ function vHome() {
       ${stat(t('stat_rejected'), money(sum(rej)), t('claimsN', { n: rej.length }), 'bad')}
       ${stat(t('stat_total'), money(sum(mine)), t('claimsN', { n: mine.length }))}
     </div>
+    ${(() => { const d = S.docs[S.me.id] || {}; const miss = [!S.me.photo_path && t('profilePhoto'), !d.iqama_no && t('doc_IQAMA'), !d.passport_no && t('doc_PASSPORT')].filter(Boolean);
+      return `<button class="callout soft" onclick="openPerson('${S.me.id}','${miss.length && miss[0] !== t('profilePhoto') ? 'docs' : 'profile'}')"><span class="avatar sm">${avatarInner(S.me)}</span><span>${esc(miss.length ? t('completeProfile', { items: miss.join(S.lang === 'ar' ? '، ' : ', ') }) : t('myProfileDocs'))}</span><b>${esc(miss.length ? t('addNow') : t('open'))}</b></button>`; })()}
+    ${amHR() ? (x => `<button class="callout" onclick="go('people')">${ic('users')}<span>${esc(x.length ? t('hrExpiring', { n: x.length }) : t('hrOpen'))}</span><b>${esc(t('nav_people'))}</b></button>`)(expiringDocs(S.profiles.map(u => u.id), true)) : ''}
     ${(x => x.length ? `<div class="alert warn" onclick="openPerson('${S.me.id}','docs')">${ic('file')}<span>${x.map(d => esc(t('doc_' + d.kind)) + ': ' + esc(d.days < 0 ? t('expired') : t('expiresInDays', { n: d.days }))).join(' · ')}</span><b>${esc(t('review'))}</b></div>` : '')(expiringDocs([S.me.id], false))}
     <button class="btn btn-primary btn-lg w100" onclick="mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button>
     ${myTasks.length ? `<div class="sec-head" style="margin-top:24px"><h3>${esc(t('myTasks'))} <span class="count">${myTasks.length}</span></h3></div>
