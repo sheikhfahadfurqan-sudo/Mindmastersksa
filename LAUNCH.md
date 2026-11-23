@@ -35,6 +35,7 @@ Storage: Supabase Free includes 1 GB for files; Pro ($25/month) includes 100 GB.
 ## Employee profiles (added 23 Nov)
 - Everyone: **avatar (top right) → My profile** → *Change photo*, *Edit* (mobile, nationality, emergency contact), and **Documents**: iqama, passport, driving licence, medical insurance — numbers, expiry dates and copies (photo or PDF, 10 MB).
 - Executives: **Team → click a person** to see and edit everything, plus job title, department, joining date, role, and the **Contract & salary** tab (contract dates, basic salary, allowances, contract copies).
+- **HR (Suhail):** sees the **Employees** menu with every profile, document and contract & salary, and can edit them. HR cannot change roles or disable accounts. Change who is HR in **Team → HR access**.
 - Privacy: an employee sees only their own documents; colleagues see only name and photo; contract & salary are executives-only. The Team list flags iqama/passport expiring within 60 days or already expired.
 
 ---
