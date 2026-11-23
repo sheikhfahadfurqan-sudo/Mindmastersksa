@@ -454,7 +454,11 @@ en: {
   projectExpenses:'Project expenses', myProjectExpenses:'My expenses on this project', edit:'Edit', myProjects:'My projects',
   budgetContext:'Project budget: {used} used of {budget} · {left} remaining', remainingAmt:'{amt} left',
   noDetails:'No details added yet.', schedule:'Schedule', notSet:'Not set', overBy:'Over by {amt}',
-  pmFlowNote:'Project expenses go to this person for approval.'
+  pmFlowNote:'Project expenses go to this person for approval.',
+  del:'Delete', deleteExpense:'Delete expense', deleteExpenseConfirm:'Permanently delete this expense and its receipt? This cannot be undone.',
+  expenseDeleted:'Expense deleted', deleteProject:'Delete project', deleteProjectConfirm:'Permanently delete “{name}”? This cannot be undone.',
+  projectDeleted:'Project deleted', projectHasExpenses:'This project has {n} expenses, so it cannot be deleted. Close it instead — it stays in the records and no new expenses can be added.',
+  closeProject:'Close project', projectClosed:'Project closed', e_hasExpenses:'This project still has expenses. Close it instead.'
 },
 ar: {
   appName:'مايند ماسترز', tagline:'المصروفات والمشاريع', langBtn:'English',
@@ -551,7 +555,11 @@ ar: {
   projectExpenses:'مصروفات المشروع', myProjectExpenses:'مصروفاتي في هذا المشروع', edit:'تعديل', myProjects:'مشاريعي',
   budgetContext:'ميزانية المشروع: مستخدم {used} من {budget} · المتبقي {left}', remainingAmt:'المتبقي {amt}',
   noDetails:'لم تُضف تفاصيل بعد.', schedule:'الجدول الزمني', notSet:'غير محدد', overBy:'تجاوز بمقدار {amt}',
-  pmFlowNote:'تذهب مصروفات المشروع إلى هذا الشخص للموافقة.'
+  pmFlowNote:'تذهب مصروفات المشروع إلى هذا الشخص للموافقة.',
+  del:'حذف', deleteExpense:'حذف المصروف', deleteExpenseConfirm:'هل تريد حذف هذا المصروف وإيصاله نهائياً؟ لا يمكن التراجع عن ذلك.',
+  expenseDeleted:'تم حذف المصروف', deleteProject:'حذف المشروع', deleteProjectConfirm:'هل تريد حذف «{name}» نهائياً؟ لا يمكن التراجع عن ذلك.',
+  projectDeleted:'تم حذف المشروع', projectHasExpenses:'لا يمكن حذف هذا المشروع لأن عليه {n} من المصروفات. يمكنك إغلاقه بدلاً من ذلك — يبقى في السجلات ولا يمكن إضافة مصروفات جديدة إليه.',
+  closeProject:'إغلاق المشروع', projectClosed:'تم إغلاق المشروع', e_hasExpenses:'ما زالت على هذا المشروع مصروفات. أغلقه بدلاً من ذلك.'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
@@ -708,7 +716,7 @@ function errMsg(e) {
     ['not assigned to this project', 'e_notAssigned'], ['project is not active', 'e_projInactive'],
     ['account is not active', 'e_inactive'], ['receipt upload is required', 'e_receipt'],
     ['cannot approve', 'e_cantApprove'], ['cannot reject', 'e_cantApprove'], ['already closed', 'e_closed'],
-    ['Only an executive', 'e_execOnly'], ['reason is required', 'e_reason'],
+    ['Only an executive', 'e_execOnly'], ['reason is required', 'e_reason'], ['expenses_project_fk', 'e_hasExpenses'],
     ['Failed to fetch', 'offline'], ['NetworkError', 'offline'], ['Load failed', 'offline']
   ];
   for (const [needle, key] of map) if (m.toLowerCase().includes(needle.toLowerCase())) return t(key);
@@ -1400,6 +1408,7 @@ async function mExpense(id) {
   const p = e.project_id ? P(e.project_id) : null;
   const acts = [];
   if (canWithdraw(e)) acts.push(`<button class="btn btn-ghost danger" onclick="withdrawFlow('${e.id}')">${esc(t('withdraw'))}</button>`);
+  else if (execView()) acts.push(`<button class="btn btn-ghost danger" onclick="deleteExpenseFlow('${e.id}')">${esc(t('del'))}</button>`);
   if (canAct(e)) {
     acts.push(`<button class="btn btn-bad-ghost" onclick="rejectFlow('${e.id}')">${esc(t('reject'))}</button>`);
     acts.push(`<button class="btn btn-ok" onclick="approveFlow('${e.id}')">${ic('check')}${esc(approveLabel(e))}</button>`);
@@ -1489,6 +1498,42 @@ async function withdrawFlow(id) {
     sb.storage.from('receipts').remove([e.receipt_path]).catch(() => {});
     closeAllModals();
     toast(t('withdrawn'));
+    await reload();
+  } catch (er) { toast(errMsg(er), 'bad'); }
+}
+async function deleteExpenseFlow(id) {
+  const e = S.expenses.find(x => x.id === id); if (!e || !execView()) return;
+  const ok = await promptDialog({ title: t('deleteExpense') + ' — ' + e.title, message: moneyTxt(e.amount_sar) + ' · ' + uname(e.user_id) + '\n' + t('deleteExpenseConfirm'), ok: t('del'), danger: true });
+  if (!ok) return;
+  try {
+    const { data, error } = await sb.from('expenses').delete().eq('id', id).select('id');
+    if (error) throw error;
+    if (!data || !data.length) throw new Error('not deleted');
+    sb.storage.from('receipts').remove([e.receipt_path]).catch(() => {});
+    closeAllModals();
+    toast(t('expenseDeleted'), 'ok');
+    await reload();
+  } catch (er) { toast(errMsg(er), 'bad'); }
+}
+async function deleteProjectFlow(id) {
+  const p = P(id); if (!p || !execView()) return;
+  const n = S.expenses.filter(e => e.project_id === id).length;
+  if (n) {
+    if (p.status === 'CLOSED') return toast(t('projectHasExpenses', { n }), 'bad');
+    const ok = await promptDialog({ title: t('deleteProject'), message: t('projectHasExpenses', { n }), ok: t('closeProject') });
+    if (!ok) return;
+    const { error } = await sb.from('projects').update({ status: 'CLOSED' }).eq('id', id);
+    if (error) return toast(errMsg(error), 'bad');
+    closeAllModals(); toast(t('projectClosed'), 'ok'); return reload();
+  }
+  const ok = await promptDialog({ title: t('deleteProject'), message: t('deleteProjectConfirm', { name: pname(p) }), ok: t('del'), danger: true });
+  if (!ok) return;
+  try {
+    const { data, error } = await sb.from('projects').delete().eq('id', id).select('id');
+    if (error) throw error;
+    if (!data || !data.length) throw new Error('not deleted');
+    closeAllModals();
+    toast(t('projectDeleted'), 'ok');
     await reload();
   } catch (er) { toast(errMsg(er), 'bad'); }
 }
@@ -1634,7 +1679,7 @@ function mProjectDetail(id) {
       ${exList.length ? `<div class="list">${exList.map(e => expRow(e, { showWho: money_ })).join('')}</div>` : empty(t('noData'))}
     </div>
     <div class="m-foot">
-      ${execView() ? `<button class="btn btn-ghost" onclick="closeModal();mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
+      ${execView() ? `<button class="btn btn-ghost danger" onclick="deleteProjectFlow('${p.id}')">${esc(t('del'))}</button><button class="btn btn-ghost" onclick="closeModal();mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
       ${canSubmit ? `<button class="btn btn-primary" onclick="closeModal();mNewExpense('${p.id}')">${ic('plus')}${esc(t('newExpense'))}</button>` : `<button class="btn btn-ghost" onclick="closeModal()">${esc(t('close'))}</button>`}
     </div>`, 'sheet-lg');
 }
