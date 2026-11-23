@@ -284,6 +284,28 @@ html[dir=rtl] .m-head{padding:14px 18px 14px 14px}
 .toast.ok{background:var(--ok)} .toast.bad{background:var(--bad)}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}}
 .spin .ic{animation:spin .8s linear infinite}
+.pr-LOW{background:var(--soft);color:var(--muted)} .pr-HIGH{background:#fdeedd;color:#9a4b00} .pr-URGENT{background:var(--badbg);color:var(--bad)}
+.ps-CLOSED{background:var(--soft);color:var(--muted)}
+.tbl-wrap{overflow-x:auto;margin:0 -18px;padding:0 18px;-webkit-overflow-scrolling:touch}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:720px}
+.tbl th{text-align:start;font-size:12px;font-weight:600;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr{cursor:pointer} .tbl tbody tr:hover td{background:#faf9f6}
+.tbl .r{text-align:end;white-space:nowrap}
+.tbl .pn b{display:block;font-weight:600} .tbl .pn small{color:var(--muted);font-size:12px}
+.tbl .bar{width:90px;display:inline-block;vertical-align:middle;margin-inline-end:6px}
+.neg{color:var(--bad);font-weight:600}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mini>div{background:var(--soft);border-radius:12px;padding:10px 12px;min-width:0}
+.mini small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.mini b{display:block;font-size:15px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:560px){.mini{grid-template-columns:1fr 1fr}}
+.prose{white-space:pre-wrap;word-break:break-word;font-size:14px;margin:0}
+.fsec{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:6px 0 -4px;border-top:1px solid var(--line);padding-top:14px}
+.fsec:first-child{border-top:0;padding-top:0;margin-top:0}
+html[lang=ar] .fsec{text-transform:none;letter-spacing:0}
+.pc-dates{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -392,21 +414,21 @@ en: {
   allTime:'All dates', mineOnly:'Only mine', totalShown:'{n} shown · total {amt}',
   newProject:'New project', editProject:'Edit project', projectDetails:'Project details', projName:'Project name',
   projNameAr:'Name in Arabic', projCode:'Project code', client:'Client', description:'Description', status:'Status',
-  budget:'Budget (SAR)', manager:'Project manager', noManager:'No manager — expenses go straight to the executive',
+  budget:'Budget (SAR)', manager:'Project manager', noManager:'Required — project expenses go to the project manager for approval.',
   noManagerShort:'No manager', members:'Team members', ps_ACTIVE:'Active', ps_ON_HOLD:'On hold', ps_CLOSED:'Closed',
   membersN:'{n} members', projectsEmptyExec:'No projects yet. Create the first one.',
   projectsEmptyEmp:'You have not been added to a project yet.', projectSaved:'Project saved',
   projNameRequired:'Project name is required.', youManage:'You manage this', searchPeople:'Search people',
   peopleHint:'People appear here after they sign in once.', approvedSpend:'Approved spend',
   routingTitle:'Approval routing',
-  routingBody:'Who approves what. The executive gives the final approval on every expense.',
-  flowProject:'Project expense', flowGeneral:'General expense', generalApprover:'General expenses approver (email)',
-  routingSaved:'Approval routing saved', routingInvalid:'Enter a valid @mindmastersksa.com email.',
+  routingBody:'Who approves what. Executives always see every expense and can approve or reject at any stage.',
+  flowProject:'Project expense', flowGeneral:'General expense', generalApprover:'Accounts team — general expenses (emails, separated by commas)',
+  routingSaved:'Approval routing saved', routingInvalid:'Enter valid @mindmastersksa.com emails.',
   notSignedYet:'This person has not signed in yet — they will see their queue after their first sign-in.',
   people:'People', role:'Role', role_EXECUTIVE:'Executive', role_EMPLOYEE:'Employee', jobTitle:'Job title',
   department:'Department', accessActive:'Can sign in and submit expenses', inactive:'Disabled', editPerson:'Edit person',
   execLocked:'Executive access for this account is permanent.', personSaved:'Saved',
-  approverBadge:'General approver', pmBadge:'Project manager',
+  approverBadge:'Accounts team', pmBadge:'Project manager',
   myProfile:'My profile', fullName:'Full name', fullNameAr:'Name in Arabic', phone:'Mobile', email:'Email', profileSaved:'Profile saved',
   installApp:'Install app', installTitle:'Add Mind Masters to your phone', installed:'App installed',
   iosStep1:'Open this page in Safari.', iosStep2:'Tap the Share button (the square with an arrow).',
@@ -417,7 +439,22 @@ en: {
   e_notAssigned:'You are not assigned to this project.', e_projInactive:'This project is not active.',
   e_inactive:'Your account is not active.', e_receipt:'A receipt upload is required.',
   e_cantApprove:'You cannot approve this expense.', e_closed:'This expense is already closed.',
-  e_execOnly:'Only an executive can give final approval.', e_reason:'Please write a reason.'
+  e_execOnly:'Only an executive can give final approval.', e_reason:'Please write a reason.',
+  finalStep:'final approval', pmFinalLabel:'Project manager’s approval is final (no executive sign-off needed)',
+  accFinalLabel:'Accounts team’s approval is final (no executive sign-off needed)',
+  needsUpdateSql:'Settings could not be saved. Run db/update-2026-11-23.sql in Supabase first.',
+  projectsBudgets:'Projects & budgets', allTimeShort:'all time', kpi_budget:'Total budget', kpi_spent:'Spent (approved)',
+  kpi_remaining:'Remaining', col_budget:'Budget', col_used:'Used', overBudget:'Over budget', waitingWith:'Pending approvals — waiting with',
+  startDate:'Start date', endDate:'Target end date', location:'Location / site', clientContact:'Client contact person',
+  clientPhone:'Client phone', priority:'Priority', pr_LOW:'Low', pr_NORMAL:'Normal', pr_HIGH:'High', pr_URGENT:'Urgent',
+  scope:'Scope & deliverables', scopePh:'What must be delivered, milestones, special instructions…', descPh:'What is this project about?',
+  descRequired:'Add a description so the team knows what the project is about.', managerRequired:'Choose the project manager.',
+  datesInvalid:'The end date must be on or after the start date.',
+  secInfo:'Project information', secClient:'Client & location', secTeam:'Manager & team', secScope:'Details for the team',
+  projectExpenses:'Project expenses', myProjectExpenses:'My expenses on this project', edit:'Edit', myProjects:'My projects',
+  budgetContext:'Project budget: {used} used of {budget} · {left} remaining', remainingAmt:'{amt} left',
+  noDetails:'No details added yet.', schedule:'Schedule', notSet:'Not set', overBy:'Over by {amt}',
+  pmFlowNote:'Project expenses go to this person for approval.'
 },
 ar: {
   appName:'مايند ماسترز', tagline:'المصروفات والمشاريع', langBtn:'English',
@@ -474,21 +511,21 @@ ar: {
   allTime:'كل التواريخ', mineOnly:'مصروفاتي فقط', totalShown:'المعروض: {n} · الإجمالي {amt}',
   newProject:'مشروع جديد', editProject:'تعديل المشروع', projectDetails:'تفاصيل المشروع', projName:'اسم المشروع',
   projNameAr:'الاسم بالعربية', projCode:'رمز المشروع', client:'العميل', description:'الوصف', status:'الحالة',
-  budget:'الميزانية (ر.س)', manager:'مدير المشروع', noManager:'بدون مدير — تذهب المصروفات مباشرة للإدارة التنفيذية',
+  budget:'الميزانية (ر.س)', manager:'مدير المشروع', noManager:'مطلوب — تذهب مصروفات المشروع إلى مدير المشروع للموافقة.',
   noManagerShort:'بدون مدير', members:'أعضاء الفريق', ps_ACTIVE:'نشط', ps_ON_HOLD:'متوقف مؤقتاً', ps_CLOSED:'مغلق',
   membersN:'الأعضاء: {n}', projectsEmptyExec:'لا توجد مشاريع بعد. أنشئ أول مشروع.',
   projectsEmptyEmp:'لم تتم إضافتك إلى أي مشروع بعد.', projectSaved:'تم حفظ المشروع',
   projNameRequired:'اسم المشروع مطلوب.', youManage:'أنت المدير', searchPeople:'ابحث عن موظف',
   peopleHint:'يظهر الموظفون هنا بعد تسجيل دخولهم لأول مرة.', approvedSpend:'المصروف المعتمد',
   routingTitle:'مسار الموافقات',
-  routingBody:'من يوافق على ماذا. الإدارة التنفيذية تعطي الاعتماد النهائي لكل مصروف.',
-  flowProject:'مصروف مشروع', flowGeneral:'مصروف عام', generalApprover:'مُعتمِد المصروفات العامة (البريد الإلكتروني)',
+  routingBody:'من يوافق على ماذا. ترى الإدارة التنفيذية جميع المصروفات ويمكنها الموافقة أو الرفض في أي مرحلة.',
+  flowProject:'مصروف مشروع', flowGeneral:'مصروف عام', generalApprover:'فريق الحسابات — المصروفات العامة (عناوين البريد مفصولة بفواصل)',
   routingSaved:'تم حفظ مسار الموافقات', routingInvalid:'أدخل بريداً صحيحاً ينتهي بـ ‎@mindmastersksa.com.',
   notSignedYet:'لم يسجّل هذا الشخص الدخول بعد — ستظهر له الطلبات بعد أول تسجيل دخول.',
   people:'الموظفون', role:'الدور', role_EXECUTIVE:'تنفيذي', role_EMPLOYEE:'موظف', jobTitle:'المسمى الوظيفي',
   department:'القسم', accessActive:'يمكنه الدخول وتقديم المصروفات', inactive:'موقوف', editPerson:'تعديل بيانات الموظف',
   execLocked:'صلاحية الإدارة التنفيذية لهذا الحساب دائمة.', personSaved:'تم الحفظ',
-  approverBadge:'مُعتمِد المصروفات العامة', pmBadge:'مدير مشروع',
+  approverBadge:'فريق الحسابات', pmBadge:'مدير مشروع',
   myProfile:'ملفي الشخصي', fullName:'الاسم الكامل', fullNameAr:'الاسم بالعربية', phone:'الجوال', email:'البريد الإلكتروني', profileSaved:'تم حفظ الملف',
   installApp:'تثبيت التطبيق', installTitle:'أضف مايند ماسترز إلى جوالك', installed:'تم تثبيت التطبيق',
   iosStep1:'افتح هذه الصفحة في متصفح سفاري.', iosStep2:'اضغط زر المشاركة (المربع مع السهم).',
@@ -499,13 +536,28 @@ ar: {
   e_notAssigned:'لست معيّناً في هذا المشروع.', e_projInactive:'هذا المشروع غير نشط.',
   e_inactive:'حسابك غير نشط.', e_receipt:'يجب رفع الإيصال.',
   e_cantApprove:'لا يمكنك الموافقة على هذا المصروف.', e_closed:'تم إغلاق هذا المصروف مسبقاً.',
-  e_execOnly:'الاعتماد النهائي للإدارة التنفيذية فقط.', e_reason:'يرجى كتابة السبب.'
+  e_execOnly:'الاعتماد النهائي للإدارة التنفيذية فقط.', e_reason:'يرجى كتابة السبب.',
+  finalStep:'اعتماد نهائي', pmFinalLabel:'موافقة مدير المشروع نهائية (دون الحاجة لاعتماد الإدارة التنفيذية)',
+  accFinalLabel:'موافقة فريق الحسابات نهائية (دون الحاجة لاعتماد الإدارة التنفيذية)',
+  needsUpdateSql:'تعذّر حفظ الإعدادات. شغّل الملف db/update-2026-11-23.sql في Supabase أولاً.',
+  projectsBudgets:'المشاريع والميزانيات', allTimeShort:'كل الفترات', kpi_budget:'إجمالي الميزانيات', kpi_spent:'المصروف (المعتمد)',
+  kpi_remaining:'المتبقي', col_budget:'الميزانية', col_used:'المستخدم', overBudget:'تجاوز الميزانية', waitingWith:'الموافقات المعلّقة — لدى',
+  startDate:'تاريخ البدء', endDate:'تاريخ الانتهاء المتوقع', location:'الموقع', clientContact:'مسؤول التواصل لدى العميل',
+  clientPhone:'هاتف العميل', priority:'الأولوية', pr_LOW:'منخفضة', pr_NORMAL:'عادية', pr_HIGH:'عالية', pr_URGENT:'عاجلة',
+  scope:'نطاق العمل والمخرجات', scopePh:'المطلوب تسليمه، المراحل، أي تعليمات خاصة…', descPh:'ما هو هذا المشروع؟',
+  descRequired:'أضف وصفاً ليعرف الفريق طبيعة المشروع.', managerRequired:'اختر مدير المشروع.',
+  datesInvalid:'يجب أن يكون تاريخ الانتهاء في يوم البدء أو بعده.',
+  secInfo:'معلومات المشروع', secClient:'العميل والموقع', secTeam:'المدير والفريق', secScope:'تفاصيل للفريق',
+  projectExpenses:'مصروفات المشروع', myProjectExpenses:'مصروفاتي في هذا المشروع', edit:'تعديل', myProjects:'مشاريعي',
+  budgetContext:'ميزانية المشروع: مستخدم {used} من {budget} · المتبقي {left}', remainingAmt:'المتبقي {amt}',
+  noDetails:'لم تُضف تفاصيل بعد.', schedule:'الجدول الزمني', notSet:'غير محدد', overBy:'تجاوز بمقدار {amt}',
+  pmFlowNote:'تذهب مصروفات المشروع إلى هذا الشخص للموافقة.'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
-const EXEC_EMAILS = ['naim@mindmastersksa.com', 'info@mindmastersksa.com'];
+const EXEC_EMAILS = ['naim@mindmastersksa.com', 'naem@mindmastersksa.com', 'info@mindmastersksa.com'];
 const CATS_GENERAL = ['FOOD','GROCERIES','TRANSPORT','FUEL','SUPPLIES','OTHER'];
 const CATS_PROJECT = ['MATERIALS','EQUIPMENT','TRANSPORT','FUEL','FOOD','ACCOMMODATION','SUPPLIES','OTHER'];
 const ALL_CATS = ['FOOD','GROCERIES','TRANSPORT','FUEL','SUPPLIES','EQUIPMENT','MATERIALS','ACCOMMODATION','OTHER'];
@@ -571,8 +623,12 @@ function uid() { return (crypto.randomUUID ? crypto.randomUUID() : Date.now().to
 // ─── DERIVED STATE ────────────────────────────────────────────────
 const isExec = () => !!S.me && S.me.role === 'EXECUTIVE';
 const execView = () => isExec() && S.execMode;
-const genApprover = () => String(S.settings.general_approver_email || '').trim().toLowerCase();
-const amGenApprover = () => !!S.me && S.me.email.toLowerCase() === genApprover();
+const setOn = k => ['true', '1', 'yes', 'on'].includes(String(S.settings[k] || '').trim().toLowerCase());
+const pmFinal = () => setOn('pm_final');
+const accFinal = () => setOn('accounts_final');
+const accountsList = () => String(S.settings.general_approver_email || '').toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean);
+const accountsNames = list => (list || accountsList()).map(unameByEmail).join(S.lang === 'ar' ? '، ' : ', ');
+const amGenApprover = () => !!S.me && accountsList().includes(S.me.email.toLowerCase());
 const P = id => S.pmap[id];
 const U = id => S.umap[id];
 function uname(id) { const u = U(id); if (!u) return '—'; return (S.lang === 'ar' && u.full_name_ar) || u.full_name || u.email; }
@@ -613,7 +669,7 @@ function submittableProjects() {
 }
 function waitingText(e) {
   if (e.status === 'PENDING_MANAGER') { const p = P(e.project_id); return t('ev_wait_manager', { name: p ? uname(p.manager_id) : '—' }); }
-  if (e.status === 'PENDING_ACCOUNTS') return t('ev_wait_accounts', { name: unameByEmail(genApprover()) });
+  if (e.status === 'PENDING_ACCOUNTS') return t('ev_wait_accounts', { name: accountsNames(accountsList().filter(x => x !== (U(e.user_id) || {}).email)) || '—' });
   if (e.status === 'PENDING_EXECUTIVE') return t('ev_wait_exec');
   return '';
 }
@@ -622,11 +678,29 @@ function routeText(type, projectId) {
   if (type === 'PROJECT') {
     const p = P(projectId); if (!p) return '';
     if (!p.manager_id || p.manager_id === S.me.id) return t('routeDirect');
-    return t('pmLabel') + ' (' + uname(p.manager_id) + ')' + arrow + t('executive');
+    return t('pmLabel') + ' (' + uname(p.manager_id) + ')' + (pmFinal() ? ' — ' + t('finalStep') : arrow + t('executive'));
   }
-  const g = genApprover();
-  if (!g || g === S.me.email.toLowerCase()) return t('routeDirect');
-  return t('accountsLabel') + ' (' + unameByEmail(g) + ')' + arrow + t('executive');
+  const others = accountsList().filter(x => x !== S.me.email.toLowerCase());
+  if (!others.length) return t('routeDirect');
+  return t('accountsLabel') + ' (' + accountsNames(others) + ')' + (accFinal() ? ' — ' + t('finalStep') : arrow + t('executive'));
+}
+function approveLabel(e) {
+  if (execView()) return t('approveFinal');
+  if ((e.status === 'PENDING_MANAGER' && pmFinal()) || (e.status === 'PENDING_ACCOUNTS' && accFinal())) return t('approveFinal');
+  return t('approveForward');
+}
+function projStats(p) {
+  const ex = S.expenses.filter(e => e.project_id === p.id);
+  const appr = sum(ex.filter(e => e.status === 'APPROVED')), pend = sum(ex.filter(e => PENDING.includes(e.status)));
+  const budget = +p.budget_sar || 0;
+  return { ex, appr, pend, budget, left: budget - appr, pct: budget ? appr / budget * 100 : 0 };
+}
+const seesProjectMoney = p => execView() || (!!p && p.manager_id === S.me.id);
+function prchip(pr) { return pr && pr !== 'NORMAL' ? `<span class="chip pr-${pr}">${esc(t('pr_' + pr))}</span>` : ''; }
+function dateRange(p) {
+  if (!p.start_date && !p.end_date) return '';
+  const arrow = S.lang === 'ar' ? ' ← ' : ' → ';
+  return (p.start_date ? fdate(p.start_date) : t('notSet')) + arrow + (p.end_date ? fdate(p.end_date) : t('notSet'));
 }
 function errMsg(e) {
   const m = String((e && (e.message || e.error_description || e.error)) || e || '');
@@ -904,6 +978,7 @@ function vHome() {
   const appr = mine.filter(e => e.status === 'APPROVED');
   const rej = mine.filter(e => e.status === 'REJECTED');
   const n = queue().mine.length;
+  const myProj = myProjectsList().filter(p => p.status !== 'CLOSED').sort((a, b) => (a.manager_id === S.me.id ? 0 : 1) - (b.manager_id === S.me.id ? 0 : 1) || pname(a).localeCompare(pname(b)));
   return `<div class="hello"><h2>${esc(t('hello'))}${firstName() ? (S.lang === 'ar' ? '، ' : ', ') + esc(firstName()) : ''}</h2><p class="muted">${esc(fdate(new Date()))}</p></div>
     ${n ? `<button class="callout" onclick="go('approvals')">${ic('checkCircle')}<span>${esc(t('waitingForYou', { n }))}</span><b>${esc(t('review'))}</b></button>` : ''}
     <div class="stats">
@@ -913,6 +988,8 @@ function vHome() {
       ${stat(t('stat_total'), money(sum(mine)), t('claimsN', { n: mine.length }))}
     </div>
     <button class="btn btn-primary btn-lg w100" onclick="mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button>
+    ${myProj.length ? `<div class="sec-head" style="margin-top:24px"><h3>${esc(t('myProjects'))} <span class="count">${myProj.length}</span></h3>${myProj.length > 4 ? `<button class="link" onclick="go('projects')">${esc(t('viewAll'))}</button>` : ''}</div>
+      <div class="pgrid">${myProj.slice(0, 4).map(projCard).join('')}</div>` : ''}
     <div class="sec-head" style="margin-top:24px"><h3>${esc(t('recent'))}</h3>${mine.length ? `<button class="link" onclick="go('expenses')">${esc(t('viewAll'))}</button>` : ''}</div>
     ${mine.length ? `<div class="list">${mine.slice(0, 6).map(e => expRow(e)).join('')}</div>` : empty(t('emptyExpenses'))}`;
 }
@@ -932,27 +1009,40 @@ function barList(items) {
   return `<div class="plist">${items.map(i => `<div><div class="pl-top"><b>${esc(i.label)}</b><span>${money(i.value)}</span></div>
     ${i.sub ? `<div class="pl-sub muted">${esc(i.sub)}</div>` : ''}<div class="bar" style="margin-top:6px"><i style="width:${Math.max(2, i.value / max * 100).toFixed(1)}%"></i></div></div>`).join('')}</div>`;
 }
+function holderOf(e) {
+  if (e.status === 'PENDING_MANAGER') { const p = P(e.project_id); return p && p.manager_id ? uname(p.manager_id) + ' · ' + t('pmLabel') : t('pmLabel'); }
+  if (e.status === 'PENDING_ACCOUNTS') return t('accountsLabel');
+  return t('executive');
+}
 function vDashboard() {
   const per = S.dashPeriod;
   const list = S.expenses.filter(e => inPeriod(e, per));
   const appr = list.filter(e => e.status === 'APPROVED');
   const pend = list.filter(e => PENDING.includes(e.status));
-  const allAppr = S.expenses.filter(e => e.status === 'APPROVED');
   const q = queue();
 
-  const projRows = S.projects.map(p => {
-    const a = sum(appr.filter(e => e.project_id === p.id)), pe = sum(pend.filter(e => e.project_id === p.id));
-    const used = sum(allAppr.filter(e => e.project_id === p.id)), budget = +p.budget_sar || 0;
-    return { p, a, pe, used, budget };
-  }).filter(r => r.a || r.pe || r.p.status === 'ACTIVE').sort((x, y) => (y.a + y.pe) - (x.a + x.pe));
-  const maxP = Math.max(...projRows.map(r => r.a), 1);
-  const projHtml = projRows.length ? `<div class="plist">${projRows.map(r => {
-    const pct = r.budget ? Math.min(100, r.used / r.budget * 100) : (r.a / maxP * 100);
-    return `<div><div class="pl-top"><b>${esc((r.p.code ? r.p.code + ' · ' : '') + pname(r.p))}</b><span>${money(r.a)}</span></div>
-      <div class="pl-sub muted">${r.pe ? esc(t('pendingAmt', { amt: moneyTxt(r.pe) })) + ' · ' : ''}${esc(r.budget ? t('budgetUsed', { used: moneyTxt(r.used), budget: moneyTxt(r.budget) }) : t('noBudget'))}</div>
-      <div class="bar ${r.budget && r.used > r.budget ? 'over' : ''}"><i style="width:${Math.max(r.a || r.used ? 2 : 0, pct).toFixed(1)}%"></i></div></div>`;
-  }).join('')}</div>` : empty(t('noData'));
+  // Projects & budgets — all time (a budget covers the whole project)
+  const rows = S.projects.map(p => ({ p, ...projStats(p) }))
+    .filter(r => r.p.status !== 'CLOSED' || r.appr || r.pend)
+    .sort((x, y) => (x.p.status === 'ACTIVE' ? 0 : 1) - (y.p.status === 'ACTIVE' ? 0 : 1) || (y.appr + y.pend) - (x.appr + x.pend) || pname(x.p).localeCompare(pname(y.p)));
+  const tBudget = rows.reduce((a, r) => a + r.budget, 0), tAppr = rows.reduce((a, r) => a + r.appr, 0), tPend = rows.reduce((a, r) => a + r.pend, 0);
+  const tLeft = rows.reduce((a, r) => a + (r.budget ? r.left : 0), 0);
+  const table = rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>
+      <th>${esc(t('project'))}</th><th>${esc(t('status'))}</th><th class="r">${esc(t('col_budget'))}</th><th class="r">${esc(t('kpi_spent'))}</th>
+      <th class="r">${esc(t('stat_pending'))}</th><th class="r">${esc(t('kpi_remaining'))}</th><th>${esc(t('col_used'))}</th></tr></thead><tbody>
+      ${rows.map(r => { const over = r.budget && r.appr > r.budget; return `<tr onclick="mProjectDetail('${r.p.id}')">
+        <td class="pn"><b>${esc((r.p.code ? r.p.code + ' · ' : '') + pname(r.p))}</b><small>${esc(r.p.manager_id ? uname(r.p.manager_id) : t('noManagerShort'))}${r.p.end_date ? ' · ' + esc(fdate(r.p.end_date)) : ''}</small></td>
+        <td>${pchip(r.p.status)}</td>
+        <td class="r">${r.budget ? money(r.budget) : `<span class="muted">${esc(t('notSet'))}</span>`}</td>
+        <td class="r">${money(r.appr)}</td>
+        <td class="r">${r.pend ? money(r.pend) : '<span class="muted">—</span>'}</td>
+        <td class="r ${over ? 'neg' : ''}">${r.budget ? money(r.left) : '—'}</td>
+        <td style="white-space:nowrap">${r.budget ? `<span class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, r.pct).toFixed(1)}%"></i></span><span class="small ${over ? 'neg' : 'muted'}">${Math.round(r.pct)}%</span>` : ''}</td>
+      </tr>`; }).join('')}</tbody></table></div>` : empty(t('projectsEmptyExec'));
 
+  const projItems = S.projects.map(p => ({ label: (p.code ? p.code + ' · ' : '') + pname(p), value: sum(appr.filter(e => e.project_id === p.id)),
+      sub: (x => x ? t('pendingAmt', { amt: moneyTxt(x) }) : '')(sum(pend.filter(e => e.project_id === p.id))) }))
+    .filter(i => i.value > 0 || i.sub).sort((a, b) => b.value - a.value);
   const gen = appr.filter(e => e.expense_type === 'GENERAL');
   const catItems = ALL_CATS.map(c => ({ label: t('cat_' + c), value: sum(gen.filter(e => e.category === c)) })).filter(i => i.value > 0).sort((a, b) => b.value - a.value);
   const byEmp = {};
@@ -963,6 +1053,10 @@ function vDashboard() {
   }
   const empItems = Object.entries(byEmp).map(([id, r]) => ({ label: uname(id), value: r.a, sub: r.p ? t('pendingAmt', { amt: moneyTxt(r.p) }) : '' }))
     .filter(i => i.value > 0 || i.sub).sort((a, b) => b.value - a.value).slice(0, 15);
+  // Who is holding pending claims (all time) — so Naim can chase approvals
+  const hold = {};
+  for (const e of S.expenses) if (PENDING.includes(e.status)) { const k = holderOf(e); (hold[k] = hold[k] || []).push(e); }
+  const holdItems = Object.entries(hold).map(([k, a]) => ({ label: k, value: sum(a), sub: t('claimsN', { n: a.length }) })).sort((a, b) => b.value - a.value);
 
   return `<div class="dash-head">
       <div class="seg">${['month', 'last', 'year', 'all'].map(k => `<button class="${per === k ? 'on' : ''}" onclick="S.dashPeriod='${k}';render()">${esc(t('per_' + k))}</button>`).join('')}</div>
@@ -975,10 +1069,23 @@ function vDashboard() {
       ${stat(t('kpi_project'), money(sum(appr.filter(e => e.expense_type === 'PROJECT'))), t('approvedOnly'))}
       ${stat(t('kpi_general'), money(sum(gen)), t('approvedOnly'))}
     </div>
+    <div class="card">
+      <div class="sec-head" style="margin:0 0 12px"><h3 style="margin:0">${esc(t('projectsBudgets'))} <span class="count">${rows.length}</span></h3><span class="muted small">${esc(t('allTimeShort'))}</span></div>
+      <div class="mini" style="margin-bottom:14px">
+        <div><small>${esc(t('kpi_budget'))}</small><b>${money(tBudget)}</b></div>
+        <div><small>${esc(t('kpi_spent'))}</small><b>${money(tAppr)}</b></div>
+        <div><small>${esc(t('stat_pending'))}</small><b>${money(tPend)}</b></div>
+        <div><small>${esc(t('kpi_remaining'))}</small><b class="${tLeft < 0 ? 'neg' : ''}">${money(tLeft)}</b></div>
+      </div>
+      ${table}
+    </div>
     <div class="grid2">
-      <div class="card"><h3>${esc(t('byProject'))}</h3>${projHtml}</div>
       <div>
+        <div class="card"><h3>${esc(t('byProject'))}</h3>${barList(projItems)}</div>
         <div class="card"><h3>${esc(t('byCategory'))}</h3>${barList(catItems)}</div>
+      </div>
+      <div>
+        <div class="card"><h3>${esc(t('waitingWith'))}</h3>${holdItems.length ? barList(holdItems) : empty(t('approvals_empty'))}</div>
         <div class="card"><h3>${esc(t('byEmployee'))}</h3>${barList(empItems)}</div>
       </div>
     </div>`;
@@ -1052,40 +1159,43 @@ function vApprovals() {
 }
 
 // ─── VIEW: PROJECTS ───────────────────────────────────────────────
+function projCard(p) {
+  const ev = execView(), mgr = p.manager_id === S.me.id;
+  const ps = projStats(p), over = ps.budget && ps.appr > ps.budget;
+  const dr = dateRange(p);
+  return `<button class="pcard" onclick="mProjectDetail('${p.id}')">
+    <div class="pc-top"><span class="code">${esc(p.code || '')}</span><span style="display:flex;gap:4px">${prchip(p.priority)}${pchip(p.status)}</span></div>
+    <h4>${esc(pname(p))}</h4>
+    ${p.client || p.location ? `<div class="muted small">${esc([p.client, p.location].filter(Boolean).join(' · '))}</div>` : ''}
+    ${dr ? `<div class="pc-dates">${esc(dr)}</div>` : ''}
+    <div class="pc-meta">${ic('user')}<span>${esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort'))} · ${esc(t('membersN', { n: (p.members || []).length }))}</span></div>
+    ${mgr && !ev ? `<span class="chip chip-dark" style="align-self:flex-start">${esc(t('youManage'))}</span>` : ''}
+    ${ev || mgr ? `<div class="pc-spend">${esc(t('approvedSpend'))}: <b style="color:var(--ink)">${money(ps.appr)}</b>${ps.budget ? ` / ${money(ps.budget)}` : ''}
+      ${ps.pend ? `<br>${esc(t('pendingAmt', { amt: moneyTxt(ps.pend) }))}` : ''}
+      ${ps.budget ? `<div class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, ps.pct).toFixed(1)}%"></i></div>
+        <div style="margin-top:4px" class="${over ? 'neg' : ''}">${esc(over ? t('overBy', { amt: moneyTxt(-ps.left) }) : t('remainingAmt', { amt: moneyTxt(ps.left) }))}</div>` : ''}</div>` : ''}
+  </button>`;
+}
+const myProjectsList = () => S.projects.filter(p => p.manager_id === S.me.id || isMember(p));
 function vProjects() {
   const ev = execView();
-  const list = (ev ? S.projects : S.projects.filter(p => p.manager_id === S.me.id || isMember(p)))
+  const list = (ev ? S.projects : myProjectsList())
     .slice().sort((a, b) => (a.status === 'ACTIVE' ? 0 : 1) - (b.status === 'ACTIVE' ? 0 : 1) || pname(a).localeCompare(pname(b)));
-  const cards = list.map(p => {
-    const mgr = p.manager_id === S.me.id;
-    const showSpend = ev || mgr;
-    const used = sum(S.expenses.filter(e => e.project_id === p.id && e.status === 'APPROVED'));
-    const budget = +p.budget_sar || 0;
-    return `<button class="pcard" onclick="${ev ? `mProject('${p.id}')` : `mProjectView('${p.id}')`}">
-      <div class="pc-top"><span class="code">${esc(p.code || '')}</span>${pchip(p.status)}</div>
-      <h4>${esc(pname(p))}</h4>
-      ${p.client ? `<div class="muted small">${esc(p.client)}</div>` : ''}
-      <div class="pc-meta">${ic('user')}<span>${esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort'))} · ${esc(t('membersN', { n: (p.members || []).length }))}</span></div>
-      ${mgr && !ev ? `<span class="chip chip-dark" style="align-self:flex-start">${esc(t('youManage'))}</span>` : ''}
-      ${showSpend ? `<div class="pc-spend">${esc(t('approvedSpend'))}: <b style="color:var(--ink)">${money(used)}</b>${budget ? ` / ${money(budget)}` : ''}
-        ${budget ? `<div class="bar ${used > budget ? 'over' : ''}"><i style="width:${Math.min(100, used / budget * 100).toFixed(1)}%"></i></div>` : ''}</div>` : ''}
-    </button>`;
-  }).join('');
   return `<div class="sec-head"><h3>${esc(t('nav_projects'))} <span class="count">${list.length}</span></h3>
       ${ev ? `<button class="btn btn-primary btn-sm" onclick="mProject()">${ic('plus')}${esc(t('newProject'))}</button>` : ''}</div>
-    ${list.length ? `<div class="pgrid">${cards}</div>` : empty(ev ? t('projectsEmptyExec') : t('projectsEmptyEmp'))}`;
+    ${list.length ? `<div class="pgrid">${list.map(projCard).join('')}</div>` : empty(ev ? t('projectsEmptyExec') : t('projectsEmptyEmp'))}`;
 }
 
 // ─── VIEW: TEAM (executive) ───────────────────────────────────────
 function teamRows() {
-  const g = genApprover();
+  const acc = accountsList();
   const q = (S.teamQ || '').toLowerCase();
   return S.profiles.filter(u => !q || [u.full_name, u.full_name_ar, u.email, u.title, u.department].some(x => x && x.toLowerCase().includes(q)))
     .sort((a, b) => (a.role === 'EXECUTIVE' ? 0 : 1) - (b.role === 'EXECUTIVE' ? 0 : 1) || uname(a.id).localeCompare(uname(b.id)))
     .map(u => {
       const badges = [];
       if (u.role === 'EXECUTIVE') badges.push(`<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>`);
-      if (u.email.toLowerCase() === g) badges.push(`<span class="chip st-PENDING_ACCOUNTS">${esc(t('approverBadge'))}</span>`);
+      if (acc.includes(u.email.toLowerCase())) badges.push(`<span class="chip st-PENDING_ACCOUNTS">${esc(t('approverBadge'))}</span>`);
       if (S.projects.some(p => p.manager_id === u.id)) badges.push(`<span class="chip st-PENDING_MANAGER">${esc(t('pmBadge'))}</span>`);
       if (!u.active) badges.push(`<span class="chip st-REJECTED">${esc(t('inactive'))}</span>`);
       const sub = [u.title, u.department].filter(Boolean).join(' · ');
@@ -1096,20 +1206,26 @@ function teamRows() {
 }
 function renderTeamList() { const el = $('#team-list'); if (el) el.innerHTML = teamRows(); }
 function vTeam() {
-  const g = genApprover();
-  const gp = S.profiles.find(p => p.email.toLowerCase() === g);
+  const acc = accountsList();
+  const missing = acc.filter(e => !S.profiles.some(p => p.email.toLowerCase() === e));
   const arrow = S.lang === 'ar' ? '←' : '→';
+  const done = `<span class="chip st-APPROVED">${esc(t('st_APPROVED'))}</span>`;
+  const execStep = `<span class="step">${esc(t('executive'))}</span>`;
   return `<div class="card">
       <h3>${esc(t('routingTitle'))}</h3>
       <p class="muted small" style="margin:-6px 0 12px">${esc(t('routingBody'))}</p>
       <div class="flow">
-        <div><b>${esc(t('flowProject'))}</b><span class="step">${esc(t('pmLabel'))}</span>${arrow}<span class="step">${esc(t('executive'))}</span></div>
-        <div><b>${esc(t('flowGeneral'))}</b><span class="step">${esc(gp ? uname(gp.id) : g || '—')}</span>${arrow}<span class="step">${esc(t('executive'))}</span></div>
+        <div><b>${esc(t('flowProject'))}</b><span class="step">${esc(t('pmLabel'))}</span>${arrow}${pmFinal() ? done : execStep + arrow + done}</div>
+        <div><b>${esc(t('flowGeneral'))}</b><span class="step">${esc(acc.length ? accountsNames(acc) : '—')}</span>${arrow}${accFinal() ? done : execStep + arrow + done}</div>
       </div>
       <label class="field"><span>${esc(t('generalApprover'))}</span>
-        <div class="inline"><input id="gen-appr" type="email" dir="ltr" value="${esc(g)}" autocomplete="off"><button class="btn btn-primary" onclick="saveRouting(this)">${esc(t('save'))}</button></div>
-      </label>
-      ${g && !gp ? `<p class="muted small" style="margin:8px 0 0">${esc(t('notSignedYet'))}</p>` : ''}
+        <textarea id="gen-appr" dir="ltr" rows="2" autocomplete="off">${esc(acc.join(', '))}</textarea></label>
+      ${missing.length ? `<p class="muted small" style="margin:8px 0 0"><bdi>${esc(missing.join(', '))}</bdi> — ${esc(t('notSignedYet'))}</p>` : ''}
+      <div style="display:flex;flex-direction:column;gap:10px;margin:14px 0">
+        <label class="chk"><input type="checkbox" id="set-pmfinal" ${pmFinal() ? 'checked' : ''}>${esc(t('pmFinalLabel'))}</label>
+        <label class="chk"><input type="checkbox" id="set-accfinal" ${accFinal() ? 'checked' : ''}>${esc(t('accFinalLabel'))}</label>
+      </div>
+      <button class="btn btn-primary" onclick="saveRouting(this)">${esc(t('save'))}</button>
     </div>
     <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${S.profiles.length}</span></h3></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
@@ -1117,19 +1233,27 @@ function vTeam() {
     <div id="team-list" class="list">${teamRows()}</div>`;
 }
 async function saveRouting(btn) {
-  const v = $('#gen-appr').value.trim().toLowerCase();
-  if (!/^[^\s@]+@mindmastersksa\.com$/.test(v)) return toast(t('routingInvalid'), 'bad');
+  const list = [...new Set($('#gen-appr').value.toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean))];
+  if (!list.length || list.some(v => !/^[^\s@]+@mindmastersksa\.com$/.test(v))) return toast(t('routingInvalid'), 'bad');
+  const vals = { general_approver_email: list.join(','), pm_final: $('#set-pmfinal').checked ? 'true' : 'false', accounts_final: $('#set-accfinal').checked ? 'true' : 'false' };
   btn.disabled = true;
-  const { data, error } = await sb.from('app_settings').update({ value: v }).eq('key', 'general_approver_email').select();
-  btn.disabled = false;
-  if (error || !data || !data.length) return toast(errMsg(error || 'not saved'), 'bad');
-  S.settings.general_approver_email = v;
-  toast(t('routingSaved'), 'ok');
-  render();
+  try {
+    for (const [key, value] of Object.entries(vals)) {
+      const { data, error } = await sb.from('app_settings').update({ value }).eq('key', key).select();
+      if (error) throw error;
+      if (!data || !data.length) throw new Error(t('needsUpdateSql'));
+      S.settings[key] = value;
+    }
+    toast(t('routingSaved'), 'ok');
+    render();
+  } catch (e) {
+    toast(e && e.message === t('needsUpdateSql') ? e.message : errMsg(e), 'bad');
+    btn.disabled = false;
+  }
 }
 
 // ─── MODAL: NEW EXPENSE ───────────────────────────────────────────
-function mNewExpense() {
+function mNewExpense(presetPid) {
   closeMenu();
   const projs = submittableProjects();
   const st = { type: 'GENERAL', file: null, prevUrl: null };
@@ -1188,6 +1312,10 @@ function mNewExpense() {
   };
   g('#nf-submit').onclick = () => submitExpense(ov, st);
   fillCats(); updRoute();
+  if (presetPid && g('#nf-proj') && projs.some(p => p.id === presetPid)) {
+    g('#nf-type').querySelector('[data-v="PROJECT"]').click();
+    g('#nf-proj').value = presetPid; updRoute();
+  }
 }
 function compressImage(file) {
   return new Promise(resolve => {
@@ -1274,7 +1402,7 @@ async function mExpense(id) {
   if (canWithdraw(e)) acts.push(`<button class="btn btn-ghost danger" onclick="withdrawFlow('${e.id}')">${esc(t('withdraw'))}</button>`);
   if (canAct(e)) {
     acts.push(`<button class="btn btn-bad-ghost" onclick="rejectFlow('${e.id}')">${esc(t('reject'))}</button>`);
-    acts.push(`<button class="btn btn-ok" onclick="approveFlow('${e.id}')">${ic('check')}${esc(execView() ? t('approveFinal') : t('approveForward'))}</button>`);
+    acts.push(`<button class="btn btn-ok" onclick="approveFlow('${e.id}')">${ic('check')}${esc(approveLabel(e))}</button>`);
   }
   const ov = openModal(`${mhead(e.title)}
     <div class="m-body">
@@ -1283,11 +1411,13 @@ async function mExpense(id) {
       <dl class="kv">
         <dt>${esc(t('submittedBy'))}</dt><dd>${esc(uname(e.user_id))}</dd>
         <dt>${esc(t('typeLabel'))}</dt><dd>${esc(t('type_' + e.expense_type))}${p ? ' — ' + esc((p.code ? p.code + ' · ' : '') + pname(p)) : ''}</dd>
+        ${p ? `<dt>${esc(t('manager'))}</dt><dd>${esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort'))}</dd>` : ''}
         <dt>${esc(t('category'))}</dt><dd>${esc(t('cat_' + e.category))}</dd>
         <dt>${esc(t('date'))}</dt><dd>${esc(fdate(e.expense_date))}</dd>
         ${e.vendor ? `<dt>${esc(t('vendor'))}</dt><dd>${esc(e.vendor)}</dd>` : ''}
         ${e.notes ? `<dt>${esc(t('notes'))}</dt><dd>${esc(e.notes)}</dd>` : ''}
       </dl>
+      ${p && seesProjectMoney(p) && (+p.budget_sar || 0) > 0 ? (() => { const ps = projStats(p); return `<div class="note">${esc(t('budgetContext', { used: moneyTxt(ps.appr), budget: moneyTxt(ps.budget), left: moneyTxt(ps.left) }))}</div>`; })() : ''}
       <div class="receipt" id="x-rc"><div class="spinner sm"></div></div>
       <h4>${esc(t('timeline'))}</h4>${timeline(e)}
     </div>
@@ -1323,7 +1453,7 @@ async function approveFlow(id) {
   const e = S.expenses.find(x => x.id === id); if (!e) return;
   const note = await promptDialog({
     title: t('approve') + ' — ' + e.title, message: moneyTxt(e.amount_sar) + ' · ' + uname(e.user_id),
-    label: t('approveNote'), ok: execView() ? t('approveFinal') : t('approveForward'), okClass: 'btn-ok'
+    label: t('approveNote'), ok: approveLabel(e), okClass: 'btn-ok'
   });
   if (note === null) return;
   try {
@@ -1375,39 +1505,56 @@ async function approveAll() {
 
 // ─── MODAL: PROJECTS ──────────────────────────────────────────────
 function mProject(id) {
-  const p = id ? P(id) : { status: 'ACTIVE', budget_sar: 0, members: [] };
+  const p = id ? P(id) : { status: 'ACTIVE', priority: 'NORMAL', budget_sar: 0, members: [], start_date: todayISO() };
   if (!p) return;
   const oldSel = new Set((p.members || []).map(m => m.user_id));
   const people = S.profiles.filter(u => u.active || oldSel.has(u.id) || u.id === p.manager_id).sort((a, b) => uname(a.id).localeCompare(uname(b.id)));
+  const opt = () => ` <i>(${esc(t('optional'))})</i>`;
   const ov = openModal(`${mhead(id ? t('editProject') : t('newProject'))}
     <div class="m-body">
+      <div class="fsec">${esc(t('secInfo'))}</div>
       <div class="two">
         <label class="field"><span>${esc(t('projName'))}</span><input id="pf-name" maxlength="120" value="${esc(p.name || '')}"></label>
-        <label class="field"><span>${esc(t('projCode'))} <i>(${esc(t('optional'))})</i></span><input id="pf-code" maxlength="30" dir="ltr" value="${esc(p.code || '')}"></label>
+        <label class="field"><span>${esc(t('projCode'))}${opt()}</span><input id="pf-code" maxlength="30" dir="ltr" value="${esc(p.code || '')}"></label>
       </div>
-      <label class="field"><span>${esc(t('projNameAr'))} <i>(${esc(t('optional'))})</i></span><input id="pf-name-ar" dir="rtl" maxlength="120" value="${esc(p.name_ar || '')}"></label>
+      <label class="field"><span>${esc(t('projNameAr'))}${opt()}</span><input id="pf-name-ar" dir="rtl" maxlength="120" value="${esc(p.name_ar || '')}"></label>
+      <label class="field"><span>${esc(t('description'))}</span><textarea id="pf-desc" rows="3" maxlength="3000" placeholder="${esc(t('descPh'))}">${esc(p.description || '')}</textarea></label>
       <div class="two">
-        <label class="field"><span>${esc(t('client'))} <i>(${esc(t('optional'))})</i></span><input id="pf-client" maxlength="120" value="${esc(p.client || '')}"></label>
-        <label class="field"><span>${esc(t('budget'))} <i>(${esc(t('optional'))})</i></span><input id="pf-budget" type="number" min="0" step="0.01" inputmode="decimal" dir="ltr" value="${+p.budget_sar ? +p.budget_sar : ''}"></label>
+        <label class="field"><span>${esc(t('startDate'))}</span><input id="pf-start" type="date" dir="ltr" value="${esc(p.start_date || '')}"></label>
+        <label class="field"><span>${esc(t('endDate'))}${opt()}</span><input id="pf-end" type="date" dir="ltr" value="${esc(p.end_date || '')}"></label>
       </div>
       <div class="two">
-        <label class="field"><span>${esc(t('manager'))}</span><select id="pf-mgr"><option value="">${esc(t('noManagerShort'))}</option>
-          ${people.map(u => `<option value="${u.id}" ${p.manager_id === u.id ? 'selected' : ''}>${esc(uname(u.id))}</option>`).join('')}</select></label>
-        <label class="field"><span>${esc(t('status'))}</span><select id="pf-status">${['ACTIVE', 'ON_HOLD', 'CLOSED'].map(s => `<option value="${s}" ${p.status === s ? 'selected' : ''}>${esc(t('ps_' + s))}</option>`).join('')}</select></label>
+        <label class="field"><span>${esc(t('budget'))}</span><input id="pf-budget" type="number" min="0" step="0.01" inputmode="decimal" dir="ltr" placeholder="0.00" value="${+p.budget_sar ? +p.budget_sar : ''}"></label>
+        <label class="field"><span>${esc(t('priority'))}</span><select id="pf-prio">${['LOW', 'NORMAL', 'HIGH', 'URGENT'].map(x => `<option value="${x}" ${(p.priority || 'NORMAL') === x ? 'selected' : ''}>${esc(t('pr_' + x))}</option>`).join('')}</select></label>
       </div>
-      <p class="muted small" id="pf-mgr-hint">${esc(t('noManager'))}</p>
-      <label class="field"><span>${esc(t('description'))} <i>(${esc(t('optional'))})</i></span><textarea id="pf-desc" rows="2" maxlength="1000">${esc(p.description || '')}</textarea></label>
+      <label class="field"><span>${esc(t('status'))}</span><select id="pf-status">${['ACTIVE', 'ON_HOLD', 'CLOSED'].map(x => `<option value="${x}" ${p.status === x ? 'selected' : ''}>${esc(t('ps_' + x))}</option>`).join('')}</select></label>
+
+      <div class="fsec">${esc(t('secClient'))}</div>
+      <div class="two">
+        <label class="field"><span>${esc(t('client'))}${opt()}</span><input id="pf-client" maxlength="120" value="${esc(p.client || '')}"></label>
+        <label class="field"><span>${esc(t('location'))}${opt()}</span><input id="pf-loc" maxlength="160" value="${esc(p.location || '')}"></label>
+      </div>
+      <div class="two">
+        <label class="field"><span>${esc(t('clientContact'))}${opt()}</span><input id="pf-cc" maxlength="120" value="${esc(p.client_contact || '')}"></label>
+        <label class="field"><span>${esc(t('clientPhone'))}${opt()}</span><input id="pf-cp" type="tel" dir="ltr" maxlength="30" value="${esc(p.client_phone || '')}"></label>
+      </div>
+
+      <div class="fsec">${esc(t('secTeam'))}</div>
+      <label class="field"><span>${esc(t('manager'))}</span><select id="pf-mgr"><option value="">—</option>
+        ${people.map(u => `<option value="${u.id}" ${p.manager_id === u.id ? 'selected' : ''}>${esc(uname(u.id))}</option>`).join('')}</select>
+        <small class="muted">${esc(t('noManager'))}</small></label>
       <div class="field"><span>${esc(t('members'))} <i id="pf-mcount">(${oldSel.size})</i></span>
         <input class="search" id="pf-q" type="search" placeholder="${esc(t('searchPeople'))}">
         <div class="checklist" id="pf-members">${people.map(u => `<label class="ck" data-q="${esc([u.full_name, u.full_name_ar, u.email].filter(Boolean).join(' ').toLowerCase())}"><input type="checkbox" value="${u.id}" ${oldSel.has(u.id) ? 'checked' : ''}><span><b>${esc(uname(u.id))}</b><small><bdi>${esc(u.email)}</bdi></small></span></label>`).join('')}</div>
         <small class="muted">${esc(t('peopleHint'))}</small>
       </div>
+
+      <div class="fsec">${esc(t('secScope'))}</div>
+      <label class="field"><span>${esc(t('scope'))}${opt()}</span><textarea id="pf-scope" rows="4" maxlength="5000" placeholder="${esc(t('scopePh'))}">${esc(p.scope || '')}</textarea></label>
       <div class="err hidden" id="pf-err"></div>
     </div>
     <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="pf-save">${esc(t('save'))}</button></div>`, 'sheet-lg');
   const g = s => ov.querySelector(s);
-  const updHint = () => g('#pf-mgr-hint').classList.toggle('hidden', !!g('#pf-mgr').value);
-  g('#pf-mgr').onchange = updHint; updHint();
   g('#pf-q').oninput = ev => { const q = ev.target.value.toLowerCase(); ov.querySelectorAll('#pf-members .ck').forEach(l => l.classList.toggle('hidden', !!q && !l.dataset.q.includes(q))); };
   g('#pf-members').onchange = () => { g('#pf-mcount').textContent = '(' + ov.querySelectorAll('#pf-members input:checked').length + ')'; };
   g('#pf-save').onclick = () => saveProject(ov, id, oldSel);
@@ -1415,12 +1562,21 @@ function mProject(id) {
 async function saveProject(ov, id, oldSel) {
   const g = s => ov.querySelector(s);
   const errBox = g('#pf-err');
-  const name = g('#pf-name').value.trim();
-  if (!name) { errBox.textContent = t('projNameRequired'); errBox.classList.remove('hidden'); return; }
+  const fail = m => { errBox.textContent = m; errBox.classList.remove('hidden'); errBox.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  errBox.classList.add('hidden');
+  const name = g('#pf-name').value.trim(), desc = g('#pf-desc').value.trim(), mgr = g('#pf-mgr').value;
+  const start = g('#pf-start').value || null, end = g('#pf-end').value || null;
+  if (!name) return fail(t('projNameRequired'));
+  if (!desc) return fail(t('descRequired'));
+  if (!mgr) return fail(t('managerRequired'));
+  if (start && end && end < start) return fail(t('datesInvalid'));
+  const v = sel => g(sel).value.trim() || null;
   const obj = {
-    name, code: g('#pf-code').value.trim() || null, name_ar: g('#pf-name-ar').value.trim() || null,
-    client: g('#pf-client').value.trim() || null, budget_sar: Math.max(0, parseFloat(g('#pf-budget').value) || 0),
-    status: g('#pf-status').value, manager_id: g('#pf-mgr').value || null, description: g('#pf-desc').value.trim() || null
+    name, code: v('#pf-code'), name_ar: v('#pf-name-ar'), description: desc,
+    client: v('#pf-client'), location: v('#pf-loc'), client_contact: v('#pf-cc'), client_phone: v('#pf-cp'),
+    start_date: start, end_date: end, priority: g('#pf-prio').value, scope: v('#pf-scope'),
+    budget_sar: Math.max(0, parseFloat(g('#pf-budget').value) || 0),
+    status: g('#pf-status').value, manager_id: mgr
   };
   const btn = g('#pf-save'); btn.disabled = true; btn.textContent = t('saving');
   try {
@@ -1435,28 +1591,54 @@ async function saveProject(ov, id, oldSel) {
     closeModal(ov);
     toast(t('projectSaved'), 'ok');
     await reload();
+    if (pid) mProjectDetail(pid);
   } catch (e) {
-    errBox.textContent = errMsg(e); errBox.classList.remove('hidden');
+    const m = String((e && e.message) || '');
+    fail(/column|schema cache/i.test(m) ? t('needsUpdateSql') : errMsg(e));
     btn.disabled = false; btn.textContent = t('save');
   }
 }
-function mProjectView(id) {
+function mProjectDetail(id) {
+  closeAllModals();
   const p = P(id); if (!p) return;
+  const money_ = seesProjectMoney(p);
+  const ps = projStats(p);
+  const exList = (money_ ? ps.ex : ps.ex.filter(e => e.user_id === S.me.id)).slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   const members = (p.members || []).map(m => uname(m.user_id));
-  const mineAppr = sum(S.expenses.filter(e => e.project_id === id && e.status === 'APPROVED' && (p.manager_id === S.me.id || e.user_id === S.me.id)));
+  const canSubmit = p.status === 'ACTIVE' && submittableProjects().some(x => x.id === p.id);
+  const kv = (label, val) => val ? `<dt>${esc(label)}</dt><dd>${val}</dd>` : '';
+  const contact = [p.client_contact ? esc(p.client_contact) : '', p.client_phone ? `<bdi>${esc(p.client_phone)}</bdi>` : ''].filter(Boolean).join(' · ');
+  const over = ps.budget && ps.appr > ps.budget;
   openModal(`${mhead(pname(p))}
     <div class="m-body">
-      <div class="x-top"><span class="code">${esc(p.code || '')}</span>${pchip(p.status)}</div>
+      <div class="x-top"><span class="code">${esc(p.code || '')}</span><div style="display:flex;gap:6px">${prchip(p.priority)}${pchip(p.status)}</div></div>
+      ${money_ ? `<div class="mini">
+          <div><small>${esc(t('col_budget'))}</small><b>${ps.budget ? money(ps.budget) : esc(t('notSet'))}</b></div>
+          <div><small>${esc(t('kpi_spent'))}</small><b>${money(ps.appr)}</b></div>
+          <div><small>${esc(t('stat_pending'))}</small><b>${money(ps.pend)}</b></div>
+          <div><small>${esc(t('kpi_remaining'))}</small><b class="${over ? 'neg' : ''}">${ps.budget ? money(ps.left) : '—'}</b></div>
+        </div>
+        ${ps.budget ? `<div class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, ps.pct).toFixed(1)}%"></i></div>` : ''}` : ''}
       <dl class="kv">
-        ${p.client ? `<dt>${esc(t('client'))}</dt><dd>${esc(p.client)}</dd>` : ''}
-        <dt>${esc(t('manager'))}</dt><dd>${esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort'))}</dd>
-        <dt>${esc(t('members'))}</dt><dd>${esc(members.join('، ') || '—')}</dd>
-        <dt>${esc(t('approvedSpend'))}</dt><dd>${money(mineAppr)}</dd>
-        ${p.description ? `<dt>${esc(t('description'))}</dt><dd>${esc(p.description)}</dd>` : ''}
+        ${kv(t('manager'), esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort')))}
+        ${kv(t('members'), esc(members.join(S.lang === 'ar' ? '، ' : ', ') || '—'))}
+        ${kv(t('schedule'), esc(dateRange(p)))}
+        ${kv(t('client'), esc(p.client || ''))}
+        ${kv(t('clientContact'), contact)}
+        ${kv(t('location'), esc(p.location || ''))}
       </dl>
+      <div><h4 style="margin-bottom:6px">${esc(t('description'))}</h4>${p.description ? `<p class="prose">${esc(p.description)}</p>` : `<p class="muted small">${esc(t('noDetails'))}</p>`}</div>
+      ${p.scope ? `<div><h4 style="margin-bottom:6px">${esc(t('scope'))}</h4><p class="prose">${esc(p.scope)}</p></div>` : ''}
+      <div class="sec-head" style="margin:4px 0 0"><h4>${esc(money_ ? t('projectExpenses') : t('myProjectExpenses'))} <span class="count">${exList.length}</span></h4>
+        ${money_ && exList.length ? `<button class="btn btn-ghost btn-sm" onclick="exportCsv(projStats(P('${p.id}')).ex,'project-${esc((p.code || 'export').replace(/[^\w-]/g, ''))}')">${ic('download')}${esc(t('exportCsv'))}</button>` : ''}</div>
+      ${exList.length ? `<div class="list">${exList.map(e => expRow(e, { showWho: money_ })).join('')}</div>` : empty(t('noData'))}
     </div>
-    ${p.status === 'ACTIVE' ? `<div class="m-foot"><button class="btn btn-primary" onclick="closeModal();mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button></div>` : ''}`);
+    <div class="m-foot">
+      ${execView() ? `<button class="btn btn-ghost" onclick="closeModal();mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
+      ${canSubmit ? `<button class="btn btn-primary" onclick="closeModal();mNewExpense('${p.id}')">${ic('plus')}${esc(t('newExpense'))}</button>` : `<button class="btn btn-ghost" onclick="closeModal()">${esc(t('close'))}</button>`}
+    </div>`, 'sheet-lg');
 }
+const mProjectView = mProjectDetail;
 
 // ─── MODAL: PEOPLE ────────────────────────────────────────────────
 function mPerson(id) {
@@ -1511,11 +1693,11 @@ function mProfile() {
 
 // ─── CSV EXPORT ───────────────────────────────────────────────────
 function exportCsv(list, label) {
-  const H = ['Expense date', 'Employee', 'Email', 'Type', 'Project code', 'Project', 'Category', 'Description', 'Vendor', 'Amount (SAR)', 'Status', 'Submitted at', 'First approval by', 'Final approval by', 'Rejected by', 'Rejection reason'];
+  const H = ['Expense date', 'Employee', 'Email', 'Type', 'Project code', 'Project', 'Project manager', 'Category', 'Description', 'Vendor', 'Amount (SAR)', 'Status', 'Submitted at', 'First approval by', 'Final approval by', 'Rejected by', 'Rejection reason'];
   const nm = id => (id && U(id) ? U(id).full_name : '');
   const rows = list.map(e => {
     const u = U(e.user_id) || {}, p = e.project_id ? P(e.project_id) : null;
-    return [e.expense_date, u.full_name || '', u.email || '', e.expense_type, p ? p.code || '' : '', p ? p.name : '', e.category, e.title, e.vendor || '',
+    return [e.expense_date, u.full_name || '', u.email || '', e.expense_type, p ? p.code || '' : '', p ? p.name : '', p ? nm(p.manager_id) : '', e.category, e.title, e.vendor || '',
       (+e.amount_sar).toFixed(2), e.status, e.created_at, nm(e.first_approver_id), nm(e.final_approver_id), nm(e.rejected_by), e.rejection_reason || ''];
   });
   const cell = c => {

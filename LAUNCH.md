@@ -2,16 +2,24 @@
 
 App address: https://mindmastersksa.onrender.com
 
-## How approvals work
-| Expense type | Step 1 | Step 2 (final) |
+## How approvals work (updated 23 Nov)
+| Expense type | Who approves | Final? |
 |---|---|---|
-| **Project expense** | Project manager of that project | Executive (Naim / info@) |
-| **General expense** (food, groceries, misc.) | General approver — **suhail@mindmastersksa.com** for now | Executive (Naim / info@) |
+| **Project expense** | The **project manager** of that project | Yes — the PM's approval is final |
+| **General expense** (food, groceries, misc.) | The **accounts team** (Suhail for now; you can list several people) | Yes — accounts' approval is final |
 
-- If a project has no manager, or the manager submits their own expense, it goes straight to the executive.
-- Executives can approve or reject at any stage. A rejection always needs a reason, which the employee sees.
-- To hand general expenses to the new accounts officer later: **Team → Approval routing → change the email → Save.** Claims already waiting move to the new person automatically.
-- naim@ and info@ become Executives automatically on first sign-in. They can switch between the **Executive** and **Employee** views. Employees never see that switch, the dashboard, or the Team page.
+- Naim and info@ see **every** expense, project and budget on the Dashboard, and can approve or reject anything at any stage.
+- If a project has no manager, or the manager submits their own expense, it goes to the executive.
+- Want Naim to sign last again? **Team → Approval routing → untick "approval is final" → Save.**
+- Accounts team: **Team → Approval routing →** type the emails separated by commas → **Save**.
+- naim@ (also naem@) and info@ are Executives automatically. They can switch between **Executive** and **Employee** views. Employees never see that switch, the Dashboard or the Team page.
+- New projects need a **name, description and project manager**. Add dates, budget, client, location and scope so the team knows what to do.
+
+## ★ Update of 23 Nov — do this once (keeps all data)
+1. Supabase → **SQL Editor → New query** → paste all of `db/update-2026-11-23.sql` → **Run**. (Run this **before** pushing the app.)
+2. Push the new app to GitHub (see step 3 below). Render redeploys automatically.
+3. Naim opens **Projects**, clicks the project created yesterday → **Edit** → fills in description, dates, budget and client.
+
 
 ---
 
@@ -24,8 +32,8 @@ Test script:
 1. Naim (or info@) signs in and sees the Dashboard. Switch to the **Employee** view and back.
 2. Create a test project. Choose a project manager and add an employee.
 3. The employee submits one **project** expense and one **general** expense, each with a receipt photo.
-4. The PM approves the project expense, and Suhail approves the general one. Both then appear for Naim.
-5. Naim approves one and rejects the other with a reason. The employee sees the result and the reason.
+4. The PM approves the project expense, and Suhail approves the general one. Both are now Approved, and Naim sees them on the Dashboard.
+5. Submit one more and have Naim reject it with a reason. The employee sees the result and the reason.
 6. Switch to Arabic on a phone, then install the app to the home screen (iPhone and Android).
 7. Delete the test claims afterwards: open Supabase → Table Editor → expenses → delete the rows.
 
