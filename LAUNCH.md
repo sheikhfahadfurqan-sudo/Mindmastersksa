@@ -21,6 +21,17 @@ App address: https://mindmastersksa.onrender.com
 3. Naim opens **Projects**, clicks the project created yesterday → **Edit** → fills in description, dates, budget and client.
 
 
+## Project workspace (added 23 Nov)
+Open any project to get tabs:
+- **Overview** – budget, details, upcoming milestones, latest site update.
+- **Tasks** – Naim / the PM add tasks with owner, due date and milestone flag. The assigned person ticks them off (tap the circle: to do → in progress → done). Progress % shows on the project and on Naim's dashboard. Each person sees **My tasks** on their home screen.
+- **Updates** – anyone on the project posts progress notes with site photos.
+- **Files** – drawings, contracts, quotations, BOQ, photos, reports (up to 25 MB each). Everyone on the project can upload and open; uploader, PM or Naim can delete.
+- **Expenses** – that project's claims.
+- **Finance** (Naim + PM only) – contract value, payment terms, client invoices (mark paid), invoiced / received / outstanding, expected margin.
+
+Storage: Supabase Free includes 1 GB for files; Pro ($25/month) includes 100 GB.
+
 ---
 
 ## 0. Test for free first

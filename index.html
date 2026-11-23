@@ -306,6 +306,34 @@ html[dir=rtl] .m-head{padding:14px 18px 14px 14px}
 .fsec:first-child{border-top:0;padding-top:0;margin-top:0}
 html[lang=ar] .fsec{text-transform:none;letter-spacing:0}
 .pc-dates{font-size:12px;color:var(--muted)}
+.back{display:inline-flex;margin-bottom:10px;text-decoration:none;font-size:13.5px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.ph h2{font-size:22px;letter-spacing:-.01em;margin:4px 0 2px}
+.ph-chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:22px}
+.ph-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ph-prog{display:flex;align-items:center;gap:10px;margin:4px 0 14px}.ph-prog .bar{flex:1;max-width:320px}
+.ptabs{margin-bottom:16px}
+.trow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px}
+.trow.done .row-title{text-decoration:line-through;color:var(--muted)}
+.tchk{width:26px;height:26px;border-radius:50%;border:2px solid #cfcbc2;display:grid;place-items:center;color:#fff;flex:none}
+.tchk:disabled{cursor:default;opacity:.7}
+.tchk .ic{width:15px;height:15px;stroke-width:3}
+.tchk.ts-IN_PROGRESS{border-color:var(--info)} .tchk.ts-IN_PROGRESS i{width:10px;height:10px;border-radius:50%;background:var(--info)}
+.tchk.ts-DONE{background:var(--ok);border-color:var(--ok)}
+.tnotes{margin-top:3px;white-space:pre-wrap}
+.chip.ts-TODO{background:var(--soft);color:var(--ink2)} .chip.ts-IN_PROGRESS{background:var(--infobg);color:var(--info)} .chip.ts-DONE{background:var(--okbg);color:var(--ok)}
+.ms{color:#b07a00}
+.inv-PAID{background:var(--okbg);color:var(--ok)} .inv-UNPAID{background:var(--warnbg);color:var(--warn)} .inv-OVERDUE{background:var(--badbg);color:var(--bad)}
+.upd{display:flex;flex-direction:column;gap:8px}
+.upd.card{margin:0}
+.upd-h{display:flex;align-items:center;gap:10px}.upd-h .who{flex:1;min-width:0}
+.upd-h b{display:block;font-size:14px}.upd-h small{color:var(--muted);font-size:12px}
+.avatar.sm{width:32px;height:32px;font-size:12px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--soft)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.fic{overflow:hidden}.fic img{width:100%;height:100%;object-fit:cover}
+.mytask{cursor:pointer}
 </style>
 </head>
 <body>
@@ -458,7 +486,30 @@ en: {
   del:'Delete', deleteExpense:'Delete expense', deleteExpenseConfirm:'Permanently delete this expense and its receipt? This cannot be undone.',
   expenseDeleted:'Expense deleted', deleteProject:'Delete project', deleteProjectConfirm:'Permanently delete “{name}”? This cannot be undone.',
   projectDeleted:'Project deleted', projectHasExpenses:'This project has {n} expenses, so it cannot be deleted. Close it instead — it stays in the records and no new expenses can be added.',
-  closeProject:'Close project', projectClosed:'Project closed', e_hasExpenses:'This project still has expenses. Close it instead.'
+  closeProject:'Close project', projectClosed:'Project closed', e_hasExpenses:'This project still has expenses. Close it instead.',
+  tab_overview:'Overview', tab_tasks:'Tasks', tab_updates:'Updates', tab_files:'Files', tab_expenses:'Expenses', tab_finance:'Finance',
+  progress:'Progress', tasksDone:'{d} of {n} tasks done', noTasks:'No tasks yet.', addTask:'Add task', editTask:'Edit task',
+  taskTitle:'Task', assignee:'Assigned to', unassigned:'Unassigned', dueDate:'Due date', milestone:'Milestone',
+  milestoneHint:'a key stage, e.g. handover', ts_TODO:'To do', ts_IN_PROGRESS:'In progress', ts_DONE:'Done', overdue:'Overdue',
+  taskSaved:'Task saved', taskDeleted:'Task deleted', deleteTaskConfirm:'Delete this task?', taskTitleRequired:'Write the task.',
+  openTasks:'Open tasks', doneTasks:'Completed', myTasks:'My tasks', nextMilestones:'Upcoming tasks & milestones',
+  postUpdate:'Post update', updatePh:'What happened on site? Progress, issues, next steps…', addPhotos:'Site photos', post:'Post',
+  posting:'Posting…', updatePosted:'Update posted', noUpdates:'No updates yet. Post the first progress update.',
+  deleteUpdateConfirm:'Delete this update and its photos?', updateDeleted:'Update deleted', latestUpdate:'Latest update',
+  updateRequired:'Write the update.', uploadFiles:'Upload files', folder:'Folder',
+  f_DRAWINGS:'Drawings', f_CONTRACTS:'Contracts', f_QUOTATIONS:'Quotations', f_BOQ:'BOQ', f_PHOTOS:'Photos', f_REPORTS:'Reports', f_OTHER:'Other',
+  chooseFiles:'Choose files (up to 25 MB each)', filesChosen:'{n} files selected', upload:'Upload', uploadingN:'Uploading {i} of {n}…',
+  filesUploaded:'{n} files uploaded', noFiles:'No files yet. Upload drawings, contracts, quotations and photos here.',
+  deleteFileConfirm:'Delete “{name}”?', fileDeleted:'File deleted', fileTooBig25:'“{name}” is larger than 25 MB.',
+  filesRequired:'Choose at least one file.', contractValue:'Contract value (SAR)', contractValueShort:'Contract value',
+  paymentTerms:'Payment terms', termsPh:'e.g. 30% advance, 60% on progress, 10% retention', invoiced:'Invoiced', received:'Received',
+  outstanding:'Outstanding', margin:'Expected margin', marginSub:'Contract value minus approved expenses', cashPos:'Cash position',
+  cashSub:'Payments received minus approved expenses', invoices:'Client invoices', invoice:'Invoice', addInvoice:'Add invoice',
+  editInvoice:'Edit invoice', invoiceNo:'Invoice no.', invoicePh:'e.g. Progress payment 1', issueDate:'Issued', paidDate:'Paid on',
+  paidHint:'leave empty if not paid yet', markPaid:'Mark paid', inv_PAID:'Paid', inv_UNPAID:'Unpaid', inv_OVERDUE:'Overdue',
+  noInvoices:'No invoices yet.', invoiceSaved:'Invoice saved', invoiceDeleted:'Invoice deleted', deleteInvoiceConfirm:'Delete this invoice?',
+  financeHint:'Only executives and this project’s manager can see this tab.', invoicedPct:'{pct}% of the contract invoiced',
+  kpi_contract:'Contract value', col_progress:'Progress', e_task:'You cannot change this task.'
 },
 ar: {
   appName:'مايند ماسترز', tagline:'المصروفات والمشاريع', langBtn:'English',
@@ -559,7 +610,30 @@ ar: {
   del:'حذف', deleteExpense:'حذف المصروف', deleteExpenseConfirm:'هل تريد حذف هذا المصروف وإيصاله نهائياً؟ لا يمكن التراجع عن ذلك.',
   expenseDeleted:'تم حذف المصروف', deleteProject:'حذف المشروع', deleteProjectConfirm:'هل تريد حذف «{name}» نهائياً؟ لا يمكن التراجع عن ذلك.',
   projectDeleted:'تم حذف المشروع', projectHasExpenses:'لا يمكن حذف هذا المشروع لأن عليه {n} من المصروفات. يمكنك إغلاقه بدلاً من ذلك — يبقى في السجلات ولا يمكن إضافة مصروفات جديدة إليه.',
-  closeProject:'إغلاق المشروع', projectClosed:'تم إغلاق المشروع', e_hasExpenses:'ما زالت على هذا المشروع مصروفات. أغلقه بدلاً من ذلك.'
+  closeProject:'إغلاق المشروع', projectClosed:'تم إغلاق المشروع', e_hasExpenses:'ما زالت على هذا المشروع مصروفات. أغلقه بدلاً من ذلك.',
+  tab_overview:'نظرة عامة', tab_tasks:'المهام', tab_updates:'التحديثات', tab_files:'الملفات', tab_expenses:'المصروفات', tab_finance:'المالية',
+  progress:'نسبة الإنجاز', tasksDone:'تم إنجاز {d} من {n} مهام', noTasks:'لا توجد مهام بعد.', addTask:'إضافة مهمة', editTask:'تعديل المهمة',
+  taskTitle:'المهمة', assignee:'مسندة إلى', unassigned:'غير مسندة', dueDate:'تاريخ الاستحقاق', milestone:'مرحلة رئيسية',
+  milestoneHint:'مرحلة مهمة مثل التسليم', ts_TODO:'لم تبدأ', ts_IN_PROGRESS:'قيد التنفيذ', ts_DONE:'منجزة', overdue:'متأخرة',
+  taskSaved:'تم حفظ المهمة', taskDeleted:'تم حذف المهمة', deleteTaskConfirm:'هل تريد حذف هذه المهمة؟', taskTitleRequired:'اكتب المهمة.',
+  openTasks:'المهام المفتوحة', doneTasks:'المنجزة', myTasks:'مهامي', nextMilestones:'المهام والمراحل القادمة',
+  postUpdate:'نشر تحديث', updatePh:'ماذا حدث في الموقع؟ الإنجاز، المشاكل، الخطوات التالية…', addPhotos:'صور الموقع', post:'نشر',
+  posting:'جارٍ النشر…', updatePosted:'تم نشر التحديث', noUpdates:'لا توجد تحديثات بعد. انشر أول تحديث للإنجاز.',
+  deleteUpdateConfirm:'هل تريد حذف هذا التحديث وصوره؟', updateDeleted:'تم حذف التحديث', latestUpdate:'آخر تحديث',
+  updateRequired:'اكتب التحديث.', uploadFiles:'رفع ملفات', folder:'المجلد',
+  f_DRAWINGS:'المخططات', f_CONTRACTS:'العقود', f_QUOTATIONS:'عروض الأسعار', f_BOQ:'جداول الكميات', f_PHOTOS:'الصور', f_REPORTS:'التقارير', f_OTHER:'أخرى',
+  chooseFiles:'اختر الملفات (حتى 25 ميجابايت لكل ملف)', filesChosen:'تم اختيار {n} ملفات', upload:'رفع', uploadingN:'جارٍ رفع {i} من {n}…',
+  filesUploaded:'تم رفع {n} ملفات', noFiles:'لا توجد ملفات بعد. ارفع المخططات والعقود وعروض الأسعار والصور هنا.',
+  deleteFileConfirm:'هل تريد حذف «{name}»؟', fileDeleted:'تم حذف الملف', fileTooBig25:'الملف «{name}» أكبر من 25 ميجابايت.',
+  filesRequired:'اختر ملفاً واحداً على الأقل.', contractValue:'قيمة العقد (ر.س)', contractValueShort:'قيمة العقد',
+  paymentTerms:'شروط الدفع', termsPh:'مثال: 30٪ دفعة مقدمة، 60٪ حسب الإنجاز، 10٪ محتجزات', invoiced:'المفوتر', received:'المحصّل',
+  outstanding:'المستحق', margin:'الهامش المتوقع', marginSub:'قيمة العقد ناقص المصروفات المعتمدة', cashPos:'الوضع النقدي',
+  cashSub:'المبالغ المحصلة ناقص المصروفات المعتمدة', invoices:'فواتير العميل', invoice:'فاتورة', addInvoice:'إضافة فاتورة',
+  editInvoice:'تعديل الفاتورة', invoiceNo:'رقم الفاتورة', invoicePh:'مثال: دفعة إنجاز 1', issueDate:'تاريخ الإصدار', paidDate:'تاريخ السداد',
+  paidHint:'اتركه فارغاً إن لم تُسدد بعد', markPaid:'تحديد كمدفوعة', inv_PAID:'مدفوعة', inv_UNPAID:'غير مدفوعة', inv_OVERDUE:'متأخرة',
+  noInvoices:'لا توجد فواتير بعد.', invoiceSaved:'تم حفظ الفاتورة', invoiceDeleted:'تم حذف الفاتورة', deleteInvoiceConfirm:'هل تريد حذف هذه الفاتورة؟',
+  financeHint:'هذا التبويب يظهر فقط للإدارة التنفيذية ومدير هذا المشروع.', invoicedPct:'تمت فوترة {pct}٪ من العقد',
+  kpi_contract:'قيمة العقود', col_progress:'الإنجاز', e_task:'لا يمكنك تعديل هذه المهمة.'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
@@ -581,6 +655,7 @@ const S = {
   lang: store.get('mm_lang', (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en'),
   execMode: store.get('mm_view', 'exec') !== 'emp',
   me: null, view: 'home', profiles: [], projects: [], expenses: [], settings: {},
+  tasks: [], fin: {}, invoices: [], pid: null, ptab: 'overview', pdata: null, pfolder: 'all',
   umap: {}, pmap: {}, booting: false, lastLoad: 0, dashPeriod: 'month', teamQ: '',
   f: { status: 'all', project: 'all', employee: 'all', period: 'all', q: '', mine: false }
 };
@@ -716,7 +791,7 @@ function errMsg(e) {
     ['not assigned to this project', 'e_notAssigned'], ['project is not active', 'e_projInactive'],
     ['account is not active', 'e_inactive'], ['receipt upload is required', 'e_receipt'],
     ['cannot approve', 'e_cantApprove'], ['cannot reject', 'e_cantApprove'], ['already closed', 'e_closed'],
-    ['Only an executive', 'e_execOnly'], ['reason is required', 'e_reason'], ['expenses_project_fk', 'e_hasExpenses'],
+    ['Only an executive', 'e_execOnly'], ['reason is required', 'e_reason'], ['expenses_project_fk', 'e_hasExpenses'], ['cannot change this task', 'e_task'], ['project_tasks', 'needsUpdateSql'],
     ['Failed to fetch', 'offline'], ['NetworkError', 'offline'], ['Load failed', 'offline']
   ];
   for (const [needle, key] of map) if (m.toLowerCase().includes(needle.toLowerCase())) return t(key);
@@ -864,12 +939,16 @@ async function fetchAllRows(build) {
   return out;
 }
 async function loadAll() {
-  const [profiles, projects, expenses, settings] = await Promise.all([
+  const [profiles, projects, expenses, settings, tasks, fin, invoices] = await Promise.all([
     fetchAllRows(() => sb.from('profiles').select('id,email,full_name,full_name_ar,phone,role,title,department,active,created_at').order('full_name')),
     fetchAllRows(() => sb.from('projects').select('*,members:project_members(user_id)').order('created_at', { ascending: false })),
     fetchAllRows(() => sb.from('expenses').select('*').order('created_at', { ascending: false })),
-    fetchAllRows(() => sb.from('app_settings').select('key,value'))
+    fetchAllRows(() => sb.from('app_settings').select('key,value')),
+    fetchAllRows(() => sb.from('project_tasks').select('*').order('created_at')),
+    fetchAllRows(() => sb.from('project_finance').select('*')),
+    fetchAllRows(() => sb.from('project_invoices').select('*').order('issue_date', { ascending: false }))
   ]);
+  S.tasks = tasks; S.invoices = invoices; S.fin = Object.fromEntries(fin.map(f => [f.project_id, f]));
   S.profiles = profiles; S.projects = projects; S.expenses = expenses;
   S.settings = Object.fromEntries(settings.map(x => [x.key, x.value]));
   S.umap = Object.fromEntries(profiles.map(u => [u.id, u]));
@@ -883,6 +962,7 @@ async function reload(manual) {
   if (btn) btn.classList.add('spin');
   try {
     await loadAll();
+    if (S.view === 'project' && S.pid && S.pdata && !S.pdata.loading) await loadPData(S.pid, true);
     if (!S.me.active) { showScreen('disabled'); return; }
     if (!$('#app').classList.contains('hidden')) render();
     if (manual) toast(t('refreshed'));
@@ -910,8 +990,10 @@ function navItems() {
 function render() {
   if (!S.me) return;
   const items = navItems();
-  if (!items.find(i => i.id === S.view)) S.view = 'home';
-  const nav = items.map(i => `<button class="nav-item ${S.view === i.id ? 'on' : ''}" onclick="go('${i.id}')">${ic(i.icon)}<span>${esc(i.label)}</span>${i.badge ? `<em class="badge">${i.badge}</em>` : ''}</button>`).join('');
+  if (S.view === 'project' && !P(S.pid)) S.view = 'projects';
+  if (S.view !== 'project' && !items.find(i => i.id === S.view)) S.view = 'home';
+  const navOn = id => S.view === id || (S.view === 'project' && id === 'projects');
+  const nav = items.map(i => `<button class="nav-item ${navOn(i.id) ? 'on' : ''}" onclick="go('${i.id}')">${ic(i.icon)}<span>${esc(i.label)}</span>${i.badge ? `<em class="badge">${i.badge}</em>` : ''}</button>`).join('');
   $('#side-nav').innerHTML = nav;
   $('#tabbar').innerHTML = nav;
   renderTopbar();
@@ -921,12 +1003,13 @@ function render() {
     pb.innerHTML = `<span>${esc(t('previewBanner'))}</span><button onclick="setExecMode(true)">${esc(t('backToExec'))}</button>`;
     pb.classList.remove('hidden');
   } else pb.classList.add('hidden');
-  const views = { home: execView() ? vDashboard : vHome, expenses: vExpenses, approvals: vApprovals, projects: vProjects, team: vTeam };
+  const views = { home: execView() ? vDashboard : vHome, expenses: vExpenses, approvals: vApprovals, projects: vProjects, team: vTeam, project: vProject };
   $('#view').innerHTML = views[S.view]();
+  if (S.view === 'project') setTimeout(fillThumbs, 0);
   $('#fab').classList.toggle('hidden', S.view === 'team');
 }
 function renderTopbar() {
-  const cur = navItems().find(i => i.id === S.view);
+  const cur = navItems().find(i => i.id === (S.view === 'project' ? 'projects' : S.view));
   $('#topbar').innerHTML = `
     <div class="tb-brand"><img src="/logo.png" alt=""><span>${esc(cur ? cur.label : '')}</span></div>
     <div class="tb-actions">
@@ -986,6 +1069,8 @@ function vHome() {
   const appr = mine.filter(e => e.status === 'APPROVED');
   const rej = mine.filter(e => e.status === 'REJECTED');
   const n = queue().mine.length;
+  const myTasks = S.tasks.filter(x => x.assignee_id === S.me.id && x.status !== 'DONE' && P(x.project_id))
+    .sort((a, b) => (a.due_date || '9999').localeCompare(b.due_date || '9999'));
   const myProj = myProjectsList().filter(p => p.status !== 'CLOSED').sort((a, b) => (a.manager_id === S.me.id ? 0 : 1) - (b.manager_id === S.me.id ? 0 : 1) || pname(a).localeCompare(pname(b)));
   return `<div class="hello"><h2>${esc(t('hello'))}${firstName() ? (S.lang === 'ar' ? '، ' : ', ') + esc(firstName()) : ''}</h2><p class="muted">${esc(fdate(new Date()))}</p></div>
     ${n ? `<button class="callout" onclick="go('approvals')">${ic('checkCircle')}<span>${esc(t('waitingForYou', { n }))}</span><b>${esc(t('review'))}</b></button>` : ''}
@@ -996,6 +1081,11 @@ function vHome() {
       ${stat(t('stat_total'), money(sum(mine)), t('claimsN', { n: mine.length }))}
     </div>
     <button class="btn btn-primary btn-lg w100" onclick="mNewExpense()">${ic('plus')}${esc(t('newExpense'))}</button>
+    ${myTasks.length ? `<div class="sec-head" style="margin-top:24px"><h3>${esc(t('myTasks'))} <span class="count">${myTasks.length}</span></h3></div>
+      <div class="list">${myTasks.slice(0, 6).map(tk => { const od = isOverdue(tk); return `<div class="row mytask" onclick="openProject('${tk.project_id}','tasks')">
+        <div class="row-ic proj">${ic('checkCircle')}</div>
+        <div class="row-main"><div class="row-title">${tk.is_milestone ? '<span class="ms">◆</span> ' : ''}${esc(tk.title)}</div><div class="row-sub ${od ? 'neg' : ''}">${esc([pname(P(tk.project_id)), tk.due_date ? fdate(tk.due_date) : ''].filter(Boolean).join(' · '))}${od ? ' · ' + esc(t('overdue')) : ''}</div></div>
+        <div class="row-end"><span class="chip ts-${tk.status}">${esc(t('ts_' + tk.status))}</span></div></div>`; }).join('')}</div>` : ''}
     ${myProj.length ? `<div class="sec-head" style="margin-top:24px"><h3>${esc(t('myProjects'))} <span class="count">${myProj.length}</span></h3>${myProj.length > 4 ? `<button class="link" onclick="go('projects')">${esc(t('viewAll'))}</button>` : ''}</div>
       <div class="pgrid">${myProj.slice(0, 4).map(projCard).join('')}</div>` : ''}
     <div class="sec-head" style="margin-top:24px"><h3>${esc(t('recent'))}</h3>${mine.length ? `<button class="link" onclick="go('expenses')">${esc(t('viewAll'))}</button>` : ''}</div>
@@ -1037,7 +1127,7 @@ function vDashboard() {
   const tLeft = rows.reduce((a, r) => a + (r.budget ? r.left : 0), 0);
   const table = rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>
       <th>${esc(t('project'))}</th><th>${esc(t('status'))}</th><th class="r">${esc(t('col_budget'))}</th><th class="r">${esc(t('kpi_spent'))}</th>
-      <th class="r">${esc(t('stat_pending'))}</th><th class="r">${esc(t('kpi_remaining'))}</th><th>${esc(t('col_used'))}</th></tr></thead><tbody>
+      <th class="r">${esc(t('stat_pending'))}</th><th class="r">${esc(t('kpi_remaining'))}</th><th>${esc(t('col_used'))}</th><th>${esc(t('col_progress'))}</th></tr></thead><tbody>
       ${rows.map(r => { const over = r.budget && r.appr > r.budget; return `<tr onclick="mProjectDetail('${r.p.id}')">
         <td class="pn"><b>${esc((r.p.code ? r.p.code + ' · ' : '') + pname(r.p))}</b><small>${esc(r.p.manager_id ? uname(r.p.manager_id) : t('noManagerShort'))}${r.p.end_date ? ' · ' + esc(fdate(r.p.end_date)) : ''}</small></td>
         <td>${pchip(r.p.status)}</td>
@@ -1046,6 +1136,7 @@ function vDashboard() {
         <td class="r">${r.pend ? money(r.pend) : '<span class="muted">—</span>'}</td>
         <td class="r ${over ? 'neg' : ''}">${r.budget ? money(r.left) : '—'}</td>
         <td style="white-space:nowrap">${r.budget ? `<span class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, r.pct).toFixed(1)}%"></i></span><span class="small ${over ? 'neg' : 'muted'}">${Math.round(r.pct)}%</span>` : ''}</td>
+        <td style="white-space:nowrap">${(tp => tp.n ? `<span class="bar"><i style="width:${tp.pct}%;background:var(--ok)"></i></span><span class="small muted">${tp.pct}%</span>` : '<span class="muted">—</span>')(taskProgress(r.p.id))}</td>
       </tr>`; }).join('')}</tbody></table></div>` : empty(t('projectsEmptyExec'));
 
   const projItems = S.projects.map(p => ({ label: (p.code ? p.code + ' · ' : '') + pname(p), value: sum(appr.filter(e => e.project_id === p.id)),
@@ -1085,6 +1176,12 @@ function vDashboard() {
         <div><small>${esc(t('stat_pending'))}</small><b>${money(tPend)}</b></div>
         <div><small>${esc(t('kpi_remaining'))}</small><b class="${tLeft < 0 ? 'neg' : ''}">${money(tLeft)}</b></div>
       </div>
+      ${(() => { const fs = rows.map(r => projFinance(r.p.id)); const cv = fs.reduce((a, f) => a + f.contract, 0), inv = fs.reduce((a, f) => a + f.invoiced, 0), rec = fs.reduce((a, f) => a + f.received, 0);
+        return cv || inv ? `<div class="mini" style="margin-bottom:14px">
+          <div><small>${esc(t('kpi_contract'))}</small><b>${money(cv)}</b></div>
+          <div><small>${esc(t('invoiced'))}</small><b>${money(inv)}</b></div>
+          <div><small>${esc(t('received'))}</small><b>${money(rec)}</b></div>
+          <div><small>${esc(t('outstanding'))}</small><b>${money(inv - rec)}</b></div></div>` : ''; })()}
       ${table}
     </div>
     <div class="grid2">
@@ -1177,6 +1274,7 @@ function projCard(p) {
     ${p.client || p.location ? `<div class="muted small">${esc([p.client, p.location].filter(Boolean).join(' · '))}</div>` : ''}
     ${dr ? `<div class="pc-dates">${esc(dr)}</div>` : ''}
     <div class="pc-meta">${ic('user')}<span>${esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort'))} · ${esc(t('membersN', { n: (p.members || []).length }))}</span></div>
+    ${(tp => tp.n ? `<div class="pc-spend">${esc(t('tasksDone', { d: tp.d, n: tp.n }))}<div class="bar"><i style="width:${tp.pct}%;background:var(--ok)"></i></div></div>` : '')(taskProgress(p.id))}
     ${mgr && !ev ? `<span class="chip chip-dark" style="align-self:flex-start">${esc(t('youManage'))}</span>` : ''}
     ${ev || mgr ? `<div class="pc-spend">${esc(t('approvedSpend'))}: <b style="color:var(--ink)">${money(ps.appr)}</b>${ps.budget ? ` / ${money(ps.budget)}` : ''}
       ${ps.pend ? `<br>${esc(t('pendingAmt', { amt: moneyTxt(ps.pend) }))}` : ''}
@@ -1529,11 +1627,15 @@ async function deleteProjectFlow(id) {
   const ok = await promptDialog({ title: t('deleteProject'), message: t('deleteProjectConfirm', { name: pname(p) }), ok: t('del'), danger: true });
   if (!ok) return;
   try {
+    let paths = [];
+    try { const r = await sb.from('project_files').select('path').eq('project_id', id); paths = (r.data || []).map(x => x.path); } catch (e) {}
     const { data, error } = await sb.from('projects').delete().eq('id', id).select('id');
     if (error) throw error;
     if (!data || !data.length) throw new Error('not deleted');
+    if (paths.length) sb.storage.from('project-files').remove(paths).catch(() => {});
     closeAllModals();
     toast(t('projectDeleted'), 'ok');
+    S.view = 'projects'; S.pid = null; S.pdata = null;
     await reload();
   } catch (er) { toast(errMsg(er), 'bad'); }
 }
@@ -1643,47 +1745,475 @@ async function saveProject(ov, id, oldSel) {
     btn.disabled = false; btn.textContent = t('save');
   }
 }
-function mProjectDetail(id) {
-  closeAllModals();
-  const p = P(id); if (!p) return;
-  const money_ = seesProjectMoney(p);
-  const ps = projStats(p);
-  const exList = (money_ ? ps.ex : ps.ex.filter(e => e.user_id === S.me.id)).slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  const members = (p.members || []).map(m => uname(m.user_id));
+
+// ─── PROJECT WORKSPACE ────────────────────────────────────────────
+const FOLDERS = ['DRAWINGS', 'CONTRACTS', 'QUOTATIONS', 'BOQ', 'PHOTOS', 'REPORTS', 'OTHER'];
+const MAX_PFILE = 25 * 1024 * 1024;
+const canManageP = p => !!p && (execView() || p.manager_id === S.me.id);
+const projTasks = pid => S.tasks.filter(x => x.project_id === pid);
+function taskProgress(pid) {
+  const a = projTasks(pid), d = a.filter(x => x.status === 'DONE').length;
+  return { n: a.length, d, pct: a.length ? Math.round(d / a.length * 100) : 0 };
+}
+const isOverdue = tk => tk.status !== 'DONE' && !!tk.due_date && tk.due_date < todayISO();
+function invStatus(i) { return i.paid_date ? 'PAID' : (i.due_date && i.due_date < todayISO() ? 'OVERDUE' : 'UNPAID'); }
+function projFinance(pid) {
+  const f = S.fin[pid] || {}, inv = S.invoices.filter(i => i.project_id === pid);
+  const invoiced = sum(inv), received = sum(inv.filter(i => i.paid_date));
+  return { contract: +f.contract_value_sar || 0, terms: f.payment_terms || '', inv, invoiced, received, outstanding: invoiced - received };
+}
+function projectPeople(p) { return [...new Set([p.manager_id, ...(p.members || []).map(m => m.user_id)].filter(Boolean))]; }
+function fmtSize(b) { b = +b || 0; if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(0) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; }
+const isImgMime = m => /^image\/(jpeg|png|webp|gif)$/.test(m || '');
+
+function openProject(id, tab) {
+  closeAllModals(); closeMenu();
+  if (!P(id)) return;
+  if (S.pid !== id) { S.pdata = null; S.pfolder = 'all'; }
+  S.pid = id; S.ptab = tab || 'overview'; S.view = 'project';
+  render(); window.scrollTo(0, 0);
+}
+const mProjectDetail = id => openProject(id);
+const mProjectView = mProjectDetail;
+function setPTab(tb) { S.ptab = tb; render(); }
+async function loadPData(pid, silent) {
+  if (!silent) S.pdata = { pid, loading: true, updates: [], files: [], urls: {} };
+  try {
+    const [updates, files] = await Promise.all([
+      fetchAllRows(() => sb.from('project_updates').select('*').eq('project_id', pid).order('created_at', { ascending: false })),
+      fetchAllRows(() => sb.from('project_files').select('*').eq('project_id', pid).order('created_at', { ascending: false }))
+    ]);
+    if (S.pid !== pid) return;
+    const urls = (S.pdata && S.pdata.pid === pid && S.pdata.urls) || {};
+    S.pdata = { pid, loading: false, updates, files, urls };
+  } catch (e) {
+    if (S.pid === pid) S.pdata = { pid, loading: false, updates: [], files: [], urls: {}, error: errMsg(e) };
+  }
+  if (!silent && S.view === 'project' && S.pid === pid) render();
+}
+async function fillThumbs() {
+  const imgs = [...document.querySelectorAll('img[data-path]')];
+  if (!imgs.length || !S.pdata) return;
+  const urls = S.pdata.urls || (S.pdata.urls = {});
+  const need = [...new Set(imgs.map(i => i.dataset.path).filter(p => !urls[p]))];
+  if (need.length) {
+    try {
+      const { data } = await sb.storage.from('project-files').createSignedUrls(need, 3600);
+      (data || []).forEach(d => { if (d && d.signedUrl) urls[d.path] = d.signedUrl; });
+    } catch (e) {}
+  }
+  document.querySelectorAll('img[data-path]').forEach(i => { const u = urls[i.dataset.path]; if (u && i.getAttribute('src') !== u) i.src = u; });
+}
+
+function vProject() {
+  const p = P(S.pid);
+  if (!p) { S.view = 'projects'; return vProjects(); }
+  if (!S.pdata || S.pdata.pid !== p.id) loadPData(p.id);
+  const manage = canManageP(p), money_ = seesProjectMoney(p);
+  const tp = taskProgress(p.id), ps = projStats(p);
+  const exCount = (money_ ? ps.ex : ps.ex.filter(e => e.user_id === S.me.id)).length;
+  const openT = projTasks(p.id).filter(x => x.status !== 'DONE').length;
+  const nFiles = S.pdata && !S.pdata.loading ? S.pdata.files.length : 0;
+  const tabs = [['overview', t('tab_overview')], ['tasks', t('tab_tasks') + (openT ? ' · ' + openT : '')], ['updates', t('tab_updates')],
+    ['files', t('tab_files') + (nFiles ? ' · ' + nFiles : '')], ['expenses', t('tab_expenses') + (exCount ? ' · ' + exCount : '')]];
+  if (manage) tabs.push(['finance', t('tab_finance')]);
+  if (!tabs.some(x => x[0] === S.ptab)) S.ptab = 'overview';
   const canSubmit = p.status === 'ACTIVE' && submittableProjects().some(x => x.id === p.id);
+  const body = { overview: pOverview, tasks: pTasks, updates: pUpdates, files: pFiles, expenses: pExpenses, finance: pFinance }[S.ptab](p);
+  const sub = [p.client, p.location].filter(Boolean).join(' · ');
+  return `<button class="link back" onclick="go('projects')">${S.lang === 'ar' ? '→' : '←'} ${esc(t('nav_projects'))}</button>
+    <div class="ph">
+      <div class="ph-main">
+        <div class="ph-chips"><span class="code">${esc(p.code || '')}</span>${prchip(p.priority)}${pchip(p.status)}${p.manager_id === S.me.id && !execView() ? `<span class="chip chip-dark">${esc(t('youManage'))}</span>` : ''}</div>
+        <h2>${esc(pname(p))}</h2>
+        ${sub ? `<div class="muted small">${esc(sub)}</div>` : ''}
+      </div>
+      <div class="ph-actions">
+        ${execView() ? `<button class="btn btn-ghost btn-sm danger" onclick="deleteProjectFlow('${p.id}')">${esc(t('del'))}</button>` : ''}
+        ${execView() ? `<button class="btn btn-ghost btn-sm" onclick="mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
+        ${canSubmit ? `<button class="btn btn-primary btn-sm" onclick="mNewExpense('${p.id}')">${ic('plus')}${esc(t('newExpense'))}</button>` : ''}
+      </div>
+    </div>
+    ${tp.n ? `<div class="ph-prog"><div class="bar"><i style="width:${tp.pct}%;background:var(--ok)"></i></div><span class="small muted">${esc(t('tasksDone', { d: tp.d, n: tp.n }))} · ${tp.pct}%</span></div>` : ''}
+    <div class="pills ptabs">${tabs.map(([k, l]) => `<button class="pill ${S.ptab === k ? 'on' : ''}" onclick="setPTab('${k}')">${esc(l)}</button>`).join('')}</div>
+    ${body}`;
+}
+
+// Overview
+function pOverview(p) {
+  const money_ = seesProjectMoney(p), ps = projStats(p), over = ps.budget && ps.appr > ps.budget;
   const kv = (label, val) => val ? `<dt>${esc(label)}</dt><dd>${val}</dd>` : '';
   const contact = [p.client_contact ? esc(p.client_contact) : '', p.client_phone ? `<bdi>${esc(p.client_phone)}</bdi>` : ''].filter(Boolean).join(' · ');
-  const over = ps.budget && ps.appr > ps.budget;
-  openModal(`${mhead(pname(p))}
-    <div class="m-body">
-      <div class="x-top"><span class="code">${esc(p.code || '')}</span><div style="display:flex;gap:6px">${prchip(p.priority)}${pchip(p.status)}</div></div>
-      ${money_ ? `<div class="mini">
-          <div><small>${esc(t('col_budget'))}</small><b>${ps.budget ? money(ps.budget) : esc(t('notSet'))}</b></div>
-          <div><small>${esc(t('kpi_spent'))}</small><b>${money(ps.appr)}</b></div>
-          <div><small>${esc(t('stat_pending'))}</small><b>${money(ps.pend)}</b></div>
-          <div><small>${esc(t('kpi_remaining'))}</small><b class="${over ? 'neg' : ''}">${ps.budget ? money(ps.left) : '—'}</b></div>
-        </div>
-        ${ps.budget ? `<div class="bar ${over ? 'over' : ''}"><i style="width:${Math.min(100, ps.pct).toFixed(1)}%"></i></div>` : ''}` : ''}
-      <dl class="kv">
-        ${kv(t('manager'), esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort')))}
-        ${kv(t('members'), esc(members.join(S.lang === 'ar' ? '، ' : ', ') || '—'))}
-        ${kv(t('schedule'), esc(dateRange(p)))}
-        ${kv(t('client'), esc(p.client || ''))}
-        ${kv(t('clientContact'), contact)}
-        ${kv(t('location'), esc(p.location || ''))}
-      </dl>
-      <div><h4 style="margin-bottom:6px">${esc(t('description'))}</h4>${p.description ? `<p class="prose">${esc(p.description)}</p>` : `<p class="muted small">${esc(t('noDetails'))}</p>`}</div>
-      ${p.scope ? `<div><h4 style="margin-bottom:6px">${esc(t('scope'))}</h4><p class="prose">${esc(p.scope)}</p></div>` : ''}
-      <div class="sec-head" style="margin:4px 0 0"><h4>${esc(money_ ? t('projectExpenses') : t('myProjectExpenses'))} <span class="count">${exList.length}</span></h4>
-        ${money_ && exList.length ? `<button class="btn btn-ghost btn-sm" onclick="exportCsv(projStats(P('${p.id}')).ex,'project-${esc((p.code || 'export').replace(/[^\w-]/g, ''))}')">${ic('download')}${esc(t('exportCsv'))}</button>` : ''}</div>
-      ${exList.length ? `<div class="list">${exList.map(e => expRow(e, { showWho: money_ })).join('')}</div>` : empty(t('noData'))}
-    </div>
-    <div class="m-foot">
-      ${execView() ? `<button class="btn btn-ghost danger" onclick="deleteProjectFlow('${p.id}')">${esc(t('del'))}</button><button class="btn btn-ghost" onclick="closeModal();mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
-      ${canSubmit ? `<button class="btn btn-primary" onclick="closeModal();mNewExpense('${p.id}')">${ic('plus')}${esc(t('newExpense'))}</button>` : `<button class="btn btn-ghost" onclick="closeModal()">${esc(t('close'))}</button>`}
-    </div>`, 'sheet-lg');
+  const members = (p.members || []).map(m => uname(m.user_id));
+  const next = projTasks(p.id).filter(x => x.status !== 'DONE' && (x.is_milestone || x.due_date))
+    .sort((a, b) => (a.due_date || '9999').localeCompare(b.due_date || '9999')).slice(0, 4);
+  const lu = S.pdata && S.pdata.pid === p.id && S.pdata.updates[0];
+  return `${money_ ? `<div class="card"><div class="mini">
+        <div><small>${esc(t('col_budget'))}</small><b>${ps.budget ? money(ps.budget) : esc(t('notSet'))}</b></div>
+        <div><small>${esc(t('kpi_spent'))}</small><b>${money(ps.appr)}</b></div>
+        <div><small>${esc(t('stat_pending'))}</small><b>${money(ps.pend)}</b></div>
+        <div><small>${esc(t('kpi_remaining'))}</small><b class="${over ? 'neg' : ''}">${ps.budget ? money(ps.left) : '—'}</b></div>
+      </div>${ps.budget ? `<div class="bar ${over ? 'over' : ''}" style="margin-top:12px"><i style="width:${Math.min(100, ps.pct).toFixed(1)}%"></i></div>` : ''}</div>` : ''}
+    <div class="grid2">
+      <div>
+        <div class="card"><h3>${esc(t('projectDetails'))}</h3><dl class="kv">
+          ${kv(t('manager'), esc(p.manager_id ? uname(p.manager_id) : t('noManagerShort')))}
+          ${kv(t('members'), esc(members.join(S.lang === 'ar' ? '، ' : ', ') || '—'))}
+          ${kv(t('schedule'), esc(dateRange(p)))}
+          ${kv(t('client'), esc(p.client || ''))}
+          ${kv(t('clientContact'), contact)}
+          ${kv(t('location'), esc(p.location || ''))}
+        </dl></div>
+        <div class="card"><h3>${esc(t('description'))}</h3>${p.description ? `<p dir="auto" class="prose">${esc(p.description)}</p>` : `<p class="muted small" style="margin:0">${esc(t('noDetails'))}</p>`}
+          ${p.scope ? `<h3 style="margin-top:16px">${esc(t('scope'))}</h3><p dir="auto" class="prose">${esc(p.scope)}</p>` : ''}</div>
+      </div>
+      <div>
+        <div class="card"><div class="sec-head" style="margin:0 0 10px"><h3 style="margin:0">${esc(t('nextMilestones'))}</h3><button class="link" onclick="setPTab('tasks')">${esc(t('viewAll'))}</button></div>
+          ${next.length ? `<div class="list">${next.map(tk => taskRow(tk, p)).join('')}</div>` : `<p class="muted small" style="margin:0">${esc(t('noTasks'))}</p>`}</div>
+        <div class="card"><div class="sec-head" style="margin:0 0 10px"><h3 style="margin:0">${esc(t('latestUpdate'))}</h3><button class="link" onclick="setPTab('updates')">${esc(t('viewAll'))}</button></div>
+          ${lu ? updateCard(lu, p, true) : `<p class="muted small" style="margin:0">${esc(S.pdata && S.pdata.loading ? t('loading') : t('noUpdates'))}</p>`}</div>
+      </div>
+    </div>`;
 }
-const mProjectView = mProjectDetail;
+
+// Tasks
+function taskRow(tk, p) {
+  const can = canManageP(p) || tk.assignee_id === S.me.id;
+  const od = isOverdue(tk);
+  const sub = [tk.assignee_id ? uname(tk.assignee_id) : t('unassigned'), tk.due_date ? fdate(tk.due_date) : ''].filter(Boolean).join(' · ');
+  return `<div class="trow ${tk.status === 'DONE' ? 'done' : ''}">
+    <button class="tchk ts-${tk.status}" ${can ? `onclick="cycleTask('${tk.id}')"` : 'disabled'} title="${esc(t('ts_' + tk.status))}" aria-label="${esc(t('ts_' + tk.status))}">${tk.status === 'DONE' ? ic('check') : tk.status === 'IN_PROGRESS' ? '<i></i>' : ''}</button>
+    <div class="tmain" ${canManageP(p) ? `onclick="mTask('${p.id}','${tk.id}')" style="cursor:pointer"` : ''}>
+      <div class="row-title">${tk.is_milestone ? `<span class="ms">◆</span> ` : ''}${esc(tk.title)}</div>
+      <div class="row-sub ${od ? 'neg' : ''}">${esc(sub)}${od ? ' · ' + esc(t('overdue')) : ''}</div>
+      ${tk.notes ? `<div class="small muted tnotes">${esc(tk.notes)}</div>` : ''}
+    </div>
+    <span class="chip ts-${tk.status}">${esc(t('ts_' + tk.status))}</span></div>`;
+}
+function pTasks(p) {
+  const all = projTasks(p.id);
+  const open = all.filter(x => x.status !== 'DONE').sort((a, b) => (a.due_date || '9999').localeCompare(b.due_date || '9999') || (b.is_milestone - a.is_milestone));
+  const done = all.filter(x => x.status === 'DONE').sort((a, b) => String(b.completed_at || '').localeCompare(String(a.completed_at || '')));
+  return `<div class="sec-head" style="margin-top:0"><h3>${esc(t('openTasks'))} <span class="count">${open.length}</span></h3>
+      ${canManageP(p) ? `<button class="btn btn-primary btn-sm" onclick="mTask('${p.id}')">${ic('plus')}${esc(t('addTask'))}</button>` : ''}</div>
+    ${open.length ? `<div class="list">${open.map(tk => taskRow(tk, p)).join('')}</div>` : empty(t('noTasks'))}
+    ${done.length ? `<div class="sec-head"><h3>${esc(t('doneTasks'))} <span class="count">${done.length}</span></h3></div><div class="list">${done.map(tk => taskRow(tk, p)).join('')}</div>` : ''}`;
+}
+async function cycleTask(id) {
+  const tk = S.tasks.find(x => x.id === id); if (!tk) return;
+  const next = { TODO: 'IN_PROGRESS', IN_PROGRESS: 'DONE', DONE: 'TODO' }[tk.status];
+  const { error } = await sb.rpc('set_task_status', { p_id: id, p_status: next });
+  if (error) return toast(errMsg(error), 'bad');
+  tk.status = next; tk.completed_at = next === 'DONE' ? new Date().toISOString() : null;
+  render();
+}
+function mTask(pid, tid) {
+  const p = P(pid); if (!p || !canManageP(p)) return;
+  const tk = tid ? S.tasks.find(x => x.id === tid) : { status: 'TODO', is_milestone: false };
+  if (!tk) return;
+  const people = projectPeople(p);
+  const ov = openModal(`${mhead(tid ? t('editTask') : t('addTask'))}
+    <div class="m-body">
+      <label class="field"><span>${esc(t('taskTitle'))}</span><input id="tk-title" maxlength="200" value="${esc(tk.title || '')}"></label>
+      <label class="field"><span>${esc(t('notes'))} <i>(${esc(t('optional'))})</i></span><textarea id="tk-notes" rows="2" maxlength="2000">${esc(tk.notes || '')}</textarea></label>
+      <div class="two">
+        <label class="field"><span>${esc(t('assignee'))}</span><select id="tk-who"><option value="">${esc(t('unassigned'))}</option>
+          ${people.map(u => `<option value="${u}" ${tk.assignee_id === u ? 'selected' : ''}>${esc(uname(u))}</option>`).join('')}</select></label>
+        <label class="field"><span>${esc(t('dueDate'))} <i>(${esc(t('optional'))})</i></span><input id="tk-due" type="date" dir="ltr" value="${esc(tk.due_date || '')}"></label>
+      </div>
+      <label class="field"><span>${esc(t('status'))}</span><select id="tk-st">${['TODO', 'IN_PROGRESS', 'DONE'].map(s => `<option value="${s}" ${tk.status === s ? 'selected' : ''}>${esc(t('ts_' + s))}</option>`).join('')}</select></label>
+      <label class="chk"><input type="checkbox" id="tk-ms" ${tk.is_milestone ? 'checked' : ''}>${esc(t('milestone'))} <span class="muted small">— ${esc(t('milestoneHint'))}</span></label>
+      <div class="err hidden" id="tk-err"></div>
+    </div>
+    <div class="m-foot">${tid ? `<button class="btn btn-ghost danger" id="tk-del" style="margin-inline-end:auto">${esc(t('del'))}</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="tk-save">${esc(t('save'))}</button></div>`);
+  const g = s => ov.querySelector(s);
+  g('#tk-save').onclick = async () => {
+    const title = g('#tk-title').value.trim();
+    if (!title) { g('#tk-err').textContent = t('taskTitleRequired'); g('#tk-err').classList.remove('hidden'); return; }
+    const st = g('#tk-st').value;
+    const obj = { project_id: pid, title, notes: g('#tk-notes').value.trim() || null, assignee_id: g('#tk-who').value || null,
+      due_date: g('#tk-due').value || null, status: st, is_milestone: g('#tk-ms').checked,
+      completed_at: st === 'DONE' ? (tk.completed_at || new Date().toISOString()) : null };
+    g('#tk-save').disabled = true;
+    const q = tid ? sb.from('project_tasks').update(obj).eq('id', tid) : sb.from('project_tasks').insert(obj);
+    const { error } = await q;
+    if (error) { g('#tk-save').disabled = false; g('#tk-err').textContent = errMsg(error); g('#tk-err').classList.remove('hidden'); return; }
+    closeModal(ov); toast(t('taskSaved'), 'ok'); await reload();
+  };
+  if (tid) g('#tk-del').onclick = async () => {
+    const ok = await promptDialog({ title: t('del'), message: t('deleteTaskConfirm'), ok: t('del'), danger: true });
+    if (!ok) return;
+    const { error } = await sb.from('project_tasks').delete().eq('id', tid);
+    if (error) return toast(errMsg(error), 'bad');
+    closeAllModals(); toast(t('taskDeleted')); await reload();
+  };
+}
+
+// Updates
+function updateCard(u, p, compact) {
+  const photos = (S.pdata ? S.pdata.files : []).filter(f => f.update_id === u.id && isImgMime(f.mime));
+  const canDel = u.author_id === S.me.id || canManageP(p);
+  const au = U(u.author_id) || { email: '?' };
+  return `<div class="upd ${compact ? 'compact' : 'card'}">
+    <div class="upd-h"><span class="avatar sm">${esc(initials(au))}</span><div class="who"><b>${esc(uname(u.author_id))}</b><small>${esc(fdatetime(u.created_at))}</small></div>
+      ${canDel && !compact ? `<button class="icon-btn" onclick="deleteUpdate('${u.id}')" title="${esc(t('del'))}">${ic('x')}</button>` : ''}</div>
+    <p dir="auto" class="prose">${esc(u.body)}</p>
+    ${photos.length ? `<div class="thumbs">${photos.map(f => `<button class="thumb" onclick="openFile('${f.id}')"><img data-path="${esc(f.path)}" alt="${esc(f.name)}"></button>`).join('')}</div>` : ''}
+  </div>`;
+}
+function pUpdates(p) {
+  const d = S.pdata;
+  const list = d && !d.loading ? d.updates : null;
+  return `<div class="sec-head" style="margin-top:0"><h3>${esc(t('tab_updates'))} ${list ? `<span class="count">${list.length}</span>` : ''}</h3>
+      <button class="btn btn-primary btn-sm" onclick="mPostUpdate('${p.id}')">${ic('plus')}${esc(t('postUpdate'))}</button></div>
+    ${!list ? `<div class="center" style="padding:30px"><div class="spinner sm"></div></div>`
+      : list.length ? `<div class="list">${list.map(u => updateCard(u, p)).join('')}</div>` : empty(t('noUpdates'))}
+    ${d && d.error ? `<div class="err mt">${esc(d.error)}</div>` : ''}`;
+}
+function mPostUpdate(pid) {
+  const st = { files: [] };
+  const ov = openModal(`${mhead(t('postUpdate'))}
+    <div class="m-body">
+      <label class="field"><span>${esc(t('tab_updates'))}</span><textarea id="up-body" rows="5" maxlength="5000" placeholder="${esc(t('updatePh'))}"></textarea></label>
+      <div class="field"><span>${esc(t('addPhotos'))} <i>(${esc(t('optional'))})</i></span>
+        <label class="drop" id="up-drop">${ic('camera')}<b id="up-names">${esc(t('takePhoto'))}</b><input id="up-files" type="file" accept="image/*" multiple hidden></label></div>
+      <div class="err hidden" id="up-err"></div>
+    </div>
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="up-post">${esc(t('post'))}</button></div>`);
+  const g = s => ov.querySelector(s);
+  g('#up-files').onchange = ev => {
+    st.files = [...(ev.target.files || [])];
+    g('#up-names').textContent = st.files.length ? t('filesChosen', { n: st.files.length }) : t('takePhoto');
+    g('#up-drop').classList.toggle('has', !!st.files.length);
+  };
+  g('#up-post').onclick = async () => {
+    const body = g('#up-body').value.trim(), err = g('#up-err');
+    if (!body) { err.textContent = t('updateRequired'); err.classList.remove('hidden'); return; }
+    const btn = g('#up-post'); btn.disabled = true; btn.textContent = t('posting');
+    try {
+      const { data, error } = await sb.from('project_updates').insert({ project_id: pid, body }).select('id').single();
+      if (error) throw error;
+      let i = 0;
+      for (const f of st.files) {
+        i++; btn.textContent = t('uploadingN', { i, n: st.files.length });
+        const blob = await compressImage(f);
+        if (blob.size > MAX_PFILE) continue;
+        const type = blob.type || f.type || 'image/jpeg';
+        const path = `${pid}/${uid()}.${extFor(type, f.name)}`;
+        const up = await sb.storage.from('project-files').upload(path, blob, { contentType: type, upsert: false });
+        if (up.error) throw up.error;
+        const r = await sb.from('project_files').insert({ project_id: pid, update_id: data.id, folder: 'PHOTOS', name: f.name, path, size_bytes: blob.size, mime: type });
+        if (r.error) { sb.storage.from('project-files').remove([path]).catch(() => {}); throw r.error; }
+      }
+      closeModal(ov); toast(t('updatePosted'), 'ok');
+      await loadPData(pid, true); render();
+    } catch (e) { err.textContent = errMsg(e); err.classList.remove('hidden'); btn.disabled = false; btn.textContent = t('post'); }
+  };
+  setTimeout(() => g('#up-body').focus(), 60);
+}
+async function deleteUpdate(id) {
+  const d = S.pdata; if (!d) return;
+  const ok = await promptDialog({ title: t('del'), message: t('deleteUpdateConfirm'), ok: t('del'), danger: true });
+  if (!ok) return;
+  const paths = d.files.filter(f => f.update_id === id).map(f => f.path);
+  const { error } = await sb.from('project_updates').delete().eq('id', id);
+  if (error) return toast(errMsg(error), 'bad');
+  if (paths.length) sb.storage.from('project-files').remove(paths).catch(() => {});
+  toast(t('updateDeleted'));
+  await loadPData(d.pid, true); render();
+}
+
+// Files
+function pFiles(p) {
+  const d = S.pdata;
+  if (!d || d.loading) return `<div class="center" style="padding:30px"><div class="spinner sm"></div></div>`;
+  const fol = S.pfolder || 'all';
+  const counts = {}; d.files.forEach(f => counts[f.folder] = (counts[f.folder] || 0) + 1);
+  const list = fol === 'all' ? d.files : d.files.filter(f => f.folder === fol);
+  const pills = [['all', t('all') + ' · ' + d.files.length], ...FOLDERS.filter(k => counts[k]).map(k => [k, t('f_' + k) + ' · ' + counts[k]])];
+  return `<div class="sec-head" style="margin-top:0"><h3>${esc(t('tab_files'))} <span class="count">${d.files.length}</span></h3>
+      <button class="btn btn-primary btn-sm" onclick="mUpload('${p.id}')">${ic('plus')}${esc(t('uploadFiles'))}</button></div>
+    ${d.files.length ? `<div class="pills">${pills.map(([k, l]) => `<button class="pill ${fol === k ? 'on' : ''}" onclick="S.pfolder='${k}';render()">${esc(l)}</button>`).join('')}</div>` : ''}
+    ${list.length ? `<div class="list">${list.map(f => fileRow(f, p)).join('')}</div>` : empty(t('noFiles'))}
+    ${d.error ? `<div class="err mt">${esc(d.error)}</div>` : ''}`;
+}
+function fileRow(f, p) {
+  const canDel = f.uploaded_by === S.me.id || canManageP(p);
+  return `<div class="row" onclick="openFile('${f.id}')">
+    <div class="row-ic fic">${isImgMime(f.mime) ? `<img data-path="${esc(f.path)}" alt="">` : ic('file')}</div>
+    <div class="row-main"><div class="row-title" dir="auto">${esc(f.name)}</div><div class="row-sub">${esc([t('f_' + f.folder), fmtSize(f.size_bytes), uname(f.uploaded_by), fdate(f.created_at)].join(' · '))}</div></div>
+    <div class="row-end">${canDel ? `<button class="icon-btn" onclick="event.stopPropagation();deleteFile('${f.id}')" title="${esc(t('del'))}">${ic('x')}</button>` : ''}</div>
+  </div>`;
+}
+function mUpload(pid) {
+  const st = { files: [] };
+  const def = S.pfolder && S.pfolder !== 'all' ? S.pfolder : 'DRAWINGS';
+  const ov = openModal(`${mhead(t('uploadFiles'))}
+    <div class="m-body">
+      <label class="field"><span>${esc(t('folder'))}</span><select id="uf-folder">${FOLDERS.map(k => `<option value="${k}" ${k === def ? 'selected' : ''}>${esc(t('f_' + k))}</option>`).join('')}</select></label>
+      <label class="drop" id="uf-drop">${ic('file')}<b id="uf-names">${esc(t('chooseFiles'))}</b><small class="muted">PDF · DWG · Excel · Word · JPG · PNG · ZIP</small><input id="uf-files" type="file" multiple hidden></label>
+      <div class="err hidden" id="uf-err"></div>
+    </div>
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="uf-go">${esc(t('upload'))}</button></div>`);
+  const g = s => ov.querySelector(s);
+  g('#uf-files').onchange = ev => {
+    st.files = [...(ev.target.files || [])];
+    g('#uf-names').textContent = st.files.length === 1 ? st.files[0].name : st.files.length ? t('filesChosen', { n: st.files.length }) : t('chooseFiles');
+    g('#uf-drop').classList.toggle('has', !!st.files.length);
+  };
+  g('#uf-go').onclick = async () => {
+    const err = g('#uf-err'); err.classList.add('hidden');
+    if (!st.files.length) { err.textContent = t('filesRequired'); err.classList.remove('hidden'); return; }
+    const big = st.files.find(f => f.size > MAX_PFILE);
+    if (big) { err.textContent = t('fileTooBig25', { name: big.name }); err.classList.remove('hidden'); return; }
+    const folder = g('#uf-folder').value, btn = g('#uf-go'); btn.disabled = true;
+    let i = 0, done = 0;
+    try {
+      for (const f of st.files) {
+        i++; btn.textContent = t('uploadingN', { i, n: st.files.length });
+        const type = f.type || 'application/octet-stream';
+        const path = `${pid}/${uid()}.${extFor(type, f.name)}`;
+        const up = await sb.storage.from('project-files').upload(path, f, { contentType: type, upsert: false });
+        if (up.error) throw up.error;
+        const r = await sb.from('project_files').insert({ project_id: pid, folder, name: f.name, path, size_bytes: f.size, mime: type });
+        if (r.error) { sb.storage.from('project-files').remove([path]).catch(() => {}); throw r.error; }
+        done++;
+      }
+      closeModal(ov); toast(t('filesUploaded', { n: done }), 'ok');
+      S.pfolder = folder; await loadPData(pid, true); render();
+    } catch (e) {
+      err.textContent = errMsg(e) + (done ? ' · ' + t('filesUploaded', { n: done }) : ''); err.classList.remove('hidden');
+      btn.disabled = false; btn.textContent = t('upload');
+      if (done) loadPData(pid, true);
+    }
+  };
+}
+async function openFile(fid) {
+  const f = S.pdata && S.pdata.files.find(x => x.id === fid); if (!f) return;
+  const viewable = isImgMime(f.mime) || f.mime === 'application/pdf';
+  const w = window.open('', '_blank');
+  const { data, error } = await sb.storage.from('project-files').createSignedUrl(f.path, 900, viewable ? undefined : { download: f.name });
+  if (error || !data) { if (w) w.close(); return toast(errMsg(error || 'file'), 'bad'); }
+  if (w) w.location.href = data.signedUrl; else location.href = data.signedUrl;
+}
+async function deleteFile(fid) {
+  const d = S.pdata; const f = d && d.files.find(x => x.id === fid); if (!f) return;
+  const ok = await promptDialog({ title: t('del'), message: t('deleteFileConfirm', { name: f.name }), ok: t('del'), danger: true });
+  if (!ok) return;
+  const { data, error } = await sb.from('project_files').delete().eq('id', fid).select('id');
+  if (error || !data || !data.length) return toast(errMsg(error || 'not deleted'), 'bad');
+  sb.storage.from('project-files').remove([f.path]).catch(() => {});
+  toast(t('fileDeleted'));
+  await loadPData(d.pid, true); render();
+}
+
+// Expenses tab
+function pExpenses(p) {
+  const money_ = seesProjectMoney(p), ps = projStats(p);
+  const list = (money_ ? ps.ex : ps.ex.filter(e => e.user_id === S.me.id)).slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return `<div class="sec-head" style="margin-top:0"><h3>${esc(money_ ? t('projectExpenses') : t('myProjectExpenses'))} <span class="count">${list.length}</span></h3>
+      ${money_ && list.length ? `<button class="btn btn-ghost btn-sm" onclick="exportCsv(projStats(P('${p.id}')).ex,'project-${esc((p.code || 'export').replace(/[^\w-]/g, ''))}')">${ic('download')}${esc(t('exportCsv'))}</button>` : ''}</div>
+    ${list.length ? `<div class="sumline"><span>${esc(t('totalShown', { n: list.length, amt: moneyTxt(sum(list)) }))}</span></div><div class="list">${list.map(e => expRow(e, { showWho: money_, actions: true })).join('')}</div>` : empty(t('noData'))}`;
+}
+
+// Finance tab
+function pFinance(p) {
+  if (!canManageP(p)) return '';
+  const fn = projFinance(p.id), ps = projStats(p);
+  const margin = fn.contract - ps.appr, cash = fn.received - ps.appr;
+  const inv = fn.inv.slice().sort((a, b) => String(b.issue_date).localeCompare(String(a.issue_date)));
+  return `<p class="muted small" style="margin:0 2px 10px">${esc(t('financeHint'))}</p>
+    <div class="card">
+      <div class="sec-head" style="margin:0 0 12px"><h3 style="margin:0">${esc(t('tab_finance'))}</h3><button class="btn btn-ghost btn-sm" onclick="mFinance('${p.id}')">${esc(t('edit'))}</button></div>
+      <div class="mini">
+        <div><small>${esc(t('contractValueShort'))}</small><b>${fn.contract ? money(fn.contract) : esc(t('notSet'))}</b></div>
+        <div><small>${esc(t('invoiced'))}</small><b>${money(fn.invoiced)}</b></div>
+        <div><small>${esc(t('received'))}</small><b>${money(fn.received)}</b></div>
+        <div><small>${esc(t('outstanding'))}</small><b class="${fn.outstanding > 0 ? '' : 'muted'}">${money(fn.outstanding)}</b></div>
+      </div>
+      <div class="mini" style="margin-top:8px">
+        <div><small>${esc(t('kpi_spent'))}</small><b>${money(ps.appr)}</b></div>
+        <div><small>${esc(t('stat_pending'))}</small><b>${money(ps.pend)}</b></div>
+        <div title="${esc(t('marginSub'))}"><small>${esc(t('margin'))}</small><b class="${margin < 0 ? 'neg' : ''}">${fn.contract ? money(margin) : '—'}</b></div>
+        <div title="${esc(t('cashSub'))}"><small>${esc(t('cashPos'))}</small><b class="${cash < 0 ? 'neg' : ''}">${money(cash)}</b></div>
+      </div>
+      ${fn.contract ? `<div class="bar" style="margin-top:12px"><i style="width:${Math.min(100, fn.invoiced / fn.contract * 100).toFixed(1)}%;background:var(--info)"></i></div>
+        <div class="small muted" style="margin-top:4px">${esc(t('invoicedPct', { pct: Math.round(fn.invoiced / fn.contract * 100) }))}</div>` : ''}
+      ${fn.terms ? `<h4 style="margin:14px 0 4px">${esc(t('paymentTerms'))}</h4><p dir="auto" class="prose small">${esc(fn.terms)}</p>` : ''}
+    </div>
+    <div class="sec-head"><h3>${esc(t('invoices'))} <span class="count">${inv.length}</span></h3>
+      <button class="btn btn-primary btn-sm" onclick="mInvoice('${p.id}')">${ic('plus')}${esc(t('addInvoice'))}</button></div>
+    ${inv.length ? `<div class="list">${inv.map(i => { const s = invStatus(i); return `<div class="row" onclick="mInvoice('${p.id}','${i.id}')">
+        <div class="row-ic">${ic('receipt')}</div>
+        <div class="row-main"><div class="row-title">${esc(i.invoice_no ? '#' + i.invoice_no : t('invoice'))}${i.description ? ' · ' + esc(i.description) : ''}</div>
+          <div class="row-sub">${esc(t('issueDate'))}: ${esc(fdate(i.issue_date))}${i.due_date ? ' · ' + esc(t('dueDate')) + ': ' + esc(fdate(i.due_date)) : ''}${i.paid_date ? ' · ' + esc(t('paidDate')) + ': ' + esc(fdate(i.paid_date)) : ''}</div></div>
+        <div class="row-end"><div class="row-amt">${money(i.amount_sar)}</div><span class="chip inv-${s}">${esc(t('inv_' + s))}</span></div>
+        ${!i.paid_date ? `<div class="row-actions" onclick="event.stopPropagation()"><button class="btn btn-sm btn-ok" onclick="markPaid('${i.id}',this)">${ic('check')}${esc(t('markPaid'))}</button></div>` : ''}
+      </div>`; }).join('')}</div>` : empty(t('noInvoices'))}`;
+}
+function mFinance(pid) {
+  const fn = projFinance(pid);
+  const ov = openModal(`${mhead(t('tab_finance'))}
+    <div class="m-body">
+      <label class="field"><span>${esc(t('contractValue'))}</span><input id="fn-cv" type="number" min="0" step="0.01" inputmode="decimal" dir="ltr" value="${fn.contract || ''}" placeholder="0.00"></label>
+      <label class="field"><span>${esc(t('paymentTerms'))} <i>(${esc(t('optional'))})</i></span><textarea id="fn-terms" rows="3" maxlength="2000" placeholder="${esc(t('termsPh'))}">${esc(fn.terms)}</textarea></label>
+    </div>
+    <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="fn-save">${esc(t('save'))}</button></div>`, 'sheet-sm');
+  ov.querySelector('#fn-save').onclick = async () => {
+    const b = ov.querySelector('#fn-save'); b.disabled = true;
+    const row = { project_id: pid, contract_value_sar: Math.max(0, parseFloat(ov.querySelector('#fn-cv').value) || 0),
+      payment_terms: ov.querySelector('#fn-terms').value.trim() || null, updated_at: new Date().toISOString() };
+    const { error } = await sb.from('project_finance').upsert(row, { onConflict: 'project_id' });
+    if (error) { b.disabled = false; return toast(errMsg(error), 'bad'); }
+    closeModal(ov); toast(t('personSaved'), 'ok'); await reload();
+  };
+}
+function mInvoice(pid, iid) {
+  const i = iid ? S.invoices.find(x => x.id === iid) : { issue_date: todayISO() };
+  if (!i) return;
+  const ov = openModal(`${mhead(iid ? t('editInvoice') : t('addInvoice'))}
+    <div class="m-body">
+      <div class="two">
+        <label class="field"><span>${esc(t('invoiceNo'))} <i>(${esc(t('optional'))})</i></span><input id="iv-no" maxlength="40" dir="ltr" value="${esc(i.invoice_no || '')}"></label>
+        <label class="field"><span>${esc(t('amount'))}</span><input id="iv-amt" type="number" min="0.01" step="0.01" inputmode="decimal" dir="ltr" value="${i.amount_sar ? +i.amount_sar : ''}" placeholder="0.00"></label>
+      </div>
+      <label class="field"><span>${esc(t('description'))} <i>(${esc(t('optional'))})</i></span><input id="iv-desc" maxlength="200" value="${esc(i.description || '')}" placeholder="${esc(t('invoicePh'))}"></label>
+      <div class="two">
+        <label class="field"><span>${esc(t('issueDate'))}</span><input id="iv-issue" type="date" dir="ltr" value="${esc(i.issue_date || '')}"></label>
+        <label class="field"><span>${esc(t('dueDate'))} <i>(${esc(t('optional'))})</i></span><input id="iv-due" type="date" dir="ltr" value="${esc(i.due_date || '')}"></label>
+      </div>
+      <label class="field"><span>${esc(t('paidDate'))} <i>(${esc(t('paidHint'))})</i></span><input id="iv-paid" type="date" dir="ltr" value="${esc(i.paid_date || '')}"></label>
+      <div class="err hidden" id="iv-err"></div>
+    </div>
+    <div class="m-foot">${iid ? `<button class="btn btn-ghost danger" id="iv-del" style="margin-inline-end:auto">${esc(t('del'))}</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="iv-save">${esc(t('save'))}</button></div>`);
+  const g = s => ov.querySelector(s);
+  g('#iv-save').onclick = async () => {
+    const amt = parseFloat(g('#iv-amt').value), err = g('#iv-err');
+    if (!(amt > 0)) { err.textContent = t('amountInvalid'); err.classList.remove('hidden'); return; }
+    if (!g('#iv-issue').value) { err.textContent = t('dateRequired'); err.classList.remove('hidden'); return; }
+    const obj = { project_id: pid, invoice_no: g('#iv-no').value.trim() || null, description: g('#iv-desc').value.trim() || null,
+      amount_sar: Math.round(amt * 100) / 100, issue_date: g('#iv-issue').value, due_date: g('#iv-due').value || null, paid_date: g('#iv-paid').value || null };
+    g('#iv-save').disabled = true;
+    const { error } = await (iid ? sb.from('project_invoices').update(obj).eq('id', iid) : sb.from('project_invoices').insert(obj));
+    if (error) { g('#iv-save').disabled = false; err.textContent = errMsg(error); err.classList.remove('hidden'); return; }
+    closeModal(ov); toast(t('invoiceSaved'), 'ok'); await reload();
+  };
+  if (iid) g('#iv-del').onclick = async () => {
+    const ok = await promptDialog({ title: t('del'), message: t('deleteInvoiceConfirm'), ok: t('del'), danger: true });
+    if (!ok) return;
+    const { error } = await sb.from('project_invoices').delete().eq('id', iid);
+    if (error) return toast(errMsg(error), 'bad');
+    closeAllModals(); toast(t('invoiceDeleted')); await reload();
+  };
+}
+async function markPaid(iid, btn) {
+  if (btn) btn.disabled = true;
+  const { error } = await sb.from('project_invoices').update({ paid_date: todayISO() }).eq('id', iid);
+  if (error) { if (btn) btn.disabled = false; return toast(errMsg(error), 'bad'); }
+  toast(t('invoiceSaved'), 'ok'); await reload();
+}
 
 // ─── MODAL: PEOPLE ────────────────────────────────────────────────
 function mPerson(id) {
