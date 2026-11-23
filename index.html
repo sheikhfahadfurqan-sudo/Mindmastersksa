@@ -396,6 +396,35 @@ html[dir=rtl] .row-title,html[dir=rtl] .row-sub{unicode-bidi:plaintext;text-alig
  .prow .badges:empty{display:none}
 }
 .badges .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* profile & tabs polish */
+.per-role{font-size:14px;font-weight:500;color:var(--ink2)}
+.per-mail{margin-top:2px}
+.ph-chips:empty{display:none}
+.ptabs{gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;padding-bottom:0}
+.ptabs .pill{height:42px;border:0;border-radius:0;background:none;color:var(--muted);padding:0 12px;position:relative;font-size:14px}
+.ptabs .pill:hover{color:var(--ink)}
+.ptabs .pill.on{background:none;color:var(--ink)}
+.ptabs .pill.on::after{content:'';position:absolute;left:10px;right:10px;bottom:0;height:2px;border-radius:2px;background:var(--ink)}
+.doc .sec-head h3{flex-wrap:wrap}
+.doc h4{font-size:14px;display:flex;align-items:center;gap:8px}
+@media(max-width:600px){
+ .ph-person{flex-direction:column;align-items:stretch;gap:16px;margin-bottom:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 16px 16px;box-shadow:var(--shadow)}
+ .ph-person .per-head{flex-direction:column;text-align:center;gap:12px}
+ .ph-person .per-info{width:100%}
+ .ph-person .per-head h2{font-size:20px}
+ .ph-person .ph-chips{justify-content:center}
+ .ph-person .ph-actions{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+ .ph-person .ph-actions .btn{width:100%;height:40px}
+ .ptabs{margin-left:-14px;margin-right:-14px;padding:0 8px}
+ .ptabs .pill{flex:1 0 auto}
+ .kv{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:0}
+ .kv dd{padding-inline-start:12px!important}
+ .kv dt,.kv dd{padding:11px 0;border-top:1px solid var(--line)}
+ .kv dt:first-of-type,.kv dt:first-of-type+dd{border-top:0;padding-top:2px}
+ .kv dd{text-align:end}
+ .row:has(>.row-ic.fic){grid-template-columns:auto minmax(0,1fr) auto}
+ .row:has(>.row-ic.fic) .row-ic{display:grid;width:40px;height:40px}
+}
 </style>
 </head>
 <body>
@@ -794,7 +823,7 @@ ar: {
   hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611232035';
+const APP_VERSION = '202611232050';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -2653,10 +2682,10 @@ function vPerson() {
   const body = { profile: perProfile, docs: perDocs, contract: perContract }[S.pertab](u);
   const sub = [u.title, u.department].filter(Boolean).join(' · ');
   return `${isPeopleAdmin() && !self ? `<button class="link back" onclick="go('${ex ? 'team' : 'people'}')">${S.lang === 'ar' ? '→' : '←'} ${esc(ex ? t('nav_team') : t('nav_people'))}</button>` : ''}
-    <div class="ph">
+    <div class="ph ph-person">
       <div class="per-head">
         <span class="avatar xl">${avatarInner(u)}</span>
-        <div><h2>${esc(uname(u.id))}</h2><div class="muted small"><bdi>${esc(u.email)}</bdi>${sub ? ' · ' + esc(sub) : ''}</div>
+        <div class="per-info"><h2>${esc(uname(u.id))}</h2>${sub ? `<div class="per-role">${esc(sub)}</div>` : ''}<div class="muted small per-mail"><bdi>${esc(u.email)}</bdi></div>
           <div class="ph-chips" style="margin-top:6px">${u.role === 'EXECUTIVE' ? `<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>` : ''}${u.removed_at ? `<span class="chip st-REJECTED">${esc(t('removedChip'))}</span>` : !u.active ? `<span class="chip st-REJECTED">${esc(t('inactive'))}</span>` : ''}</div></div>
       </div>
       <div class="ph-actions">
