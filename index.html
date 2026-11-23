@@ -534,7 +534,7 @@ en: {
   totalMonthly:'Total monthly', perMonth:'month', contractCopies:'Contract copies',
   docsExpiring:'Documents expiring soon', next60:'expired or within 60 days', andMore:'…and {n} more',
   nav_people:'Employees', hrBadge:'HR', hrTitle:'HR access', hrSaved:'HR access saved',
-  hrBody:'HR can see and edit every employee’s profile, documents and contract & salary. HR cannot change roles or disable accounts.',
+  hrBody:'HR can see and edit every employee’s profile, documents and contract & salary. HR can also change roles (Employee / Executive) and enable or disable accounts.',
   hrEmails:'HR team (emails, separated by commas)'
 },
 ar: {
@@ -676,7 +676,7 @@ ar: {
   totalMonthly:'الإجمالي الشهري', perMonth:'شهرياً', contractCopies:'نسخ العقد',
   docsExpiring:'وثائق تنتهي قريباً', next60:'منتهية أو خلال 60 يوماً', andMore:'…و{n} أخرى',
   nav_people:'الموظفون', hrBadge:'الموارد البشرية', hrTitle:'صلاحية الموارد البشرية', hrSaved:'تم حفظ صلاحية الموارد البشرية',
-  hrBody:'يمكن للموارد البشرية عرض وتعديل الملف الشخصي والوثائق والعقد والراتب لكل موظف، دون تغيير الأدوار أو إيقاف الحسابات.',
+  hrBody:'يمكن للموارد البشرية عرض وتعديل الملف الشخصي والوثائق والعقد والراتب لكل موظف، ويمكنها أيضاً تغيير الأدوار (موظف / تنفيذي) وتفعيل الحسابات أو إيقافها.',
   hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
@@ -2507,16 +2507,16 @@ function mEditPerson(id) {
         <label class="field"><span>${esc(t('emergencyPhone'))}${opt}</span><input id="ep-ep" type="tel" dir="ltr" maxlength="20" value="${esc(u.emergency_phone || '')}"></label>
       </div>
       ${ex || hr ? `<div class="fsec">${esc(t('workDetails'))}</div>
-        ${locked && ex ? `<div class="note">${esc(t('execLocked'))}</div>` : ''}
+        ${locked ? `<div class="note">${esc(t('execLocked'))}</div>` : ''}
         <div class="two">
           <label class="field"><span>${esc(t('jobTitle'))}</span><input id="ep-title" maxlength="80" value="${esc(u.title || '')}"></label>
           <label class="field"><span>${esc(t('department'))}</span><input id="ep-dept" maxlength="80" value="${esc(u.department || '')}"></label>
         </div>
         <div class="two">
           <label class="field"><span>${esc(t('joinDate'))}</span><input id="ep-join" type="date" dir="ltr" value="${esc(u.join_date || '')}"></label>
-          ${ex ? `<label class="field"><span>${esc(t('role'))}</span><select id="ep-role" ${locked ? 'disabled' : ''}>${['EMPLOYEE', 'EXECUTIVE'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}</select></label>` : ''}
+          ${ex || hr ? `<label class="field"><span>${esc(t('role'))}</span><select id="ep-role" ${locked ? 'disabled' : ''}>${['EMPLOYEE', 'EXECUTIVE'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}</select></label>` : ''}
         </div>
-        ${ex ? `<label class="chk"><input type="checkbox" id="ep-active" ${u.active ? 'checked' : ''} ${locked || u.id === S.me.id ? 'disabled' : ''}>${esc(t('accessActive'))}</label>` : ''}` : ''}
+        ${ex || hr ? `<label class="chk"><input type="checkbox" id="ep-active" ${u.active ? 'checked' : ''} ${locked || u.id === S.me.id ? 'disabled' : ''}>${esc(t('accessActive'))}</label>` : ''}` : ''}
       <div class="err hidden" id="ep-err"></div>
     </div>
     <div class="m-foot"><button class="btn btn-ghost" onclick="closeModal()">${esc(t('cancel'))}</button><button class="btn btn-primary" id="ep-save">${esc(t('save'))}</button></div>`);
@@ -2534,7 +2534,9 @@ function mEditPerson(id) {
         r = await sb.rpc('admin_update_profile', { p_id: id, p_role: g('#ep-role').value, p_title: v('#ep-title'), p_department: v('#ep-dept'), p_active: g('#ep-active').checked });
         if (r.error) throw r.error;
       } else if (hr) {
-        const r = await sb.rpc('admin_update_person', { p_id: id, p: { ...base, join_date: g('#ep-join').value || '', title: v('#ep-title') || '', department: v('#ep-dept') || '' } });
+        let r = await sb.rpc('admin_update_person', { p_id: id, p: { ...base, join_date: g('#ep-join').value || '' } });
+        if (r.error) throw r.error;
+        r = await sb.rpc('admin_update_profile', { p_id: id, p_role: g('#ep-role').value, p_title: v('#ep-title'), p_department: v('#ep-dept'), p_active: g('#ep-active').checked });
         if (r.error) throw r.error;
       } else {
         const { error } = await sb.from('profiles').update(base).eq('id', id);
