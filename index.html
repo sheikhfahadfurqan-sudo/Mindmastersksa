@@ -54,6 +54,24 @@ h2,h3,h4{margin:0}
 .login-foot{display:flex;justify-content:center;gap:8px;margin-top:22px;flex-wrap:wrap}
 #login .btn-ghost,#disabled .btn-ghost{color:#ddd;border-color:#333}
 #login .btn-ghost:hover,#disabled .btn-ghost:hover{background:#1a1a1a}
+.login-or{display:flex;align-items:center;gap:12px;margin:18px 0 14px;color:#777;font-size:12.5px}
+.login-or::before,.login-or::after{content:"";flex:1;height:1px;background:#2a2a2a}
+#login .btn-outline{background:transparent;color:#eee;border:1px solid #3a3a3a}
+#login .btn-outline:hover{background:#1a1a1a}
+.otp-box{margin-top:26px;text-align:start;display:flex;flex-direction:column;gap:10px}
+.otp-box label{font-size:13px;color:#bbb;font-weight:600}
+.otp-box input{width:100%;height:48px;border:1px solid #3a3a3a;border-radius:12px;background:#151515;color:#fff;padding:0 14px;font-size:16px;outline:none}
+.otp-box input:focus{border-color:#fff}
+.otp-box input.code{font-size:22px;letter-spacing:.35em;text-align:center;font-variant-numeric:tabular-nums}
+.otp-box .btn-primary{background:#fff;color:#111}
+.otp-box .btn-primary:hover{background:#ececec}
+.otp-links{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.otp-links button{color:#aaa;font-size:13px;text-decoration:underline}
+.login-ok{margin-top:4px;font-size:13px;color:#9fd8b6}
+.invite-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.invite-row:first-child{border-top:0}
+.invite-row .who{flex:1;min-width:0}
+.invite-row .who small{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
 .login-err{margin-top:18px;text-align:start;background:#2a1311;color:#ffb4ab;border:1px solid #5c2420;border-radius:12px;padding:12px 14px;font-size:13.5px}
 
 /* buttons */
@@ -359,6 +377,24 @@ label.btn{cursor:pointer}
       <span data-t="signInMs">Sign in with Microsoft</span>
     </button>
     <p class="muted small" style="margin-top:12px" data-t="signInHint"></p>
+    <div class="login-or"><span data-t="orWord"></span></div>
+    <button id="btn-otp-start" class="btn btn-lg w100 btn-outline" onclick="otpStep('email')">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+      <span data-t="signInCode"></span>
+    </button>
+    <div id="otp-email" class="otp-box hidden">
+      <label for="otp-email-in" data-t="otpEmailLabel"></label>
+      <input id="otp-email-in" type="email" dir="ltr" autocomplete="email" inputmode="email" placeholder="name@example.com" onkeydown="if(event.key==='Enter')sendCode()">
+      <button id="btn-send-code" class="btn btn-lg w100 btn-primary" onclick="sendCode()" data-t="sendCode"></button>
+      <div class="otp-links"><button onclick="otpStep(null)" data-t="backToSignIn"></button></div>
+    </div>
+    <div id="otp-code" class="otp-box hidden">
+      <p class="login-ok" id="otp-sent-to"></p>
+      <label for="otp-code-in" data-t="otpCodeLabel"></label>
+      <input id="otp-code-in" class="code" type="text" dir="ltr" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="••••••" onkeydown="if(event.key==='Enter')verifyCode()">
+      <button id="btn-verify-code" class="btn btn-lg w100 btn-primary" onclick="verifyCode()" data-t="verifyCode"></button>
+      <div class="otp-links"><button onclick="sendCode(true)" data-t="resendCode"></button><button onclick="otpStep('email')" data-t="changeEmail"></button></div>
+    </div>
     <div id="login-error" class="login-err hidden"></div>
     <div class="login-foot">
       <button class="btn btn-ghost btn-sm" onclick="toggleLang()" data-t="langBtn"></button>
@@ -402,6 +438,19 @@ en: {
   appName:'Mind Masters', tagline:'Expenses & Projects', langBtn:'العربية',
   signInMs:'Sign in with Microsoft', signInHint:'Use your @mindmastersksa.com work account',
   onlyCompany:'Only @mindmastersksa.com accounts can use this app.',
+  orWord:'or', signInCode:'Sign in with an email code', otpEmailLabel:'Your email address',
+  sendCode:'Send me a code', otpCodeLabel:'Enter the code from the email', verifyCode:'Sign in',
+  resendCode:'Send a new code', changeEmail:'Use a different email', backToSignIn:'Back',
+  codeSentTo:'We sent a code to {email}. Check your inbox (and spam folder).', codeResent:'A new code has been sent.',
+  badEmail:'Enter a valid email address.', badCode:'That code is wrong or has expired. Try again or send a new code.',
+  notInvited:'This email has not been added to Mind Masters. Ask your manager to add you.',
+  tooManyCodes:'Too many attempts. Please wait a minute and try again.',
+  addPersonTitle:'Add a person without a company email',
+  addPersonBody:'They sign in with a code sent to their own email. Only people listed here can use email-code sign-in.',
+  addPerson:'Add person', personEmail:'Personal email', personAdded:'{name} added. Send them the app link: they choose “Sign in with an email code”.',
+  invitedWaiting:'Added — not signed in yet', removeInvite:'Remove', inviteRemoved:'Removed',
+  removeInviteConfirm:'Remove {name}? They will not be able to sign in.', alreadyAdded:'This email is already added or already has an account.',
+  nameEmailRequired:'Enter a name and a valid email.', needsEmailSql:'Run db/update-2026-11-23g-email-code.sql in Supabase first.', externalBadge:'Personal email',
   signInFailed:'Sign-in failed', profileMissing:'Your profile could not be loaded. Please sign out and sign in again.',
   disabledTitle:'Your access is paused', disabledBody:'Please contact management to restore access.',
   signOut:'Sign out', loading:'Loading…', refresh:'Refresh', refreshed:'Up to date',
@@ -547,6 +596,19 @@ ar: {
   appName:'مايند ماسترز', tagline:'المصروفات والمشاريع', langBtn:'English',
   signInMs:'تسجيل الدخول عبر مايكروسوفت', signInHint:'استخدم حساب العمل ‎@mindmastersksa.com',
   onlyCompany:'هذا التطبيق متاح فقط لحسابات ‎@mindmastersksa.com.',
+  orWord:'أو', signInCode:'الدخول برمز يُرسل إلى بريدك', otpEmailLabel:'بريدك الإلكتروني',
+  sendCode:'أرسل لي الرمز', otpCodeLabel:'أدخل الرمز الموجود في الرسالة', verifyCode:'تسجيل الدخول',
+  resendCode:'إرسال رمز جديد', changeEmail:'استخدام بريد آخر', backToSignIn:'رجوع',
+  codeSentTo:'أرسلنا رمزاً إلى {email}. تحقق من صندوق الوارد (ومجلد الرسائل غير المرغوب فيها).', codeResent:'تم إرسال رمز جديد.',
+  badEmail:'أدخل بريداً إلكترونياً صحيحاً.', badCode:'الرمز غير صحيح أو منتهي الصلاحية. حاول مرة أخرى أو اطلب رمزاً جديداً.',
+  notInvited:'لم تتم إضافة هذا البريد إلى مايند ماسترز. اطلب من مديرك إضافتك.',
+  tooManyCodes:'محاولات كثيرة. يرجى الانتظار دقيقة ثم المحاولة مرة أخرى.',
+  addPersonTitle:'إضافة شخص ليس لديه بريد الشركة',
+  addPersonBody:'يسجّل الدخول برمز يُرسل إلى بريده الشخصي. لا يمكن الدخول بالرمز إلا للأشخاص المضافين هنا.',
+  addPerson:'إضافة', personEmail:'البريد الشخصي', personAdded:'تمت إضافة {name}. أرسل له رابط التطبيق ليختار «الدخول برمز يُرسل إلى بريدك».',
+  invitedWaiting:'تمت الإضافة — لم يسجّل الدخول بعد', removeInvite:'إزالة', inviteRemoved:'تمت الإزالة',
+  removeInviteConfirm:'هل تريد إزالة {name}؟ لن يتمكن من تسجيل الدخول.', alreadyAdded:'هذا البريد مضاف مسبقاً أو لديه حساب بالفعل.',
+  nameEmailRequired:'أدخل الاسم وبريداً إلكترونياً صحيحاً.', needsEmailSql:'شغّل الملف db/update-2026-11-23g-email-code.sql في Supabase أولاً.', externalBadge:'بريد شخصي',
   signInFailed:'تعذّر تسجيل الدخول', profileMissing:'تعذّر تحميل ملفك. يرجى تسجيل الخروج ثم الدخول مرة أخرى.',
   disabledTitle:'تم إيقاف وصولك مؤقتاً', disabledBody:'يرجى التواصل مع الإدارة لاستعادة الوصول.',
   signOut:'تسجيل الخروج', loading:'جارٍ التحميل…', refresh:'تحديث', refreshed:'تم التحديث',
@@ -710,7 +772,7 @@ const S = {
   execMode: store.get('mm_view', 'exec') !== 'emp',
   me: null, view: 'home', profiles: [], projects: [], expenses: [], settings: {},
   tasks: [], fin: {}, invoices: [], av: {}, avAt: 0, docs: {}, hr: {}, personId: null, pertab: 'profile', perData: null, pid: null, ptab: 'overview', pdata: null, pfolder: 'all',
-  umap: {}, pmap: {}, booting: false, lastLoad: 0, dashPeriod: 'month', teamQ: '',
+  umap: {}, pmap: {}, invites: [], booting: false, lastLoad: 0, dashPeriod: 'month', teamQ: '',
   f: { status: 'all', project: 'all', employee: 'all', period: 'all', q: '', mine: false }
 };
 let sb = null;
@@ -937,11 +999,62 @@ function showLogin(err) {
   const box = $('#login-error');
   if (err) { box.textContent = err; box.classList.remove('hidden'); } else box.classList.add('hidden');
   const b = $('#btn-signin'); b.disabled = false;
+  ['#otp-email', '#otp-code'].forEach(x => $(x).classList.add('hidden'));
+  ['#btn-otp-start', '#btn-signin'].forEach(x => $(x).classList.remove('hidden'));
+  document.querySelectorAll('#login .login-or, #login [data-t=signInHint]').forEach(el => el.classList.remove('hidden'));
   showScreen('login');
 }
 function friendlyAuthError(msg) {
   if (/database error|saving new user|mindmastersksa/i.test(msg)) return t('onlyCompany');
   return t('signInFailed') + ': ' + msg;
+}
+// Email-code sign-in (people without a company email; an executive must add them first)
+let otpEmail = '';
+function loginMsg(err) {
+  const box = $('#login-error');
+  if (err) { box.textContent = err; box.classList.remove('hidden'); } else box.classList.add('hidden');
+}
+function otpStep(step) {
+  loginMsg(null);
+  $('#otp-email').classList.toggle('hidden', step !== 'email');
+  $('#otp-code').classList.toggle('hidden', step !== 'code');
+  $('#btn-otp-start').classList.toggle('hidden', !!step);
+  $('#btn-signin').classList.toggle('hidden', !!step);
+  document.querySelectorAll('#login .login-or, #login [data-t=signInHint]').forEach(el => el.classList.toggle('hidden', !!step));
+  if (step === 'email') { const i = $('#otp-email-in'); if (otpEmail) i.value = otpEmail; setTimeout(() => i.focus(), 50); }
+  if (step === 'code') { const i = $('#otp-code-in'); i.value = ''; setTimeout(() => i.focus(), 50); }
+}
+function otpError(m) {
+  m = String(m || '');
+  if (/database error|saving new user|not been added|signups not allowed/i.test(m)) return t('notInvited');
+  if (/rate limit|too many|security purposes|seconds/i.test(m)) return t('tooManyCodes');
+  if (/expired|invalid|token/i.test(m)) return t('badCode');
+  if (/fetch|network|load failed/i.test(m)) return t('offline');
+  return t('signInFailed') + ': ' + m;
+}
+async function sendCode(resend) {
+  if (!sb) return loginMsg(t('genericError'));
+  const email = resend ? otpEmail : $('#otp-email-in').value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return loginMsg(t('badEmail'));
+  const b = resend ? null : $('#btn-send-code'); if (b) b.disabled = true;
+  loginMsg(null);
+  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  if (b) b.disabled = false;
+  if (error) return loginMsg(otpError(error.message));
+  otpEmail = email;
+  if (resend) { toast(t('codeResent'), 'ok'); $('#otp-code-in').value = ''; return; }
+  otpStep('code');
+  $('#otp-sent-to').textContent = t('codeSentTo', { email });
+}
+async function verifyCode() {
+  const token = $('#otp-code-in').value.replace(/\D/g, '');
+  if (token.length < 6) return loginMsg(t('badCode'));
+  const b = $('#btn-verify-code'); b.disabled = true;
+  loginMsg(null);
+  const { data, error } = await sb.auth.verifyOtp({ email: otpEmail, token, type: 'email' });
+  b.disabled = false;
+  if (error) return loginMsg(otpError(error.message));
+  if (data && data.session && !S.me && !S.booting) startApp(data.session);
 }
 async function signIn() {
   if (!sb) return showLogin(t('genericError'));
@@ -964,15 +1077,13 @@ async function startApp(session) {
   S.booting = true;
   try {
     showScreen('boot');
-    const email = String(session.user.email || '').toLowerCase();
-    if (!email.endsWith(DOMAIN)) { await sb.auth.signOut(); return showLogin(t('onlyCompany')); }
     let me = null;
     for (let i = 0; i < 4 && !me; i++) {
       const { data } = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
       me = data;
       if (!me) await new Promise(r => setTimeout(r, 700));
     }
-    if (!me) return showLogin(t('profileMissing'));
+    if (!me) { try { await sb.auth.signOut(); } catch (e) {} return showLogin(t('profileMissing')); }
     S.me = me;
     if (!me.active) { showScreen('disabled'); return; }
     await loadAll();
@@ -1012,6 +1123,13 @@ async function loadAll() {
   S.tasks = tasks; S.invoices = invoices; S.fin = Object.fromEntries(fin.map(f => [f.project_id, f]));
   S.profiles = profiles; S.projects = projects; S.expenses = expenses;
   S.settings = Object.fromEntries(settings.map(x => [x.key, x.value]));
+  S.invites = [];
+  if (S.me.role === 'EXECUTIVE') {
+    try {
+      const { data, error } = await sb.from('invited_users').select('email,full_name,created_at').order('created_at', { ascending: false });
+      if (!error) S.invites = data || [];
+    } catch (e) {}
+  }
   S.umap = Object.fromEntries(profiles.map(u => [u.id, u]));
   S.pmap = Object.fromEntries(projects.map(p => [p.id, p]));
   if (S.umap[S.me.id]) S.me = S.umap[S.me.id];
@@ -1391,6 +1509,7 @@ function teamRows() {
     .map(u => {
       const badges = [];
       if (u.role === 'EXECUTIVE') badges.push(`<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>`);
+      if (!u.email.toLowerCase().endsWith(DOMAIN)) badges.push(`<span class="chip">${esc(t('externalBadge'))}</span>`);
       if (acc.includes(u.email.toLowerCase())) badges.push(`<span class="chip st-PENDING_ACCOUNTS">${esc(t('approverBadge'))}</span>`);
       if (S.projects.some(p => p.manager_id === u.id)) badges.push(`<span class="chip st-PENDING_MANAGER">${esc(t('pmBadge'))}</span>`);
       if (!u.active) badges.push(`<span class="chip st-REJECTED">${esc(t('inactive'))}</span>`);
@@ -1449,10 +1568,48 @@ function vTeam() {
       ${(m => m.length ? `<p class="muted small" style="margin:8px 0 0"><bdi>${esc(m.join(', '))}</bdi> — ${esc(t('notSignedYet'))}</p>` : '')(hrList().filter(e => !S.profiles.some(p => p.email.toLowerCase() === e)))}
       <button class="btn btn-primary" style="margin-top:12px" onclick="saveHr(this)">${esc(t('save'))}</button>
     </div>
+    ${invitesCard()}
     <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${S.profiles.length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
     <div id="team-list" class="list">${teamRows()}</div>`;
+}
+function invitesCard() {
+  const signed = new Set(S.profiles.map(p => p.email.toLowerCase()));
+  const waiting = (S.invites || []).filter(i => !signed.has(i.email));
+  return `<div class="card mt">
+      <h3>${esc(t('addPersonTitle'))}</h3>
+      <p class="muted small" style="margin:-6px 0 12px">${esc(t('addPersonBody'))}</p>
+      <div class="two">
+        <label class="field"><span>${esc(t('fullName'))}</span><input id="inv-name" maxlength="80" autocomplete="off"></label>
+        <label class="field"><span>${esc(t('personEmail'))}</span><input id="inv-email" type="email" dir="ltr" maxlength="120" autocomplete="off" placeholder="name@gmail.com"></label>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="addInvite(this)">${ic('plus')}${esc(t('addPerson'))}</button>
+      ${waiting.length ? `<div style="margin-top:14px">${waiting.map(i => `<div class="invite-row"><span class="avatar">${esc((i.full_name || '?').trim().charAt(0).toUpperCase())}</span>
+        <div class="who"><b>${esc(i.full_name)}</b><small><bdi>${esc(i.email)}</bdi> · ${esc(t('invitedWaiting'))}</small></div>
+        <button class="btn btn-ghost btn-sm danger" onclick="removeInvite('${esc(i.email)}', this)">${esc(t('removeInvite'))}</button></div>`).join('')}</div>` : ''}
+    </div>`;
+}
+async function addInvite(btn) {
+  const name = $('#inv-name').value.trim(), email = $('#inv-email').value.trim().toLowerCase();
+  if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast(t('nameEmailRequired'), 'bad');
+  if (S.profiles.some(p => p.email.toLowerCase() === email) || (S.invites || []).some(i => i.email === email)) return toast(t('alreadyAdded'), 'bad');
+  btn.disabled = true;
+  const { error } = await sb.from('invited_users').insert({ email, full_name: name });
+  btn.disabled = false;
+  if (error) return toast(/duplicate|unique/i.test(error.message) ? t('alreadyAdded') : /invited_users|relation|schema cache/i.test(error.message) ? t('needsEmailSql') : errMsg(error), 'bad');
+  toast(t('personAdded', { name }), 'ok');
+  await reload();
+}
+async function removeInvite(email, btn) {
+  const inv = (S.invites || []).find(i => i.email === email); if (!inv) return;
+  const ok = await promptDialog({ title: t('removeInvite'), message: t('removeInviteConfirm', { name: inv.full_name }), ok: t('removeInvite'), danger: true });
+  if (!ok) return;
+  btn.disabled = true;
+  const { error } = await sb.from('invited_users').delete().eq('email', email);
+  if (error) { btn.disabled = false; return toast(errMsg(error), 'bad'); }
+  toast(t('inviteRemoved'), 'ok');
+  await reload();
 }
 async function saveRouting(btn) {
   const list = [...new Set($('#gen-appr').value.toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean))];

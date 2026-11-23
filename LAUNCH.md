@@ -21,22 +21,30 @@ App address: https://mindmastersksa.onrender.com
 3. Naim opens **Projects**, clicks the project created yesterday → **Edit** → fills in description, dates, budget and client.
 
 
-## Project workspace (added 23 Nov)
-Open any project to get tabs:
-- **Overview** – budget, details, upcoming milestones, latest site update.
-- **Tasks** – Naim / the PM add tasks with owner, due date and milestone flag. The assigned person ticks them off (tap the circle: to do → in progress → done). Progress % shows on the project and on Naim's dashboard. Each person sees **My tasks** on their home screen.
-- **Updates** – anyone on the project posts progress notes with site photos.
-- **Files** – drawings, contracts, quotations, BOQ, photos, reports (up to 25 MB each). Everyone on the project can upload and open; uploader, PM or Naim can delete.
-- **Expenses** – that project's claims.
-- **Finance** (Naim + PM only) – contract value, payment terms, client invoices (mark paid), invoiced / received / outstanding, expected margin.
+## ★ Staff without a company email (added 23 Nov)
+People without an @mindmastersksa.com account sign in with a **6-digit code sent to their personal email**. Only people an executive adds can do this.
 
-Storage: Supabase Free includes 1 GB for files; Pro ($25/month) includes 100 GB.
+**One-time setup (≈15 min):**
+1. ✅ Done 23 Nov: `db/update-2026-11-23c-email-code.sql` has been run in Supabase.
+2. ✅ Checked 23 Nov: Email sign-in is enabled and *Allow new users to sign up* is on. The database still refuses anyone who wasn't added.
+3. Supabase → **Authentication → Emails → Templates**: put the code in **both** the **Confirm sign up** template (used for a person's first sign-in) and the **Magic Link** template (used every time after that). Subject: `Your Mind Masters sign-in code`. Body:
+   ```html
+   <h2>Mind Masters</h2>
+   <p>Your sign-in code is:</p>
+   <p style="font-size:28px;font-weight:bold;letter-spacing:6px">{{ .Token }}</p>
+   <p>رمز الدخول الخاص بك أعلاه. The code expires in 1 hour.</p>
+   ```
+4. Supabase → **Authentication → Emails → SMTP Settings → Enable custom SMTP**. Supabase's built-in sender only sends a few emails per hour, so it is not enough for real use.
+   - **Option A: your GoDaddy Microsoft 365 mailbox** (e.g. info@ or a new `noreply@`): Host `smtp.office365.com`, Port `587`, Username = the mailbox, Password = its password, Sender = the same address.
+     If sending fails, *Authenticated SMTP* is switched off for that mailbox. Turn it on in Microsoft 365 admin → Users → the user → Mail → *Manage email apps*, or use option B.
+   - **Option B: a free email-sending service** such as Brevo or Resend. Verify the mindmastersksa.com domain there (a few DNS records in GoDaddy), then paste the SMTP details they give you.
+5. Push the new app to GitHub (step 3 below).
 
-## Employee profiles (added 23 Nov)
-- Everyone: **avatar (top right) → My profile** → *Change photo*, *Edit* (mobile, nationality, emergency contact), and **Documents**: iqama, passport, driving licence, medical insurance — numbers, expiry dates and copies (photo or PDF, 10 MB).
-- Executives: **Team → click a person** to see and edit everything, plus job title, department, joining date, role, and the **Contract & salary** tab (contract dates, basic salary, allowances, contract copies).
-- **HR (Suhail):** sees the **Employees** menu with every profile, document and contract & salary, and can edit them, including roles (Employee / Executive) and enabling or disabling accounts. Naim and info@ always stay Executive. Change who is HR in **Team → HR access**.
-- Privacy: an employee sees only their own documents; colleagues see only name and photo; contract & salary are executives-only. The Team list flags iqama/passport expiring within 60 days or already expired.
+**Adding a person:** Naim or info@ → **Team → Add a person without a company email** → name + personal email → **Add person**. Send them the app link. They tap **Sign in with an email code**, type their email, then type the code from the email.
+- Until they sign in, they're listed under that card with a **Remove** button.
+- After their first sign-in they appear under **People** with a *Personal email* badge. To stop their access later, click their name and untick **Can sign in and submit expenses**.
+- Test it first with your own Gmail address.
+
 
 ---
 
