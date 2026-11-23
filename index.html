@@ -388,7 +388,14 @@ html[dir=rtl] .row-title,html[dir=rtl] .row-sub{unicode-bidi:plaintext;text-alig
  .flow>div>b{min-width:0;flex-basis:100%}
  .stat b{font-size:16px}
  .mini b{font-size:14px}
+ .row.has-av{grid-template-columns:auto minmax(0,1fr);row-gap:6px}
+ .row.has-av .row-end{grid-column:2;align-items:flex-start}
+ .row.has-av .row-title{white-space:normal}
+ .prow{flex-wrap:wrap;row-gap:8px}
+ .prow .badges{flex-basis:100%;max-width:100%;justify-content:flex-start;padding-inline-start:48px}
+ .prow .badges:empty{display:none}
 }
+.badges .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -787,7 +794,7 @@ ar: {
   hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611232030';
+const APP_VERSION = '202611232035';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -2564,7 +2571,7 @@ function expiringDocs(uids, withContract) {
   return out.sort((a, b) => a.days - b.days);
 }
 function expiringCard(items, showWho) {
-  const row = x => `<div class="row" onclick="openPerson('${x.id}','${x.tab}')">
+  const row = x => `<div class="row ${showWho ? 'has-av' : ''}" onclick="openPerson('${x.id}','${x.tab}')">
     ${showWho ? `<span class="avatar sm">${avatarInner(U(x.id))}</span>` : `<div class="row-ic">${ic('file')}</div>`}
     <div class="row-main"><div class="row-title">${showWho ? esc(uname(x.id)) + ' · ' : ''}${esc(t('doc_' + x.kind))}</div><div class="row-sub">${esc(t('expiryDate'))}: ${esc(fdate(x.date))}</div></div>
     <div class="row-end">${expChip(x.date)}</div></div>`;
