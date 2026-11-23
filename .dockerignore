@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+_backup_before_launch/
+db/
+node_modules/
+*.log
+*.md
+.DS_Store
+Thumbs.db
