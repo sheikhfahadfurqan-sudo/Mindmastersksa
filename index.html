@@ -583,7 +583,7 @@ en: {
   routingTitle:'Approval routing',
   routingBody:'Who approves what. Executives always see every expense and can approve or reject at any stage.',
   flowProject:'Project expense', flowGeneral:'General expense', generalApprover:'Accounts team — general expenses (emails, separated by commas)',
-  routingSaved:'Approval routing saved', routingInvalid:'Enter valid @mindmastersksa.com emails.',
+  routingSaved:'Approval routing saved', routingInvalid:'Enter @mindmastersksa.com emails, or the email of someone who has already signed in.',
   notSignedYet:'This person has not signed in yet — they will see their queue after their first sign-in.',
   people:'People', role:'Role', role_EXECUTIVE:'Executive', role_EMPLOYEE:'Employee', jobTitle:'Job title',
   department:'Department', accessActive:'Can sign in and submit expenses', inactive:'Disabled', editPerson:'Edit person',
@@ -748,7 +748,7 @@ ar: {
   routingTitle:'مسار الموافقات',
   routingBody:'من يوافق على ماذا. ترى الإدارة التنفيذية جميع المصروفات ويمكنها الموافقة أو الرفض في أي مرحلة.',
   flowProject:'مصروف مشروع', flowGeneral:'مصروف عام', generalApprover:'فريق الحسابات — المصروفات العامة (عناوين البريد مفصولة بفواصل)',
-  routingSaved:'تم حفظ مسار الموافقات', routingInvalid:'أدخل بريداً صحيحاً ينتهي بـ ‎@mindmastersksa.com.',
+  routingSaved:'تم حفظ مسار الموافقات', routingInvalid:'أدخل بريداً ينتهي بـ ‎@mindmastersksa.com أو بريد شخص سجّل دخوله مسبقاً.',
   notSignedYet:'لم يسجّل هذا الشخص الدخول بعد — ستظهر له الطلبات بعد أول تسجيل دخول.',
   people:'الموظفون', role:'الدور', role_EXECUTIVE:'تنفيذي', role_EMPLOYEE:'موظف', jobTitle:'المسمى الوظيفي',
   department:'القسم', accessActive:'يمكنه الدخول وتقديم المصروفات', inactive:'موقوف', editPerson:'تعديل بيانات الموظف',
@@ -832,7 +832,7 @@ ar: {
   mgrBody:'يستطيع المدير إنشاء جميع المشاريع وتعديلها، والاعتماد النهائي لأي مصروف (عدا مصروفاته)، والاطلاع على قائمة الموظفين. لا يستطيع حذف المشاريع أو المصروفات أو الموظفين، ولا الاطلاع على الوثائق أو الرواتب.'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611241700';
+const APP_VERSION = '202611242030';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -1717,7 +1717,7 @@ async function removeInvite(email, btn) {
 }
 async function saveRouting(btn) {
   const list = [...new Set($('#gen-appr').value.toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean))];
-  if (!list.length || list.some(v => !/^[^\s@]+@mindmastersksa\.com$/.test(v))) return toast(t('routingInvalid'), 'bad');
+  if (!list.length || list.some(v => !(/^[^\s@]+@mindmastersksa\.com$/.test(v) || S.profiles.some(p => p.email.toLowerCase() === v)))) return toast(t('routingInvalid'), 'bad');
   const vals = { general_approver_email: list.join(','), pm_final: $('#set-pmfinal').checked ? 'true' : 'false', accounts_final: $('#set-accfinal').checked ? 'true' : 'false' };
   btn.disabled = true;
   try {
