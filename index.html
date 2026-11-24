@@ -344,6 +344,11 @@ html[lang=ar] .fsec{text-transform:none;letter-spacing:0}
 .tchk.ts-IN_PROGRESS{border-color:var(--info)} .tchk.ts-IN_PROGRESS i{width:10px;height:10px;border-radius:50%;background:var(--info)}
 .tchk.ts-DONE{background:var(--ok);border-color:var(--ok)}
 .tnotes{margin-top:3px;white-space:pre-wrap}
+.tfiles{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tfile{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:3px 9px;border:1px solid var(--line);border-radius:999px;background:var(--bg);font-size:12px;color:var(--ink);cursor:pointer}
+.tfile span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.tfile .ic{width:13px;height:13px}
+.tend{display:flex;align-items:center;gap:6px}
 .chip.ts-TODO{background:var(--soft);color:var(--ink2)} .chip.ts-IN_PROGRESS{background:var(--infobg);color:var(--info)} .chip.ts-DONE{background:var(--okbg);color:var(--ok)}
 .ms{color:#b07a00}
 .inv-PAID{background:var(--okbg);color:var(--ok)} .inv-UNPAID{background:var(--warnbg);color:var(--warn)} .inv-OVERDUE{background:var(--badbg);color:var(--bad)}
@@ -623,7 +628,7 @@ en: {
   postUpdate:'Post update', updatePh:'What happened on site? Progress, issues, next steps…', addPhotos:'Site photos', post:'Post',
   posting:'Posting…', updatePosted:'Update posted', noUpdates:'No updates yet. Post the first progress update.',
   deleteUpdateConfirm:'Delete this update and its photos?', updateDeleted:'Update deleted', latestUpdate:'Latest update',
-  updateRequired:'Write the update.', uploadFiles:'Upload files', folder:'Folder',
+  updateRequired:'Write the update.', uploadFiles:'Upload files', attachFiles:'Attach files', taskLabel:'Task', folder:'Folder',
   f_DRAWINGS:'Drawings', f_CONTRACTS:'Contracts', f_QUOTATIONS:'Quotations', f_BOQ:'BOQ', f_PHOTOS:'Photos', f_REPORTS:'Reports', f_OTHER:'Other',
   chooseFiles:'Choose files (up to 25 MB each)', filesChosen:'{n} files selected', upload:'Upload', uploadingN:'Uploading {i} of {n}…',
   filesUploaded:'{n} files uploaded', noFiles:'No files yet. Upload drawings, contracts, quotations and photos here.',
@@ -788,7 +793,7 @@ ar: {
   postUpdate:'نشر تحديث', updatePh:'ماذا حدث في الموقع؟ الإنجاز، المشاكل، الخطوات التالية…', addPhotos:'صور الموقع', post:'نشر',
   posting:'جارٍ النشر…', updatePosted:'تم نشر التحديث', noUpdates:'لا توجد تحديثات بعد. انشر أول تحديث للإنجاز.',
   deleteUpdateConfirm:'هل تريد حذف هذا التحديث وصوره؟', updateDeleted:'تم حذف التحديث', latestUpdate:'آخر تحديث',
-  updateRequired:'اكتب التحديث.', uploadFiles:'رفع ملفات', folder:'المجلد',
+  updateRequired:'اكتب التحديث.', uploadFiles:'رفع ملفات', attachFiles:'إرفاق ملفات', taskLabel:'المهمة', folder:'المجلد',
   f_DRAWINGS:'المخططات', f_CONTRACTS:'العقود', f_QUOTATIONS:'عروض الأسعار', f_BOQ:'جداول الكميات', f_PHOTOS:'الصور', f_REPORTS:'التقارير', f_OTHER:'أخرى',
   chooseFiles:'اختر الملفات (حتى 25 ميجابايت لكل ملف)', filesChosen:'تم اختيار {n} ملفات', upload:'رفع', uploadingN:'جارٍ رفع {i} من {n}…',
   filesUploaded:'تم رفع {n} ملفات', noFiles:'لا توجد ملفات بعد. ارفع المخططات والعقود وعروض الأسعار والصور هنا.',
@@ -827,7 +832,7 @@ ar: {
   mgrBody:'يستطيع المدير إنشاء جميع المشاريع وتعديلها، والاعتماد النهائي لأي مصروف (عدا مصروفاته)، والاطلاع على قائمة الموظفين. لا يستطيع حذف المشاريع أو المصروفات أو الموظفين، ولا الاطلاع على الوثائق أو الرواتب.'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611241600';
+const APP_VERSION = '202611241700';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -872,6 +877,7 @@ const IC = {
   folder:'<path d="M3 6h6l2 2h10v11H3z"/>',
   users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.8.8 3 2.6 3.5 5.2"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
+  clip:'<path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6l7.8-7.8"/>',
   globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/>',
   logout:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
   x:'<path d="M6 6l12 12M18 6 6 18"/>',
@@ -2248,6 +2254,7 @@ function pOverview(p) {
 }
 
 // Tasks
+const taskFiles = tid => (S.pdata && !S.pdata.loading ? S.pdata.files : []).filter(f => f.task_id === tid);
 function taskRow(tk, p) {
   const can = canManageP(p) || tk.assignee_id === S.me.id;
   const od = isOverdue(tk);
@@ -2258,8 +2265,10 @@ function taskRow(tk, p) {
       <div class="row-title">${tk.is_milestone ? `<span class="ms">◆</span> ` : ''}${esc(tk.title)}</div>
       <div class="row-sub ${od ? 'neg' : ''}">${esc(sub)}${od ? ' · ' + esc(t('overdue')) : ''}</div>
       ${tk.notes ? `<div class="small muted tnotes">${esc(tk.notes)}</div>` : ''}
+      ${(fl => fl.length ? `<div class="tfiles">${fl.map(f => `<button class="tfile" onclick="event.stopPropagation();openFile('${f.id}')" title="${esc(f.name)}">${ic('clip')}<span dir="auto">${esc(f.name)}</span></button>`).join('')}</div>` : '')(taskFiles(tk.id))}
     </div>
-    <span class="chip ts-${tk.status}">${esc(t('ts_' + tk.status))}</span></div>`;
+    <div class="tend"><button class="icon-btn" onclick="mUpload('${p.id}','${tk.id}')" title="${esc(t('attachFiles'))}" aria-label="${esc(t('attachFiles'))}">${ic('clip')}</button>
+    <span class="chip ts-${tk.status}">${esc(t('ts_' + tk.status))}</span></div></div>`;
 }
 function pTasks(p) {
   const all = projTasks(p.id);
@@ -2413,15 +2422,17 @@ function fileRow(f, p) {
   const canDel = f.uploaded_by === S.me.id || canManageP(p);
   return `<div class="row" onclick="openFile('${f.id}')">
     <div class="row-ic fic">${isImgMime(f.mime) ? `<img data-path="${esc(f.path)}" alt="">` : ic('file')}</div>
-    <div class="row-main"><div class="row-title" dir="auto">${esc(f.name)}</div><div class="row-sub">${esc([t('f_' + f.folder), fmtSize(f.size_bytes), uname(f.uploaded_by), fdate(f.created_at)].join(' · '))}</div></div>
+    <div class="row-main"><div class="row-title" dir="auto">${esc(f.name)}</div><div class="row-sub">${esc([t('f_' + f.folder), (tk => tk ? t('taskLabel') + ': ' + tk.title : '')(f.task_id && S.tasks.find(x => x.id === f.task_id)), fmtSize(f.size_bytes), uname(f.uploaded_by), fdate(f.created_at)].filter(Boolean).join(' · '))}</div></div>
     <div class="row-end">${canDel ? `<button class="icon-btn" onclick="event.stopPropagation();deleteFile('${f.id}')" title="${esc(t('del'))}">${ic('x')}</button>` : ''}</div>
   </div>`;
 }
-function mUpload(pid) {
+function mUpload(pid, taskId) {
   const st = { files: [] };
-  const def = S.pfolder && S.pfolder !== 'all' ? S.pfolder : 'DRAWINGS';
-  const ov = openModal(`${mhead(t('uploadFiles'))}
+  const tk = taskId ? S.tasks.find(x => x.id === taskId) : null;
+  const def = tk ? 'OTHER' : S.pfolder && S.pfolder !== 'all' ? S.pfolder : 'DRAWINGS';
+  const ov = openModal(`${mhead(tk ? t('attachFiles') : t('uploadFiles'))}
     <div class="m-body">
+      ${tk ? `<p class="muted small" style="margin:0 0 12px">${esc(t('taskLabel'))}: <b style="color:var(--ink)" dir="auto">${esc(tk.title)}</b></p>` : ''}
       <label class="field"><span>${esc(t('folder'))}</span><select id="uf-folder">${FOLDERS.map(k => `<option value="${k}" ${k === def ? 'selected' : ''}>${esc(t('f_' + k))}</option>`).join('')}</select></label>
       <label class="drop" id="uf-drop">${ic('file')}<b id="uf-names">${esc(t('chooseFiles'))}</b><small class="muted">PDF · DWG · Excel · Word · JPG · PNG · ZIP</small><input id="uf-files" type="file" multiple hidden></label>
       <div class="err hidden" id="uf-err"></div>
@@ -2447,12 +2458,12 @@ function mUpload(pid) {
         const path = `${pid}/${uid()}.${extFor(type, f.name)}`;
         const up = await sb.storage.from('project-files').upload(path, f, { contentType: type, upsert: false });
         if (up.error) throw up.error;
-        const r = await sb.from('project_files').insert({ project_id: pid, folder, name: f.name, path, size_bytes: f.size, mime: type });
+        const r = await sb.from('project_files').insert({ project_id: pid, folder, name: f.name, path, size_bytes: f.size, mime: type, ...(tk ? { task_id: tk.id } : {}) });
         if (r.error) { sb.storage.from('project-files').remove([path]).catch(() => {}); throw r.error; }
         done++;
       }
       closeModal(ov); toast(t('filesUploaded', { n: done }), 'ok');
-      S.pfolder = folder; await loadPData(pid, true); render();
+      if (!tk) S.pfolder = folder; await loadPData(pid, true); render();
     } catch (e) {
       err.textContent = errMsg(e) + (done ? ' · ' + t('filesUploaded', { n: done }) : ''); err.classList.remove('hidden');
       btn.disabled = false; btn.textContent = t('upload');
