@@ -657,7 +657,9 @@ en: {
   hrExpiring:'HR: {n} employee documents expired or expiring soon', hrOpen:'HR: employee profiles, documents and contracts',
   nav_people:'Employees', hrBadge:'HR', hrTitle:'HR access', hrSaved:'HR access saved',
   hrBody:'HR can see and edit every employee’s profile, documents and contract & salary. HR can also change roles (Employee / Executive) and enable or disable accounts.',
-  hrEmails:'HR team (emails, separated by commas)'
+  hrEmails:'HR team (emails, separated by commas)',
+  mgrBadge:'Manager', mgrTitle:'Manager access', mgrSaved:'Manager access saved', mgrEmails:'Managers (emails, separated by commas)',
+  mgrBody:'Managers can create and edit all projects, give final approval on any expense (except their own) and see the employee list. They cannot delete projects, expenses or people, and cannot see documents or salaries.'
 },
 ar: {
   appName:'مايند ماسترز', tagline:'المصروفات والمشاريع', langBtn:'English',
@@ -820,10 +822,12 @@ ar: {
   hrExpiring:'الموارد البشرية: {n} من وثائق الموظفين منتهية أو تنتهي قريباً', hrOpen:'الموارد البشرية: ملفات الموظفين ووثائقهم وعقودهم',
   nav_people:'الموظفون', hrBadge:'الموارد البشرية', hrTitle:'صلاحية الموارد البشرية', hrSaved:'تم حفظ صلاحية الموارد البشرية',
   hrBody:'يمكن للموارد البشرية عرض وتعديل الملف الشخصي والوثائق والعقد والراتب لكل موظف، ويمكنها أيضاً تغيير الأدوار (موظف / تنفيذي) وتفعيل الحسابات أو إيقافها.',
-  hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)'
+  hrEmails:'فريق الموارد البشرية (عناوين البريد مفصولة بفواصل)',
+  mgrBadge:'مدير', mgrTitle:'صلاحية المدير', mgrSaved:'تم حفظ صلاحية المدير', mgrEmails:'المدراء (عناوين البريد مفصولة بفواصل)',
+  mgrBody:'يستطيع المدير إنشاء جميع المشاريع وتعديلها، والاعتماد النهائي لأي مصروف (عدا مصروفاته)، والاطلاع على قائمة الموظفين. لا يستطيع حذف المشاريع أو المصروفات أو الموظفين، ولا الاطلاع على الوثائق أو الرواتب.'
 }};
 // ─── CONFIG ───────────────────────────────────────────────────────
-const APP_VERSION = '202611232050';
+const APP_VERSION = '202611241600';
 const SUPABASE_URL = 'https://ahltxilavuymitaivxey.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I0cJCEEZdAJNZC4g7NyBvQ_XBxCRN9j'; // public key — safe in the browser; data is protected by database rules
 const DOMAIN = '@mindmastersksa.com';
@@ -903,6 +907,9 @@ const accountsNames = list => (list || accountsList()).map(unameByEmail).join(S.
 const hrList = () => String(S.settings.hr_emails || '').toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean);
 const amHR = () => !!S.me && hrList().includes(S.me.email.toLowerCase());
 const isPeopleAdmin = () => execView() || amHR();
+const managerList = () => String(S.settings.manager_emails || '').toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean);
+const amManager = () => !!S.me && !isExec() && managerList().includes(S.me.email.toLowerCase());
+const canEditProjects = () => execView() || amManager();
 const amGenApprover = () => !!S.me && accountsList().includes(S.me.email.toLowerCase());
 const P = id => S.pmap[id];
 const U = id => S.umap[id];
@@ -924,23 +931,23 @@ function canActFirst(e) {
   if (e.status === 'PENDING_ACCOUNTS') return amGenApprover();
   return false;
 }
-function canAct(e) { if (!PENDING.includes(e.status)) return false; return execView() || canActFirst(e); }
+function canAct(e) { if (!PENDING.includes(e.status)) return false; return execView() || canActFirst(e) || (amManager() && e.user_id !== S.me.id); }
 function canWithdraw(e) { return e.user_id === S.me.id && (e.status === 'PENDING_MANAGER' || e.status === 'PENDING_ACCOUNTS') && !e.first_approver_id; }
-const showApprovalsNav = () => execView() || managesAny() || amGenApprover();
+const showApprovalsNav = () => execView() || amManager() || managesAny() || amGenApprover();
 function queue() {
   const final = [], first = [], mine = [];
   const list = S.expenses.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
   for (const e of list) {
     if (!PENDING.includes(e.status)) continue;
     if (execView()) (e.status === 'PENDING_EXECUTIVE' ? final : first).push(e);
-    else if (canActFirst(e)) mine.push(e);
+    else if (canActFirst(e) || (amManager() && e.user_id !== S.me.id)) mine.push(e);
   }
   return { final, first, mine };
 }
 function badgeCount() { const q = queue(); return execView() ? q.final.length : q.mine.length; }
 const myExpenses = () => S.expenses.filter(e => e.user_id === S.me.id);
 function submittableProjects() {
-  return S.projects.filter(p => p.status === 'ACTIVE' && (isExec() || p.manager_id === S.me.id || isMember(p)))
+  return S.projects.filter(p => p.status === 'ACTIVE' && (isExec() || amManager() || p.manager_id === S.me.id || isMember(p)))
     .sort((a, b) => pname(a).localeCompare(pname(b)));
 }
 function waitingText(e) {
@@ -961,7 +968,7 @@ function routeText(type, projectId) {
   return t('accountsLabel') + ' (' + accountsNames(others) + ')' + (accFinal() ? ' — ' + t('finalStep') : arrow + t('executive'));
 }
 function approveLabel(e) {
-  if (execView()) return t('approveFinal');
+  if (execView() || amManager()) return t('approveFinal');
   if ((e.status === 'PENDING_MANAGER' && pmFinal()) || (e.status === 'PENDING_ACCOUNTS' && accFinal())) return t('approveFinal');
   return t('approveForward');
 }
@@ -971,7 +978,7 @@ function projStats(p) {
   const budget = +p.budget_sar || 0;
   return { ex, appr, pend, budget, left: budget - appr, pct: budget ? appr / budget * 100 : 0 };
 }
-const seesProjectMoney = p => execView() || (!!p && p.manager_id === S.me.id);
+const seesProjectMoney = p => execView() || amManager() || (!!p && p.manager_id === S.me.id);
 function prchip(pr) { return pr && pr !== 'NORMAL' ? `<span class="chip pr-${pr}">${esc(t('pr_' + pr))}</span>` : ''; }
 function dateRange(p) {
   if (!p.start_date && !p.end_date) return '';
@@ -1257,7 +1264,7 @@ function navItems() {
   if (showApprovalsNav()) items.push({ id: 'approvals', icon: 'checkCircle', label: t('nav_approvals'), badge: badgeCount() });
   items.push({ id: 'projects', icon: 'folder', label: t('nav_projects') });
   if (execView()) items.push({ id: 'team', icon: 'users', label: t('nav_team') });
-  else if (amHR()) items.push({ id: 'people', icon: 'users', label: t('nav_people') });
+  else if (amHR() || amManager()) items.push({ id: 'people', icon: 'users', label: t('nav_people') });
   return items;
 }
 function render() {
@@ -1546,7 +1553,7 @@ function vApprovals() {
 
 // ─── VIEW: PROJECTS ───────────────────────────────────────────────
 function projCard(p) {
-  const ev = execView(), mgr = p.manager_id === S.me.id;
+  const ev = canEditProjects(), mgr = p.manager_id === S.me.id;
   const ps = projStats(p), over = ps.budget && ps.appr > ps.budget;
   const dr = dateRange(p);
   return `<button class="pcard" onclick="mProjectDetail('${p.id}')">
@@ -1565,7 +1572,7 @@ function projCard(p) {
 }
 const myProjectsList = () => S.projects.filter(p => p.manager_id === S.me.id || isMember(p));
 function vProjects() {
-  const ev = execView();
+  const ev = canEditProjects();
   const list = (ev ? S.projects : myProjectsList())
     .slice().sort((a, b) => (a.status === 'ACTIVE' ? 0 : 1) - (b.status === 'ACTIVE' ? 0 : 1) || pname(a).localeCompare(pname(b)));
   return `<div class="sec-head"><h3>${esc(t('nav_projects'))} <span class="count">${list.length}</span></h3>
@@ -1587,6 +1594,7 @@ function teamRows() {
       if (S.projects.some(p => p.manager_id === u.id)) badges.push(`<span class="chip st-PENDING_MANAGER">${esc(t('pmBadge'))}</span>`);
       if (!u.active) badges.push(`<span class="chip st-REJECTED">${esc(t('inactive'))}</span>`);
       const sub = [u.title, u.department].filter(Boolean).join(' · ');
+      if (managerList().includes(u.email.toLowerCase()) && u.role !== 'EXECUTIVE') badges.push(`<span class="chip st-PENDING_MANAGER">${esc(t('mgrBadge'))}</span>`);
       if (hrList().includes(u.email.toLowerCase())) badges.push(`<span class="chip st-PENDING_MANAGER">${esc(t('hrBadge'))}</span>`);
       if (isPeopleAdmin()) for (const k of ['IQAMA', 'PASSPORT']) { const ed = docExpiry(S.docs[u.id], k); if (ed && daysUntil(ed) <= 60) badges.push(`<span class="chip ${daysUntil(ed) < 0 ? 'st-REJECTED' : 'st-PENDING_EXECUTIVE'}">${esc(t('doc_' + k))}: ${esc(daysUntil(ed) < 0 ? t('expired') : t('expiresInDays', { n: daysUntil(ed) }))}</span>`); }
       return `<button class="prow" onclick="openPerson('${u.id}')"><span class="avatar">${avatarInner(u)}</span>
@@ -1598,7 +1606,7 @@ function vPeople() {
   const exp = expiringDocs(livePeople().map(u => u.id), true);
   return `${exp.length ? expiringCard(exp, true) : ''}
     ${amHR() && !execView() ? invitesCard() : ''}
-    <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${livePeople().length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
+    <div class="sec-head"><h3>${esc(t('nav_people'))} <span class="count">${livePeople().length}</span></h3>${isPeopleAdmin() ? `<button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button>` : ''}</div>
     <div class="filters"><input class="search" type="search" placeholder="${esc(t('search'))}" value="${esc(S.teamQ)}" oninput="S.teamQ=this.value;renderTeamList()"></div>
     <p class="muted small" style="margin:0 2px 10px">${esc(t('peopleHint'))}</p>
     <div id="team-list" class="list">${teamRows()}</div>${removedToggle()}`;
@@ -1611,6 +1619,15 @@ async function saveHr(btn) {
   btn.disabled = false;
   if (error || !data || !data.length) return toast(error ? errMsg(error) : t('needsUpdateSql'), 'bad');
   S.settings.hr_emails = list.join(','); toast(t('hrSaved'), 'ok'); render();
+}
+async function saveManagers(btn) {
+  const list = [...new Set($('#mgr-emails').value.toLowerCase().split(/[\s,;]+/).map(x => x.trim()).filter(Boolean))];
+  if (list.some(v => !/^[^\s@]+@mindmastersksa\.com$/.test(v))) return toast(t('routingInvalid'), 'bad');
+  btn.disabled = true;
+  const { data, error } = await sb.from('app_settings').update({ value: list.join(',') }).eq('key', 'manager_emails').select();
+  btn.disabled = false;
+  if (error || !data || !data.length) return toast(error ? errMsg(error) : t('needsUpdateSql'), 'bad');
+  S.settings.manager_emails = list.join(','); toast(t('mgrSaved'), 'ok'); render();
 }
 function renderTeamList() { const el = $('#team-list'); if (el) el.innerHTML = teamRows(); }
 function vTeam() {
@@ -1641,6 +1658,13 @@ function vTeam() {
       <label class="field"><span>${esc(t('hrEmails'))}</span><textarea id="hr-emails" dir="ltr" rows="1" autocomplete="off">${esc(hrList().join(', '))}</textarea></label>
       ${(m => m.length ? `<p class="muted small" style="margin:8px 0 0"><bdi>${esc(m.join(', '))}</bdi> — ${esc(t('notSignedYet'))}</p>` : '')(hrList().filter(e => !S.profiles.some(p => p.email.toLowerCase() === e)))}
       <button class="btn btn-primary" style="margin-top:12px" onclick="saveHr(this)">${esc(t('save'))}</button>
+    </div>
+    <div class="card">
+      <h3>${esc(t('mgrTitle'))}</h3>
+      <p class="muted small" style="margin:-6px 0 12px">${esc(t('mgrBody'))}</p>
+      <label class="field"><span>${esc(t('mgrEmails'))}</span><textarea id="mgr-emails" dir="ltr" rows="1" autocomplete="off">${esc(managerList().join(', '))}</textarea></label>
+      ${(m => m.length ? `<p class="muted small" style="margin:8px 0 0"><bdi>${esc(m.join(', '))}</bdi> — ${esc(t('notSignedYet'))}</p>` : '')(managerList().filter(e => !S.profiles.some(p => p.email.toLowerCase() === e)))}
+      <button class="btn btn-primary" style="margin-top:12px" onclick="saveManagers(this)">${esc(t('save'))}</button>
     </div>
     ${invitesCard()}
     <div class="sec-head"><h3>${esc(t('people'))} <span class="count">${livePeople().length}</span></h3><button class="btn btn-ghost btn-sm" onclick="exportEmployeesCsv()">${ic('download')}${esc(t('exportCsv'))}</button></div>
@@ -2096,7 +2120,7 @@ async function saveProject(ov, id, oldSel) {
 // ─── PROJECT WORKSPACE ────────────────────────────────────────────
 const FOLDERS = ['DRAWINGS', 'CONTRACTS', 'QUOTATIONS', 'BOQ', 'PHOTOS', 'REPORTS', 'OTHER'];
 const MAX_PFILE = 25 * 1024 * 1024;
-const canManageP = p => !!p && (execView() || p.manager_id === S.me.id);
+const canManageP = p => !!p && (execView() || amManager() || p.manager_id === S.me.id);
 const projTasks = pid => S.tasks.filter(x => x.project_id === pid);
 function taskProgress(pid) {
   const a = projTasks(pid), d = a.filter(x => x.status === 'DONE').length;
@@ -2177,7 +2201,7 @@ function vProject() {
       </div>
       <div class="ph-actions">
         ${execView() ? `<button class="btn btn-ghost btn-sm danger" onclick="deleteProjectFlow('${p.id}')">${esc(t('del'))}</button>` : ''}
-        ${execView() ? `<button class="btn btn-ghost btn-sm" onclick="mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
+        ${canEditProjects() ? `<button class="btn btn-ghost btn-sm" onclick="mProject('${p.id}')">${esc(t('edit'))}</button>` : ''}
         ${canSubmit ? `<button class="btn btn-primary btn-sm" onclick="mNewExpense('${p.id}')">${ic('plus')}${esc(t('newExpense'))}</button>` : ''}
       </div>
     </div>
@@ -2580,7 +2604,8 @@ async function loadAvatars() {
     if (!fresh) S.avAt = Date.now();
   } catch (e) {}
 }
-const canSeePerson = id => id === S.me.id || isPeopleAdmin();
+const canSeePerson = id => id === S.me.id || isPeopleAdmin() || amManager();
+const canEditPerson = id => id === S.me.id || isPeopleAdmin();
 const daysUntil = d => Math.round((toDate(d) - toDate(todayISO())) / 86400000);
 function expChip(d) {
   if (!d) return '';
@@ -2675,13 +2700,13 @@ function vPerson() {
   const u = U(S.personId);
   if (!u || !canSeePerson(u.id)) { S.view = 'home'; return execView() ? vDashboard() : vHome(); }
   if (!S.perData || S.perData.uid !== u.id) loadPerData(u.id);
-  const self = u.id === S.me.id, ex = execView();
-  const tabs = [['profile', t('tab_profile')], ['docs', t('tab_docs')]];
+  const self = u.id === S.me.id, ex = execView(), canEd = canEditPerson(u.id);
+  const tabs = canEd ? [['profile', t('tab_profile')], ['docs', t('tab_docs')]] : [['profile', t('tab_profile')]];
   if (isPeopleAdmin()) tabs.push(['contract', t('tab_contract')]);
   if (!tabs.some(x => x[0] === S.pertab)) S.pertab = 'profile';
   const body = { profile: perProfile, docs: perDocs, contract: perContract }[S.pertab](u);
   const sub = [u.title, u.department].filter(Boolean).join(' · ');
-  return `${isPeopleAdmin() && !self ? `<button class="link back" onclick="go('${ex ? 'team' : 'people'}')">${S.lang === 'ar' ? '→' : '←'} ${esc(ex ? t('nav_team') : t('nav_people'))}</button>` : ''}
+  return `${(isPeopleAdmin() || amManager()) && !self ? `<button class="link back" onclick="go('${ex ? 'team' : 'people'}')">${S.lang === 'ar' ? '→' : '←'} ${esc(ex ? t('nav_team') : t('nav_people'))}</button>` : ''}
     <div class="ph ph-person">
       <div class="per-head">
         <span class="avatar xl">${avatarInner(u)}</span>
@@ -2689,8 +2714,8 @@ function vPerson() {
           <div class="ph-chips" style="margin-top:6px">${u.role === 'EXECUTIVE' ? `<span class="chip chip-dark">${esc(t('role_EXECUTIVE'))}</span>` : ''}${u.removed_at ? `<span class="chip st-REJECTED">${esc(t('removedChip'))}</span>` : !u.active ? `<span class="chip st-REJECTED">${esc(t('inactive'))}</span>` : ''}</div></div>
       </div>
       <div class="ph-actions">
-        <label class="btn btn-ghost btn-sm">${ic('camera')}${esc(t('changePhoto'))}<input type="file" accept="image/*" hidden onchange="changePhoto('${u.id}',this)"></label>
-        <button class="btn btn-primary btn-sm" onclick="mEditPerson('${u.id}')">${esc(t('edit'))}</button>
+        ${canEd ? `<label class="btn btn-ghost btn-sm">${ic('camera')}${esc(t('changePhoto'))}<input type="file" accept="image/*" hidden onchange="changePhoto('${u.id}',this)"></label>
+        <button class="btn btn-primary btn-sm" onclick="mEditPerson('${u.id}')">${esc(t('edit'))}</button>` : ''}
         ${ex && !self && !EXEC_EMAILS.includes(u.email.toLowerCase()) ? (u.removed_at
           ? `<button class="btn btn-ghost btn-sm" onclick="restorePersonFlow('${u.id}')">${esc(t('restorePerson'))}</button>`
           : `<button class="btn btn-bad-ghost btn-sm" onclick="removePersonFlow('${u.id}')">${esc(t('removePerson'))}</button>`) : ''}
@@ -2786,7 +2811,7 @@ function perContract(u) {
 
 // Edit person
 function mEditPerson(id) {
-  const u = U(id); if (!u || !canSeePerson(id)) return;
+  const u = U(id); if (!u || !canEditPerson(id)) return;
   const ex = execView(), hr = !ex && amHR(), locked = EXEC_EMAILS.includes(u.email.toLowerCase());
   const opt = ` <i>(${esc(t('optional'))})</i>`;
   const ov = openModal(`${mhead(t('editPerson'))}
